@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lightning Rail: Sharn to Thrane (v3.0)</title>
-    <!-- Include JSZip for client-side unpacking of your release zip archive -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -46,19 +44,20 @@
             box-shadow: 0 0 40px rgba(0,0,0,0.8);
             text-align: center;
         }
+        .section-title { font-size: 13px; font-weight: bold; color: #ffd700; margin: 12px 0 6px 0; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #443720; padding-bottom: 4px; }
         .setup-grid {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             justify-content: center;
             flex-wrap: wrap;
-            margin: 15px 0;
+            margin: 5px 0;
         }
         .character-card {
             border: 2px solid #554422;
             background: #14141a;
             border-radius: 6px;
-            padding: 10px;
-            width: 140px;
+            padding: 8px;
+            width: 120px;
             cursor: pointer;
             transition: all 0.2s;
         }
@@ -68,21 +67,47 @@
             transform: translateY(-3px);
         }
         .character-avatar {
-            width: 75px;
-            height: 75px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             background: #2a2a35;
-            margin: 0 auto 8px auto;
+            margin: 0 auto 6px auto;
             border: 2px solid #c5a059;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 9px;
+            font-size: 8px;
             color: #f3e5ab;
             font-weight: bold;
             overflow: hidden;
         }
         .character-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        .flex-row {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin: 5px 0;
+            flex-wrap: wrap;
+        }
+        .sub-card {
+            border: 2px solid #554422;
+            background: #1c1814;
+            border-radius: 6px;
+            padding: 6px;
+            width: 100px;
+            text-align: center;
+        }
+        .sub-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #2a221a;
+            margin: 0 auto 4px auto;
+            border: 2px solid #c5a059;
+            overflow: hidden;
+        }
+        .sub-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
         #game-layout {
             display: flex;
@@ -90,14 +115,21 @@
             width: 100%;
             margin-top: 10px;
         }
-        #canvas-container {
+        #board-viewport {
             border: 3px solid #c5a059;
             box-shadow: 0 0 30px rgba(197, 160, 89, 0.2);
             background: #121216;
             border-radius: 6px;
             overflow: hidden;
+            width: 760px;
+            height: 460px;
+            position: relative;
         }
-        canvas { display: block; }
+        #board-viewport img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
         .sidebar {
             flex: 1;
             background: rgba(20, 20, 26, 0.95);
@@ -127,13 +159,13 @@
         }
         .card-display-box {
             background: #0e0e12;
-            border: 1px dashed #685229;
-            border-radius: 4px;
-            padding: 10px;
-            min-height: 85px;
+            border: 2px solid #443720;
+            border-radius: 6px;
+            padding: 12px;
+            min-height: 120px;
             font-size: 12px;
             color: #dcdce6;
-            line-height: 1.3;
+            line-height: 1.4;
         }
         .button-group {
             display: flex;
@@ -168,53 +200,108 @@
 
     <!-- SETUP & PLAYER SELECTION SCREEN -->
     <div id="setup-screen">
-        <h2>Select Canon Operative & Configuration</h2>
-        <p style="color: #a0a0ab; font-size: 12px; margin-bottom: 5px;">Protect VIPs <strong>Melindre & Shetari</strong> against Villains <strong>Rybecht, Zerath, Orlok & Lord of Blades</strong>.</p>
+        <h2>Operation Setup & Roster Configuration</h2>
         
+        <div class="section-title">Select Canon Operative</div>
         <div class="setup-grid">
             <div class="character-card selected" onclick="selectHero('Jan Valek', this)">
-                <div class="character-avatar" id="avatar-jan-valek">JAN VALEK</div>
+                <div class="character-avatar">
+                    <img src="token_jan_valek.png" alt="Jan Valek" onerror="this.src='https://raw.githubusercontent.com/davidkcjames1976-tech/lightning-rail-game/main/Board%20Game%20Visuals/Jan_Valek.png';">
+                </div>
                 <strong>Jan Valek</strong>
-                <div style="font-size: 10px; color: #a0a0ab; margin-top: 3px;">Infiltrator</div>
+                <div style="font-size: 9px; color: #a0a0ab; margin-top: 2px;">Infiltrator</div>
             </div>
             <div class="character-card" onclick="selectHero('Fix', this)">
-                <div class="character-avatar" id="avatar-fix">FIX</div>
+                <div class="character-avatar">
+                    <img src="token_fix.png" alt="Fix" onerror="this.src='https://raw.githubusercontent.com/davidkcjames1976-tech/lightning-rail-game/main/Board%20Game%20Visuals/Fix.png';">
+                </div>
                 <strong>Fix</strong>
-                <div style="font-size: 10px; color: #a0a0ab; margin-top: 3px;">Operative</div>
+                <div style="font-size: 9px; color: #a0a0ab; margin-top: 2px;">Operative</div>
             </div>
             <div class="character-card" onclick="selectHero('Caden', this)">
-                <div class="character-avatar" id="avatar-caden">CADEN</div>
+                <div class="character-avatar">
+                    <img src="token_caden.png" alt="Caden" onerror="this.src='https://raw.githubusercontent.com/davidkcjames1976-tech/lightning-rail-game/main/Board%20Game%20Visuals/Caden.png';">
+                </div>
                 <strong>Caden</strong>
-                <div style="font-size: 10px; color: #a0a0ab; margin-top: 3px;">Vanguard</div>
+                <div style="font-size: 9px; color: #a0a0ab; margin-top: 2px;">Vanguard</div>
             </div>
             <div class="character-card" onclick="selectHero('Bromli', this)">
-                <div class="character-avatar" id="avatar-bromli">BROMLI</div>
+                <div class="character-avatar">
+                    <img src="token_bromli.png" alt="Bromli" onerror="this.src='https://raw.githubusercontent.com/davidkcjames1976-tech/lightning-rail-game/main/Board%20Game%20Visuals/Bromli.png';">
+                </div>
                 <strong>Bromli</strong>
-                <div style="font-size: 10px; color: #a0a0ab; margin-top: 3px;">Artificer</div>
+                <div style="font-size: 9px; color: #a0a0ab; margin-top: 2px;">Artificer</div>
             </div>
             <div class="character-card" onclick="selectHero('Temple', this)">
-                <div class="character-avatar" id="avatar-temple">TEMPLE</div>
+                <div class="character-avatar">
+                    <img src="token_temple.png" alt="Temple" onerror="this.src='https://raw.githubusercontent.com/davidkcjames1976-tech/lightning-rail-game/main/Board%20Game%20Visuals/Temple.png';">
+                </div>
                 <strong>Temple</strong>
-                <div style="font-size: 10px; color: #a0a0ab; margin-top: 3px;">Mystic</div>
+                <div style="font-size: 9px; color: #a0a0ab; margin-top: 2px;">Mystic</div>
             </div>
         </div>
 
-        <div style="margin: 10px 0;">
-            <label style="font-size: 12px; margin-right: 8px;">Game Mode:</label>
-            <select id="mode-select" style="background: #17171f; color: #f3e5ab; border: 1px solid #c5a059; padding: 5px; border-radius: 4px; font-size: 12px;">
+        <div class="section-title">Protected VIP Escort Targets</div>
+        <div class="flex-row">
+            <div class="sub-card" style="border-color: #ffd700;">
+                <div class="sub-avatar">
+                    <img src="token_melindre.png" alt="Melindre" onerror="this.style.display='none';">
+                </div>
+                <strong style="font-size: 10px; color: #ffd700;">Melindre</strong>[cite: 10]
+            </div>
+            <div class="sub-card" style="border-color: #ffd700;">
+                <div class="sub-avatar">
+                    <img src="token_shetari.png" alt="Shetari" onerror="this.style.display='none';">
+                </div>
+                <strong style="font-size: 10px; color: #ffd700;">Shetari</strong>[cite: 11]
+            </div>
+        </div>
+
+        <div class="section-title">Active Villains & Threat Matrix</div>
+        <div class="flex-row">
+            <div class="sub-card" style="border-color: #aa4444;">
+                <div class="sub-avatar" style="border-color: #aa4444; background: #2a1a1a;">
+                    <img src="token_rybecht.png" alt="Rybecht" onerror="this.style.display='none';">
+                </div>
+                <strong style="font-size: 10px; color: #ff9999;">Rybecht</strong>[cite: 8]
+            </div>
+            <div class="sub-card" style="border-color: #aa4444;">
+                <div class="sub-avatar" style="border-color: #aa4444; background: #2a1a1a;">
+                    <img src="token_zerath.png" alt="Zerath" onerror="this.style.display='none';">
+                </div>
+                <strong style="font-size: 10px; color: #ff9999;">Zerath</strong>[cite: 9]
+            </div>
+            <div class="sub-card" style="border-color: #aa4444;">
+                <div class="sub-avatar" style="border-color: #aa4444; background: #2a1a1a;">
+                    <img src="token_orlok.png" alt="Orlok" onerror="this.style.display='none';">
+                </div>
+                <strong style="font-size: 10px; color: #ff9999;">Orlok</strong>[cite: 7]
+            </div>
+            <div class="sub-card" style="border-color: #aa4444;">
+                <div class="sub-avatar" style="border-color: #aa4444; background: #2a1a1a;">
+                    <img src="token_lord_of_blades.png" alt="Lord of Blades" onerror="this.style.display='none';">
+                </div>
+                <strong style="font-size: 9px; color: #ff9999;">Lord of Blades</strong>[cite: 6]
+            </div>
+        </div>
+
+        <div style="margin: 12px 0 4px 0;">
+            <label style="font-size: 11px; margin-right: 6px;">Game Mode:</label>
+            <select id="mode-select" style="background: #17171f; color: #f3e5ab; border: 1px solid #c5a059; padding: 4px; border-radius: 4px; font-size: 11px;">
                 <option value="solo">Solo Operation (1 Player + AI System)</option>
                 <option value="coop">Full Cooperative (Multi-Token)</option>
             </select>
         </div>
 
-        <button onclick="startGame()" style="padding: 10px 25px; font-size: 13px; margin-top: 5px;">Board Lightning Rail</button>
+        <button onclick="startGame()" style="padding: 9px 22px; font-size: 12px; margin-top: 4px;">Board Lightning Rail</button>
     </div>
 
     <!-- MAIN GAME SCREEN -->
     <div id="game-screen" class="hidden">
         <div id="game-layout">
-            <div id="canvas-container">
-                <canvas id="gameCanvas" width="760" height="460"></canvas>
+            <div id="board-viewport">
+                <!-- Master Board Layout: Aether-Rail: The Magipunk Express -->
+                <img src="image_23243d.jpg" alt="Aether-Rail Board Layout" onerror="this.src='sharn_skyline_bg.png';">
             </div>
 
             <div class="sidebar">
@@ -222,18 +309,18 @@
                 
                 <div class="stat-box" id="status-text">
                     Active Operative: <strong id="selected-hero-display">Jan Valek</strong><br>
-                    VIP Protection: <strong>Melindre & Shetari</strong><br>
-                    Threat Level: <strong style="color: #ff9999;">Rybecht, Zerath, Orlok, Lord of Blades</strong><br>
+                    VIP Protection: <strong style="color: #ffd700;">Melindre & Shetari</strong>[cite: 6]<br>
+                    Active Threat: <strong style="color: #ff9999;">Rybecht, Zerath, Orlok, Lord of Blades</strong>[cite: 6]<br>
                     Train Speed: <strong>30 MPH | AP: <span id="ap-display">2</span></strong>
                 </div>
 
                 <div class="panel-title">Card & Crisis Stream</div>
                 <div class="card-display-box" id="card-display">
-                    <em>Unpacking visual asset archive from GitHub release package...</em>
+                    <em>Engine initialized with master board layout, modular cars, and brass dice mechanics.</em>
                 </div>
 
                 <div class="button-group">
-                    <button onclick="drawCard()">Draw Card from Catalog</button>
+                    <button onclick="drawCard()">Draw Master Card</button>
                     <button onclick="rollBrassDice()">Roll Antique Brass d6</button>
                     <button onclick="toggleAudioEngine()">Toggle Procedural Audio</button>
                     <button onclick="exportMasterPDF()">Export 300 DPI Print Package</button>
@@ -246,62 +333,15 @@
     <script>
         let currentHero = "Jan Valek";
         let gameMode = "solo";
-        let assetImages = {};
-
-        // Fetch and unpack assets directly from your GitHub release zip
-        async function initVisualAssets() {
-            const zipUrl = "https://github.com/davidkcjames1976-tech/lightning-rail-game/releases/download/v3.0/Board.Game.Visuals.zip";
-            try {
-                const response = await fetch(zipUrl);
-                const blob = await response.blob();
-                const zip = await JSZip.loadAsync(blob);
-                
-                for (let filename of Object.keys(zip.files)) {
-                    if (!zip.files[filename].dir && /\.(png|jpg|jpeg)$/i.test(filename)) {
-                        const imgData = await zip.files[filename].async("base64");
-                        const base64Flag = "data:image/png;base64," + imgData;
-                        let cleanKey = filename.split('/').pop().toLowerCase();
-                        assetImages[cleanKey] = base64Flag;
-                    }
-                }
-                
-                applyAvatars();
-                document.getElementById('card-display').innerHTML = `<em>Engine initialized. Visual assets successfully loaded and unpacked from GitHub release.</em>`;
-            } catch (err) {
-                console.warn("Asset zip extraction warning:", err);
-                document.getElementById('card-display').innerHTML = `<em>Engine initialized. Standard interface active.</em>`;
-            }
-        }
-
-        function applyAvatars() {
-            const mapping = {
-                'jan valek': 'jan_valek.png',
-                'fix': 'fix.png',
-                'caden': 'caden.png',
-                'bromli': 'bromli.png',
-                'temple': 'temple.png'
-            };
-
-            for (let [hero, filename] of Object.entries(mapping)) {
-                let match = Object.keys(assetImages).find(k => k.includes(filename.split('.')[0]));
-                if (match) {
-                    let elementId = `avatar-${hero.replace(' ', '-')}`;
-                    let el = document.getElementById(elementId);
-                    if (el) {
-                        el.innerHTML = `<img src="${assetImages[match]}" alt="${hero}">`;
-                    }
-                }
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', initVisualAssets);
 
         const masterCards = [
-            { id: "HA-01", title: "Teleport to Cars", category: "Mobility/Infiltration", desc: "Teleport up to 2 cars instantly through shadow conduits." },
-            { id: "HA-02", title: "Aether Conduit Vault", category: "Mobility/Infiltration", desc: "Move across sector gates for 0 AP during your movement phase." },
-            { id: "VIP-01", title: "Melindre's Directive", category: "VIP Safeguard", desc: "Grant +2 bonus to any defense check protecting VIP Melindre or Shetari." },
-            { id: "VILL-01", title: "Lord of Blades Ambush", category: "Major Threat", desc: "Encounter forces deployed by Rybecht, Zerath, Orlok, or the Lord of Blades." },
-            { id: "CR-01", title: "Conduit Rail Arc Overload", tier: "Tier 1 - Sharn Outskirts", desc: "DC 12 Arcana / Tinkering, failure: Take 1d6 Lightning damage." }
+            { id: "HA-01", type: "Hero Action", title: "Mist Step", cat: "House Orien", desc: "Move instantly to any unoccupied space within line of sight. Discard after use." },
+            { id: "HA-02", type: "Hero Action", title: "Thunderous Discharge", cat: "Bromli Overclock", desc: "Deal 5 Lightning Damage to target foe. Overclock: Deal 3 additional damage." },
+            { id: "CR-01", type: "Crisis Event", title: "Core Instability", cat: "Engine Hazard", desc: "Tap to deal 3 damage to target creature. If destroyed, deal 5 damage to all players." },
+            { id: "CR-02", type: "Crisis Event", title: "Mournland Surge", cat: "Ethereal Encounter", desc: "Spectral phantoms haunt the rails, disrupting all movement. Roll a D20 to proceed." },
+            { id: "TV-01", type: "Threat Card", title: "Blood Eclipse Curse", cat: "Orlok's Domain", desc: "When revealed, each player discards 2 resources. Vampire Sorcerer activates immediately." },
+            { id: "TV-02", type: "Threat Card", title: "Rybecht's Chain Lightning", cat: "Arcane Disruption", desc: "Arcane surge tears through compartments, dealing 1d6 Lightning damage to crew." },
+            { id: "TR-01", type: "Traitor Persona", title: "The Sleeper Agent", cat: "Quori Subversion", desc: "A hidden operative works from within the cabins. Identify before sector breach." }
         ];
 
         let gameState = {
@@ -325,7 +365,6 @@
             document.getElementById('selected-hero-display').innerText = currentHero + (gameMode === 'solo' ? ' (Solo + AI)' : ' (Co-op)');
             document.getElementById('setup-screen').classList.add('hidden');
             document.getElementById('game-screen').classList.remove('hidden');
-            renderBoard();
         }
 
         function returnToSetup() {
@@ -334,107 +373,26 @@
             if (gameState.audioActive) toggleAudioEngine();
         }
 
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-
-        function renderBoard() {
-            ctx.fillStyle = "#16161c";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.strokeStyle = "#332918";
-            ctx.lineWidth = 1;
-            for (let i = 0; i < canvas.width; i += 40) {
-                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
-            }
-            for (let j = 0; j < canvas.height; j += 40) {
-                ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(canvas.width, j); ctx.stroke();
-            }
-
-            const cars = [
-                { name: "Car 1: Engine", desc: "Power & Control Core" },
-                { name: "Car 2: VIP Suite", desc: "Melindre & Shetari Quarters" },
-                { name: "Car 3: Cargo Vault", desc: "Artifacts & Supplies" },
-                { name: "Car 4: Passenger", desc: "Civilians & Chaos" },
-                { name: "Car 5: Brig", desc: "Security & Traitor Hold" }
-            ];
-
-            cars.forEach((car, index) => {
-                let x = 20 + (index * 145);
-                let y = 120;
-                
-                ctx.fillStyle = index === 0 ? "#2b2211" : "#1a1a24";
-                ctx.strokeStyle = index === 0 ? "#ffd700" : "#c5a059";
-                ctx.lineWidth = 2;
-                ctx.fillRect(x, y, 130, 180);
-                ctx.strokeRect(x, y, 130, 180);
-
-                ctx.fillStyle = "#c5a059";
-                ctx.fillRect(x, y, 130, 30);
-                ctx.fillStyle = "#121212";
-                ctx.font = "bold 12px 'Cinzel'";
-                ctx.fillText(`CAR 0${index + 1}`, x + 10, y + 20);
-
-                ctx.fillStyle = "#f3e5ab";
-                ctx.font = "bold 11px 'Segoe UI'";
-                ctx.fillText(car.name.split(": ")[1], x + 10, y + 55);
-                ctx.fillStyle = "#a0a0ab";
-                ctx.font = "10px 'Segoe UI'";
-                ctx.fillText(car.desc, x + 10, y + 75);
-
-                if (index === 0) {
-                    ctx.fillStyle = "rgba(255, 215, 0, 0.15)";
-                    ctx.fillRect(x + 8, y + 95, 114, 75);
-                    ctx.strokeStyle = "#ffd700";
-                    ctx.strokeRect(x + 8, y + 95, 114, 75);
-
-                    ctx.fillStyle = "#ffd700";
-                    ctx.font = "bold 11px 'Segoe UI'";
-                    ctx.fillText(`📍 ${currentHero}`, x + 12, y + 120);
-                    ctx.font = "10px 'Segoe UI'";
-                    ctx.fillText("Active Operative", x + 12, y + 140);
-                } else if (index === 1) {
-                    ctx.fillStyle = "rgba(197, 160, 89, 0.1)";
-                    ctx.fillRect(x + 8, y + 95, 114, 75);
-                    ctx.strokeStyle = "#c5a059";
-                    ctx.strokeRect(x + 8, y + 95, 114, 75);
-
-                    ctx.fillStyle = "#ffd700";
-                    ctx.font = "bold 10px 'Segoe UI'";
-                    ctx.fillText(`🛡️ VIP: Melindre & Shetari`, x + 12, y + 125);
-                }
-            });
-
-            ctx.strokeStyle = "#ffd700";
-            ctx.lineWidth = 4;
-            ctx.beginPath(); ctx.moveTo(15, 330); ctx.lineTo(745, 330); ctx.stroke();
-
-            ctx.fillStyle = "rgba(18, 18, 22, 0.9)";
-            ctx.fillRect(15, 15, 730, 45);
-            ctx.strokeStyle = "#c5a059";
-            ctx.strokeRect(15, 15, 730, 45);
-
-            ctx.fillStyle = "#ffd700";
-            ctx.font = "bold 12px 'Cinzel'";
-            ctx.fillText(`⚡ SHARN TO THRANE | OPERATIVE: ${currentHero.toUpperCase()} | THREATS ACTIVE`, 25, 42);
-        }
-
         function drawCard() {
             if (gameState.deck.length === 0) gameState.deck = [...masterCards];
             const card = gameState.deck.pop();
             
             document.getElementById('card-display').innerHTML = `
-                <strong style="color: #ffd700;">[${card.id}] ${card.title}</strong><br>
-                <span style="color: #a0a0ab; font-size: 11px; text-transform: uppercase;">Category: ${card.category || card.tier}</span><br>
-                <p style="margin: 5px 0 0 0;">${card.desc}</p>
+                <div style="border-bottom: 1px solid #c5a059; padding-bottom: 4px; margin-bottom: 6px;">
+                    <strong style="color: #ffd700; font-size: 13px;">[${card.id}] ${card.title}</strong><br>
+                    <span style="color: #a0a0ab; font-size: 10px; text-transform: uppercase;">${card.type} • ${card.cat}</span>
+                </div>
+                <p style="margin: 0; color: #f3e5ab; font-size: 11px;">${card.desc}</p>
             `;
         }
 
         function rollBrassDice() {
             const roll = Math.floor(Math.random() * 6) + 1;
+            let outcome = roll === 6 ? "🌟 CRITICAL SUCCESS (Sapphire Conduit Triggered)" : (roll >= 4 ? "⚡ SUCCESS" : "⚙️ STRAIN INCURRED");
             document.getElementById('card-display').innerHTML = `
                 <strong style="color: #ffd700;">Antique Brass d6 Check Result</strong><br>
-                <p style="font-size: 18px; margin: 5px 0; color: #fff;">🎲 <strong>${roll}</strong></p>
-                <span style="color: #a0a0ab;">Skill check resolved successfully against train inertia.</span>
+                <p style="font-size: 16px; margin: 4px 0; color: #fff;">🎲 Roll: <strong>${roll}</strong> — ${outcome}</p>
+                <span style="color: #a0a0ab; font-size: 10px;">Check resolved against train inertia and compartment stress.</span>
             `;
         }
 
