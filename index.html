@@ -25,7 +25,7 @@
             width: 100%;
             max-width: 1200px;
         }
-        h1 { margin: 0; font-size: 24px; letter-spacing: 2px; color: #ffd700; }
+        h1 { margin: 0; font-size: 24px; letter-spacing: 2px; color: #ffd700; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
         .subtitle { font-size: 11px; color: #a0a0ab; text-transform: uppercase; letter-spacing: 1px; margin-top: 3px; }
         
         #setup-screen, #game-screen {
@@ -39,23 +39,24 @@
             background: rgba(20, 20, 28, 0.95);
             border: 2px solid #c5a059;
             border-radius: 8px;
-            padding: 30px;
-            margin-top: 40px;
+            padding: 25px;
+            margin-top: 15px;
             box-shadow: 0 0 40px rgba(0,0,0,0.8);
             text-align: center;
         }
         .setup-grid {
             display: flex;
-            gap: 20px;
+            gap: 12px;
             justify-content: center;
-            margin: 20px 0;
+            flex-wrap: wrap;
+            margin: 15px 0;
         }
         .character-card {
             border: 2px solid #554422;
             background: #14141a;
             border-radius: 6px;
-            padding: 15px;
-            width: 180px;
+            padding: 10px;
+            width: 140px;
             cursor: pointer;
             transition: all 0.2s;
         }
@@ -65,25 +66,27 @@
             transform: translateY(-3px);
         }
         .character-avatar {
-            width: 100px;
-            height: 100px;
+            width: 75px;
+            height: 75px;
             border-radius: 50%;
             background: #2a2a35;
-            margin: 0 auto 10px auto;
+            margin: 0 auto 8px auto;
             border: 2px solid #c5a059;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
+            font-size: 9px;
             color: #f3e5ab;
-            text-align: center;
             font-weight: bold;
             overflow: hidden;
         }
+        .character-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
         #game-layout {
             display: flex;
             gap: 15px;
             width: 100%;
+            margin-top: 10px;
         }
         #canvas-container {
             border: 3px solid #c5a059;
@@ -102,7 +105,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            max-height: 600px;
+            max-height: 520px;
             overflow-y: auto;
         }
         .panel-title {
@@ -125,7 +128,7 @@
             border: 1px dashed #685229;
             border-radius: 4px;
             padding: 10px;
-            min-height: 90px;
+            min-height: 85px;
             font-size: 12px;
             color: #dcdce6;
             line-height: 1.3;
@@ -140,13 +143,13 @@
             background: linear-gradient(to bottom, #d4af37, #997a25);
             color: #121212;
             border: 1px solid #ffd700;
-            padding: 8px;
+            padding: 7px;
             font-weight: bold;
             font-family: 'Cinzel', sans-serif;
             cursor: pointer;
             border-radius: 4px;
             text-transform: uppercase;
-            font-size: 12px;
+            font-size: 11px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.4);
             transition: all 0.2s ease;
         }
@@ -163,43 +166,63 @@
 
     <!-- SETUP & PLAYER SELECTION SCREEN -->
     <div id="setup-screen">
-        <h2>Select Operative Turnaround & Mode</h2>
-        <p style="color: #a0a0ab; font-size: 13px;">Choose your primary operative and configure session parameters before boarding the express.</p>
+        <h2>Select Canon Operative & Configuration</h2>
+        <p style="color: #a0a0ab; font-size: 12px; margin-bottom: 5px;">Protect VIPs <strong>Melindre & Shetari</strong> against Villains <strong>Rybecht, Zerath, Orlok & Lord of Blades</strong>.</p>
         
         <div class="setup-grid">
             <div class="character-card selected" onclick="selectHero('Jan Valek', this)">
-                <div class="character-avatar">JAN VALEK</div>
+                <div class="character-avatar">
+                    <img src="Board Game Visuals/Jan_Valek.png" alt="Jan Valek" onerror="this.style.display='none'; this.parentNode.innerHTML='JAN VALEK';">
+                </div>
                 <strong>Jan Valek</strong>
-                <div style="font-size: 11px; color: #a0a0ab; margin-top: 4px;">Infiltrator / Rogue</div>
+                <div style="font-size: 10px; color: #a0a0ab; margin-top: 3px;">Infiltrator</div>
+            </div>
+            <div class="character-card" onclick="selectHero('Fix', this)">
+                <div class="character-avatar">
+                    <img src="Board Game Visuals/Fix.png" alt="Fix" onerror="this.style.display='none'; this.parentNode.innerHTML='FIX';">
+                </div>
+                <strong>Fix</strong>
+                <div style="font-size: 10px; color: #a0a0ab; margin-top: 3px;">Operative</div>
+            </div>
+            <div class="character-card" onclick="selectHero('Caden', this)">
+                <div class="character-avatar">
+                    <img src="Board Game Visuals/Caden.png" alt="Caden" onerror="this.style.display='none'; this.parentNode.innerHTML='CADEN';">
+                </div>
+                <strong>Caden</strong>
+                <div style="font-size: 10px; color: #a0a0ab; margin-top: 3px;">Vanguard</div>
             </div>
             <div class="character-card" onclick="selectHero('Bromli', this)">
-                <div class="character-avatar">BROMLI</div>
+                <div class="character-avatar">
+                    <img src="Board Game Visuals/Bromli.png" alt="Bromli" onerror="this.style.display='none'; this.parentNode.innerHTML='BROMLI';">
+                </div>
                 <strong>Bromli</strong>
-                <div style="font-size: 11px; color: #a0a0ab; margin-top: 4px;">Artificer / Heavy</div>
+                <div style="font-size: 10px; color: #a0a0ab; margin-top: 3px;">Artificer</div>
             </div>
             <div class="character-card" onclick="selectHero('Temple', this)">
-                <div class="character-avatar">TEMPLE</div>
+                <div class="character-avatar">
+                    <img src="Board Game Visuals/Temple.png" alt="Temple" onerror="this.style.display='none'; this.parentNode.innerHTML='TEMPLE';">
+                </div>
                 <strong>Temple</strong>
-                <div style="font-size: 11px; color: #a0a0ab; margin-top: 4px;">Tactician / Mystic</div>
+                <div style="font-size: 10px; color: #a0a0ab; margin-top: 3px;">Mystic</div>
             </div>
         </div>
 
-        <div style="margin: 15px 0;">
-            <label style="font-size: 13px; margin-right: 10px;">Game Mode:</label>
-            <select id="mode-select" style="background: #17171f; color: #f3e5ab; border: 1px solid #c5a059; padding: 6px; border-radius: 4px;">
+        <div style="margin: 10px 0;">
+            <label style="font-size: 12px; margin-right: 8px;">Game Mode:</label>
+            <select id="mode-select" style="background: #17171f; color: #f3e5ab; border: 1px solid #c5a059; padding: 5px; border-radius: 4px; font-size: 12px;">
                 <option value="solo">Solo Operation (1 Player + AI System)</option>
                 <option value="coop">Full Cooperative (Multi-Token)</option>
             </select>
         </div>
 
-        <button onclick="startGame()" style="padding: 12px 30px; font-size: 14px; margin-top: 10px;">Board Lightning Rail</button>
+        <button onclick="startGame()" style="padding: 10px 25px; font-size: 13px; margin-top: 5px;">Board Lightning Rail</button>
     </div>
 
     <!-- MAIN GAME SCREEN -->
     <div id="game-screen" class="hidden">
         <div id="game-layout">
             <div id="canvas-container">
-                <canvas id="gameCanvas" width="760" height="500"></canvas>
+                <canvas id="gameCanvas" width="760" height="460"></canvas>
             </div>
 
             <div class="sidebar">
@@ -207,14 +230,14 @@
                 
                 <div class="stat-box" id="status-text">
                     Active Operative: <strong id="selected-hero-display">Jan Valek</strong><br>
-                    Train Speed: <strong>30 MPH (Cruising)</strong><br>
-                    Available AP: <strong id="ap-display">2</strong><br>
-                    Active Cards in Deck: <strong id="deck-count">122</strong>
+                    VIP Protection: <strong>Melindre & Shetari</strong><br>
+                    Threat Level: <strong style="color: #ff9999;">Rybecht, Zerath, Orlok, Lord of Blades</strong><br>
+                    Train Speed: <strong>30 MPH | AP: <span id="ap-display">2</span></strong>
                 </div>
 
                 <div class="panel-title">Card & Crisis Stream</div>
                 <div class="card-display-box" id="card-display">
-                    <em>Engine initialized. Draw from the master 122-card catalog or roll brass dice to manage security checks.</em>
+                    <em>Engine initialized. Draw from master 122-card catalog or roll antique brass dice to secure compartments.</em>
                 </div>
 
                 <div class="button-group">
@@ -235,12 +258,11 @@
         const masterCards = [
             { id: "HA-01", title: "Teleport to Cars", category: "Mobility/Infiltration", desc: "Teleport up to 2 cars instantly through shadow conduits." },
             { id: "HA-02", title: "Aether Conduit Vault", category: "Mobility/Infiltration", desc: "Move across sector gates for 0 AP during your movement phase." },
-            { id: "HA-03", title: "Climb the Rigging", category: "Mobility/Roof Track", desc: "Shift to the exterior roof movement track to bypass blocked cars." },
-            { id: "HA-04", title: "Overclock Resonance", category: "Artifice/Tinkering", desc: "Gain +2 to any Repair or Tinkering check in Car 1 (Engine)." },
-            { id: "HA-05", title: "Arcane Shielding", category: "Defense/Protection", desc: "Reduce incoming damage to Train Integrity or VIP Melindre by 2." },
+            { id: "HA-03", title: "Climb the Rigging", category: "Mobility/Roof Track", desc: "Shift to exterior roof movement track to bypass car blockades." },
+            { id: "VIP-01", title: "Melindre's Directive", category: "VIP Safeguard", desc: "Grant +2 bonus to any defense check protecting VIP Melindre or Shetari." },
+            { id: "VILL-01", title: "Lord of Blades Ambush", category: "Major Threat", desc: "Encounter forces deployed by Rybecht, Zerath, Orlok, or the Lord of Blades." },
             { id: "CR-01", title: "Conduit Rail Arc Overload", tier: "Tier 1 - Sharn Outskirts", desc: "DC 12 Arcana / Tinkering, failure: Take 1d6 Lightning damage." },
-            { id: "CR-07", title: "Lightning Rail Engine Overheat", tier: "Tier 2 - Aundair Crossing", desc: "DC 13 Tinkering / Survival, failure: -2 Integrity per round." },
-            { id: "CR-20", title: "Passenger Panic", tier: "Universal Event", desc: "Automatic Trigger, traitor may spend 1 Sabotage Token to cause instant crisis." }
+            { id: "CR-07", title: "Lightning Rail Engine Overheat", tier: "Tier 2 - Aundair Crossing", desc: "DC 13 Tinkering / Survival, failure: -2 Integrity per round." }
         ];
 
         let gameState = {
@@ -290,8 +312,8 @@
             }
 
             const cars = [
-                { name: "Car 1: Engine", desc: "Control & Power Core" },
-                { name: "Car 2: Luxury Suite", desc: "VIP Melindre Quarters" },
+                { name: "Car 1: Engine", desc: "Power & Control Core" },
+                { name: "Car 2: VIP Suite", desc: "Melindre & Shetari Quarters" },
                 { name: "Car 3: Cargo Vault", desc: "Artifacts & Supplies" },
                 { name: "Car 4: Passenger", desc: "Civilians & Chaos" },
                 { name: "Car 5: Brig", desc: "Security & Traitor Hold" }
@@ -299,7 +321,7 @@
 
             cars.forEach((car, index) => {
                 let x = 20 + (index * 145);
-                let y = 140;
+                let y = 120;
                 
                 ctx.fillStyle = index === 0 ? "#2b2211" : "#1a1a24";
                 ctx.strokeStyle = index === 0 ? "#ffd700" : "#c5a059";
@@ -331,12 +353,21 @@
                     ctx.fillText(`📍 ${currentHero}`, x + 12, y + 120);
                     ctx.font = "10px 'Segoe UI'";
                     ctx.fillText("Active Operative", x + 12, y + 140);
+                } else if (index === 1) {
+                    ctx.fillStyle = "rgba(197, 160, 89, 0.1)";
+                    ctx.fillRect(x + 8, y + 95, 114, 75);
+                    ctx.strokeStyle = "#c5a059";
+                    ctx.strokeRect(x + 8, y + 95, 114, 75);
+
+                    ctx.fillStyle = "#ffd700";
+                    ctx.font = "bold 10px 'Segoe UI'";
+                    ctx.fillText(`🛡️ VIP: Melindre & Shetari`, x + 12, y + 125);
                 }
             });
 
             ctx.strokeStyle = "#ffd700";
             ctx.lineWidth = 4;
-            ctx.beginPath(); ctx.moveTo(15, 360); ctx.lineTo(745, 360); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(15, 330); ctx.lineTo(745, 330); ctx.stroke();
 
             ctx.fillStyle = "rgba(18, 18, 22, 0.9)";
             ctx.fillRect(15, 15, 730, 45);
@@ -344,8 +375,8 @@
             ctx.strokeRect(15, 15, 730, 45);
 
             ctx.fillStyle = "#ffd700";
-            ctx.font = "bold 13px 'Cinzel'";
-            ctx.fillText(`⚡ RUN ACTIVE: SHARN TO THRANE | OPERATIVE: ${currentHero.toUpperCase()}`, 30, 42);
+            ctx.font = "bold 12px 'Cinzel'";
+            ctx.fillText(`⚡ SHARN TO THRANE | OPERATIVE: ${currentHero.toUpperCase()} | THREATS ACTIVE`, 25, 42);
         }
 
         function drawCard() {
@@ -364,7 +395,7 @@
             const roll = Math.floor(Math.random() * 6) + 1;
             document.getElementById('card-display').innerHTML = `
                 <strong style="color: #ffd700;">Antique Brass d6 Check Result</strong><br>
-                <p style="font-size: 20px; margin: 6px 0; color: #fff;">🎲 <strong>${roll}</strong></p>
+                <p style="font-size: 18px; margin: 5px 0; color: #fff;">🎲 <strong>${roll}</strong></p>
                 <span style="color: #a0a0ab;">Skill check resolved successfully against train inertia.</span>
             `;
         }
