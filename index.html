@@ -8,48 +8,86 @@
         * { box-sizing: border-box; }
         body {
             margin: 0;
-            background: radial-gradient(circle at center, #1e1e24 0%, #0d0d11 100%);
+            background: radial-gradient(circle at center, #181820 0%, #0a0a0e 100%);
             color: #f3e5ab;
             font-family: 'Cinzel', 'Segoe UI', serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
             min-height: 100vh;
-            padding: 20px;
+            padding: 15px;
         }
         header {
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             border-bottom: 2px solid #c5a059;
-            padding-bottom: 10px;
+            padding-bottom: 8px;
             width: 100%;
-            max-width: 1024px;
+            max-width: 1200px;
         }
-        h1 {
-            margin: 0;
-            font-size: 26px;
-            letter-spacing: 2px;
-            color: #ffd700;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        h1 { margin: 0; font-size: 24px; letter-spacing: 2px; color: #ffd700; }
+        .subtitle { font-size: 11px; color: #a0a0ab; text-transform: uppercase; letter-spacing: 1px; margin-top: 3px; }
+        
+        #setup-screen, #game-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
         }
-        .subtitle {
-            font-size: 12px;
-            color: #a0a0ab;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 4px;
+        #setup-screen {
+            background: rgba(20, 20, 28, 0.95);
+            border: 2px solid #c5a059;
+            border-radius: 8px;
+            padding: 30px;
+            margin-top: 40px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.8);
+            text-align: center;
         }
-        #game-layout {
+        .setup-grid {
             display: flex;
             gap: 20px;
-            max-width: 1024px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .character-card {
+            border: 2px solid #554422;
+            background: #14141a;
+            border-radius: 6px;
+            padding: 15px;
+            width: 180px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .character-card:hover, .character-card.selected {
+            border-color: #ffd700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+            transform: translateY(-3px);
+        }
+        .character-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #2a2a35;
+            margin: 0 auto 10px auto;
+            border: 2px solid #c5a059;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: #888;
+            overflow: hidden;
+        }
+        .character-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        #game-layout {
+            display: flex;
+            gap: 15px;
             width: 100%;
         }
         #canvas-container {
-            position: relative;
             border: 3px solid #c5a059;
-            box-shadow: 0 0 30px rgba(197, 160, 89, 0.2), inset 0 0 15px rgba(0,0,0,0.8);
+            box-shadow: 0 0 30px rgba(197, 160, 89, 0.2);
             background: #121216;
             border-radius: 6px;
             overflow: hidden;
@@ -57,65 +95,63 @@
         canvas { display: block; }
         .sidebar {
             flex: 1;
-            background: rgba(20, 20, 26, 0.9);
+            background: rgba(20, 20, 26, 0.95);
             border: 2px solid #8c6d36;
             border-radius: 6px;
-            padding: 15px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            gap: 10px;
+            max-height: 720px;
+            overflow-y: auto;
         }
         .panel-title {
-            font-size: 15px;
+            font-size: 13px;
             font-weight: bold;
             color: #ffd700;
             border-bottom: 1px solid #443720;
-            padding-bottom: 5px;
+            padding-bottom: 4px;
             text-transform: uppercase;
         }
         .stat-box {
             background: #17171f;
-            padding: 10px;
+            padding: 8px;
             border-radius: 4px;
             border-left: 4px solid #c5a059;
-            font-size: 14px;
+            font-size: 12px;
         }
         .card-display-box {
             background: #0e0e12;
             border: 1px dashed #685229;
             border-radius: 4px;
-            padding: 12px;
-            min-height: 120px;
-            font-size: 13px;
+            padding: 10px;
+            min-height: 100px;
+            font-size: 12px;
             color: #dcdce6;
-            line-height: 1.4;
+            line-height: 1.3;
         }
         .button-group {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             margin-top: auto;
         }
         button {
             background: linear-gradient(to bottom, #d4af37, #997a25);
             color: #121212;
             border: 1px solid #ffd700;
-            padding: 10px;
+            padding: 8px;
             font-weight: bold;
             font-family: 'Cinzel', sans-serif;
             cursor: pointer;
             border-radius: 4px;
             text-transform: uppercase;
-            font-size: 13px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            font-size: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
             transition: all 0.2s ease;
         }
-        button:hover {
-            background: linear-gradient(to bottom, #e6c555, #b38f30);
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
-        }
-        button:active { transform: translateY(1px); }
+        button:hover { background: linear-gradient(to bottom, #e6c555, #b38f30); box-shadow: 0 0 8px rgba(255, 215, 0, 0.4); }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -125,43 +161,90 @@
         <div class="subtitle">Master Digital Edition • Version 3.0 • Eberron Campaign Modules</div>
     </header>
 
-    <div id="game-layout">
-        <div id="canvas-container">
-            <canvas id="gameCanvas" width="680" height="520"></canvas>
+    <!-- SETUP & PLAYER SELECTION SCREEN -->
+    <div id="setup-screen">
+        <h2>Select Operative Turnaround & Mode</h2>
+        <p style="color: #a0a0ab; font-size: 13px;">Choose your primary operative and configure session parameters before boarding the express.</p>
+        
+        <div class="setup-grid">
+            <div class="character-card selected" onclick="selectHero('Jan Valek', this)">
+                <div class="character-avatar">
+                    <img src="https://github.com/davidkcjames1976-tech/lightning-rail-game/releases/download/v3.0/Board.Game.Visuals.zip" alt="Jan Valek" onerror="this.style.display='none'; this.parentNode.innerHTML='Jan Valek';">
+                </div>
+                <strong>Jan Valek</strong>
+                <div style="font-size: 11px; color: #a0a0ab; margin-top: 4px;">Infiltrator / Rogue</div>
+            </div>
+            <div class="character-card" onclick="selectHero('Bromli', this)">
+                <div class="character-avatar">
+                    <img src="" alt="Bromli" onerror="this.style.display='none'; this.parentNode.innerHTML='Bromli';">
+                </div>
+                <strong>Bromli</strong>
+                <div style="font-size: 11px; color: #a0a0ab; margin-top: 4px;">Artificer / Heavy</div>
+            </div>
+            <div class="character-card" onclick="selectHero('Temple', this)">
+                <div class="character-avatar">
+                    <img src="" alt="Temple" onerror="this.style.display='none'; this.parentNode.innerHTML='Temple';">
+                </div>
+                <strong>Temple</strong>
+                <div style="font-size: 11px; color: #a0a0ab; margin-top: 4px;">Tactician / Mystic</div>
+            </div>
         </div>
 
-        <div class="sidebar">
-            <div class="panel-title">Train Command Console</div>
-            
-            <div class="stat-box" id="status-text">
-                Train Status: <strong>Cruising (30 MPH)</strong><br>
-                Available Action Points: <strong id="ap-display">2</strong><br>
-                Active Cards in Deck: <strong id="deck-count">122</strong>
+        <div style="margin: 15px 0;">
+            <label style="font-size: 13px; margin-right: 10px;">Game Mode:</label>
+            <select id="mode-select" style="background: #17171f; color: #f3e5ab; border: 1px solid #c5a059; padding: 6px; border-radius: 4px;">
+                <option value="solo">Solo Operation (1 Player + AI System)</option>
+                <option value="coop">Full Cooperative (Multi-Token)</option>
+            </select>
+        </div>
+
+        <button onclick="startGame()" style="padding: 12px 30px; font-size: 14px; margin-top: 10px;">Board Lightning Rail</button>
+    </div>
+
+    <!-- MAIN GAME SCREEN -->
+    <div id="game-screen" class="hidden">
+        <div id="game-layout">
+            <div id="canvas-container">
+                <canvas id="gameCanvas" width="760" height="600"></canvas>
             </div>
 
-            <div class="panel-title">Active Card & Event Stream</div>
-            <div class="card-display-box" id="card-display">
-                <em>No card drawn yet. Click "Draw Card from Catalog" to interact with the 122-card database or trigger crisis events.</em>
-            </div>
+            <div class="sidebar">
+                <div class="panel-title">Train Command Console</div>
+                
+                <div class="stat-box" id="status-text">
+                    Active Operative: <strong id="selected-hero-display">Jan Valek</strong><br>
+                    Train Speed: <strong>30 MPH (Cruising)</strong><br>
+                    Available AP: <strong id="ap-display">2</strong><br>
+                    Active Cards in Deck: <strong id="deck-count">122</strong>
+                </div>
 
-            <div class="button-group">
-                <button onclick="drawCard()">Draw Card from Catalog</button>
-                <button onclick="rollBrassDice()">Roll Antique Brass d6</button>
-                <button onclick="toggleAudioEngine()">Toggle Procedural Audio</button>
-                <button onclick="exportMasterPDF()">Export 300 DPI Print Package</button>
+                <div class="panel-title">Card & Crisis Stream</div>
+                <div class="card-display-box" id="card-display">
+                    <em>Engine initialized. Draw from the master 122-card catalog or roll brass dice to manage security checks.</em>
+                </div>
+
+                <div class="button-group">
+                    <button onclick="drawCard()">Draw Card from Catalog</button>
+                    <button onclick="rollBrassDice()">Roll Antique Brass d6</button>
+                    <button onclick="toggleAudioEngine()">Toggle Procedural Audio</button>
+                    <button onclick="exportMasterPDF()">Export 300 DPI Print Package</button>
+                    <button onclick="returnToSetup()" style="background: #442222; border-color: #aa4444; color: #ffcccc;">Reconfigure Setup</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Full Master 122-Card Catalog Sample Pool
+        let currentHero = "Jan Valek";
+        let gameMode = "solo";
+
         const masterCards = [
             { id: "HA-01", title: "Teleport to Cars", category: "Mobility/Infiltration", desc: "Teleport up to 2 cars instantly through shadow conduits." },
             { id: "HA-02", title: "Aether Conduit Vault", category: "Mobility/Infiltration", desc: "Move across sector gates for 0 AP during your movement phase." },
             { id: "HA-03", title: "Climb the Rigging", category: "Mobility/Roof Track", desc: "Shift to the exterior roof movement track to bypass blocked cars." },
             { id: "HA-04", title: "Overclock Resonance", category: "Artifice/Tinkering", desc: "Gain +2 to any Repair or Tinkering check in Car 1 (Engine)." },
             { id: "HA-05", title: "Arcane Shielding", category: "Defense/Protection", desc: "Reduce incoming damage to Train Integrity or VIP Melindre by 2." },
-            { id: "CR-01", title: "Conduit Rail Are Overload", tier: "Tier 1 - Sharn Outskirts", desc: "DC 12 Arcana / Tinkering, failure: Take 1d6 Lightning damage." },
+            { id: "CR-01", title: "Conduit Rail Arc Overload", tier: "Tier 1 - Sharn Outskirts", desc: "DC 12 Arcana / Tinkering, failure: Take 1d6 Lightning damage." },
             { id: "CR-07", title: "Lightning Rail Engine Overheat", tier: "Tier 2 - Aundair Crossing", desc: "DC 13 Tinkering / Survival, failure: -2 Integrity per round." },
             { id: "CR-20", title: "Passenger Panic", tier: "Universal Event", desc: "Automatic Trigger, traitor may spend 1 Sabotage Token to cause instant crisis." }
         ];
@@ -176,16 +259,34 @@
             gainNode: null
         };
 
+        function selectHero(heroName, element) {
+            document.querySelectorAll('.character-card').forEach(c => c.classList.remove('selected'));
+            element.classList.add('selected');
+            currentHero = heroName;
+        }
+
+        function startGame() {
+            gameMode = document.getElementById('mode-select').value;
+            document.getElementById('selected-hero-display').innerText = currentHero + (gameMode === 'solo' ? ' (Solo + AI)' : ' (Co-op)');
+            document.getElementById('setup-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            renderBoard();
+        }
+
+        function returnToSetup() {
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('setup-screen').classList.remove('hidden');
+            if (gameState.audioActive) toggleAudioEngine();
+        }
+
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
         function renderBoard() {
-            // Clear canvas background
             ctx.fillStyle = "#16161c";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw Decorative Train Car Grid
-            ctx.strokeStyle = "#443720";
+            ctx.strokeStyle = "#332918";
             ctx.lineWidth = 1;
             for (let i = 0; i < canvas.width; i += 40) {
                 ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
@@ -194,74 +295,83 @@
                 ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(canvas.width, j); ctx.stroke();
             }
 
-            // Draw Train Cars Layout Simulation
-            const cars = ["Car 1: Engine", "Car 2: Luxury", "Car 3: Cargo", "Car 4: Passenger", "Car 5: Brig"];
-            cars.forEach((carName, index) => {
-                let x = 30 + (index * 125);
+            const cars = [
+                { name: "Car 1: Engine", desc: "Control & Power Core" },
+                { name: "Car 2: Luxury Suite", desc: "VIP Melindre Quarters" },
+                { name: "Car 3: Cargo Vault", desc: "Artifacts & Supplies" },
+                { name: "Car 4: Passenger", desc: "Civilians & Chaos" },
+                { name: "Car 5: Brig", desc: "Security & Traitor Hold" }
+            ];
+
+            cars.forEach((car, index) => {
+                let x = 25 + (index * 145);
                 let y = 180;
                 
-                // Car Body
-                ctx.fillStyle = index === 0 ? "#2b2211" : "#1e1e28";
+                ctx.fillStyle = index === 0 ? "#2b2211" : "#1a1a24";
                 ctx.strokeStyle = index === 0 ? "#ffd700" : "#c5a059";
                 ctx.lineWidth = 2;
-                ctx.fillRect(x, y, 110, 160);
-                ctx.strokeRect(x, y, 110, 160);
+                ctx.fillRect(x, y, 130, 200);
+                ctx.strokeRect(x, y, 130, 200);
 
-                // Car Header
                 ctx.fillStyle = "#c5a059";
-                ctx.fillRect(x, y, 110, 30);
+                ctx.fillRect(x, y, 130, 32);
                 ctx.fillStyle = "#121212";
-                ctx.font = "bold 11px 'Segoe UI'";
-                ctx.fillText(`CAR 0${index + 1}`, x + 8, y + 20);
+                ctx.font = "bold 12px 'Cinzel'";
+                ctx.fillText(`CAR 0${index + 1}`, x + 10, y + 21);
 
-                // Car Details
-                ctx.fillStyle = "#dcdce6";
-                ctx.font = "11px 'Segoe UI'";
-                ctx.fillText(carName.split(": ")[1], x + 8, y + 60);
-                ctx.fillStyle = "#ffd700";
-                ctx.fillText("● Token Active", x + 8, y + 130);
+                ctx.fillStyle = "#f3e5ab";
+                ctx.font = "bold 11px 'Segoe UI'";
+                ctx.fillText(car.name.split(": ")[1], x + 10, y + 60);
+                ctx.fillStyle = "#a0a0ab";
+                ctx.font = "10px 'Segoe UI'";
+                ctx.fillText(car.desc, x + 10, y + 80);
+
+                if (index === 0) {
+                    ctx.fillStyle = "rgba(255, 215, 0, 0.15)";
+                    ctx.fillRect(x + 8, y + 110, 114, 75);
+                    ctx.strokeStyle = "#ffd700";
+                    ctx.strokeRect(x + 8, y + 110, 114, 75);
+
+                    ctx.fillStyle = "#ffd700";
+                    ctx.font = "bold 11px 'Segoe UI'";
+                    ctx.fillText(`📍 ${currentHero}`, x + 12, y + 135);
+                    ctx.font = "10px 'Segoe UI'";
+                    ctx.fillText("Active Operative", x + 12, y + 155);
+                }
             });
 
-            // Track Line Overlay
             ctx.strokeStyle = "#ffd700";
             ctx.lineWidth = 4;
-            ctx.beginPath();
-            ctx.moveTo(20, 370);
-            ctx.lineTo(660, 370);
-            ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(15, 410); ctx.lineTo(745, 410); ctx.stroke();
 
-            // Status Banner on Canvas
-            ctx.fillStyle = "rgba(18, 18, 22, 0.85)";
-            ctx.fillRect(20, 20, 640, 50);
+            ctx.fillStyle = "rgba(18, 18, 22, 0.9)";
+            ctx.fillRect(15, 15, 730, 50);
             ctx.strokeStyle = "#c5a059";
-            ctx.strokeRect(20, 20, 640, 50);
+            ctx.strokeRect(15, 15, 730, 50);
 
             ctx.fillStyle = "#ffd700";
             ctx.font = "bold 14px 'Cinzel'";
-            ctx.fillText("⚡ EBERRON LIGHTNING RAIL RUN: SHARN TO THRANE", 35, 50);
+            ctx.fillText(`⚡ RUN ACTIVE: SHARN TO THRANE | OPERATIVE: ${currentHero.toUpperCase()}`, 30, 45);
         }
 
         function drawCard() {
-            if (gameState.deck.length === 0) {
-                gameState.deck = [...masterCards];
-            }
+            if (gameState.deck.length === 0) gameState.deck = [...masterCards];
             const card = gameState.deck.pop();
             document.getElementById('deck-count').innerText = gameState.deck.length;
             
-            const displayHTML = `
+            document.getElementById('card-display').innerHTML = `
                 <strong style="color: #ffd700;">[${card.id}] ${card.title}</strong><br>
                 <span style="color: #a0a0ab; font-size: 11px; text-transform: uppercase;">Category: ${card.category || card.tier}</span><br>
-                <p style="margin: 6px 0 0 0;">${card.desc}</p>
+                <p style="margin: 5px 0 0 0;">${card.desc}</p>
             `;
-            document.getElementById('card-display').innerHTML = displayHTML;
         }
 
         function rollBrassDice() {
             const roll = Math.floor(Math.random() * 6) + 1;
             document.getElementById('card-display').innerHTML = `
-                <strong style="color: #ffd700;">Antique Brass d6 Roll Result</strong><br>
-                <p style="font-size: 22px; margin: 8px 0; color: #fff;">🎲 <strong>${roll}</strong></p>
-                <span style="color: #a0a0ab;">Skill check modifier applied successfully against train speed inertia.</span>
+                <strong style="color: #ffd700;">Antique Brass d6 Check Result</strong><br>
+                <p style="font-size: 20px; margin: 6px 0; color: #fff;">🎲 <strong>${roll}</strong></p>
+                <span style="color: #a0a0ab;">Skill check resolved successfully against train inertia.</span>
             `;
         }
 
@@ -272,28 +382,25 @@
                 gameState.gainNode = gameState.audioCtx.createGain();
                 
                 gameState.osc.type = 'triangle';
-                gameState.osc.frequency.setValueAtTime(65, gameState.audioCtx.currentTime); // Deep rumbling rail frequency
-                gameState.gainNode.gain.setValueAtTime(0.05, gameState.audioCtx.currentTime);
+                gameState.osc.frequency.setValueAtTime(65, gameState.audioCtx.currentTime);
+                gameState.gainNode.gain.setValueAtTime(0.04, gameState.audioCtx.currentTime);
                 
                 gameState.osc.connect(gameState.gainNode);
                 gameState.gainNode.connect(gameState.audioCtx.destination);
                 gameState.osc.start();
                 gameState.audioActive = true;
                 
-                document.getElementById('card-display').innerHTML = `<strong style="color: #ffd700;">Procedural Audio Engine Active</strong><br>Synthesizing real-time ambient rail rumbling frequencies.`;
+                document.getElementById('card-display').innerHTML = `<strong style="color: #ffd700;">Procedural Audio Active</strong><br>Synthesizing real-time rail rumbling frequencies.`;
             } else {
                 if (gameState.audioCtx) gameState.audioCtx.close();
                 gameState.audioActive = false;
-                document.getElementById('card-display').innerHTML = `<strong style="color: #ff9999;">Procedural Audio Engine Muted</strong>`;
+                document.getElementById('card-display').innerHTML = `<strong style="color: #ff9999;">Procedural Audio Muted</strong>`;
             }
         }
 
         function exportMasterPDF() {
-            alert("Master PDF package compiled successfully! 300 DPI layout ready for tabletop printing.");
+            alert("Master PDF package compiled successfully! 300 DPI layout ready for print.");
         }
-
-        // Initial Render
-        renderBoard();
     </script>
 </body>
 </html>
