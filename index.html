@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lightning Rail: Sharn to Thrane (v3.0)</title>
+    <!-- Include JSZip library to read zip assets on the fly -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -171,37 +173,27 @@
         
         <div class="setup-grid">
             <div class="character-card selected" onclick="selectHero('Jan Valek', this)">
-                <div class="character-avatar">
-                    <img src="Board Game Visuals/Jan_Valek.png" alt="Jan Valek" onerror="this.style.display='none'; this.parentNode.innerHTML='JAN VALEK';">
-                </div>
+                <div class="character-avatar" id="avatar-jan">JAN VALEK</div>
                 <strong>Jan Valek</strong>
                 <div style="font-size: 10px; color: #a0a0ab; margin-top: 3px;">Infiltrator</div>
             </div>
             <div class="character-card" onclick="selectHero('Fix', this)">
-                <div class="character-avatar">
-                    <img src="Board Game Visuals/Fix.png" alt="Fix" onerror="this.style.display='none'; this.parentNode.innerHTML='FIX';">
-                </div>
+                <div class="character-avatar" id="avatar-fix">FIX</div>
                 <strong>Fix</strong>
                 <div style="font-size: 10px; color: #a0a0ab; margin-top: 3px;">Operative</div>
             </div>
             <div class="character-card" onclick="selectHero('Caden', this)">
-                <div class="character-avatar">
-                    <img src="Board Game Visuals/Caden.png" alt="Caden" onerror="this.style.display='none'; this.parentNode.innerHTML='CADEN';">
-                </div>
+                <div class="character-avatar" id="avatar-caden">CADEN</div>
                 <strong>Caden</strong>
                 <div style="font-size: 10px; color: #a0a0ab; margin-top: 3px;">Vanguard</div>
             </div>
             <div class="character-card" onclick="selectHero('Bromli', this)">
-                <div class="character-avatar">
-                    <img src="Board Game Visuals/Bromli.png" alt="Bromli" onerror="this.style.display='none'; this.parentNode.innerHTML='BROMLI';">
-                </div>
+                <div class="character-avatar" id="avatar-bromli">BROMLI</div>
                 <strong>Bromli</strong>
                 <div style="font-size: 10px; color: #a0a0ab; margin-top: 3px;">Artificer</div>
             </div>
             <div class="character-card" onclick="selectHero('Temple', this)">
-                <div class="character-avatar">
-                    <img src="Board Game Visuals/Temple.png" alt="Temple" onerror="this.style.display='none'; this.parentNode.innerHTML='TEMPLE';">
-                </div>
+                <div class="character-avatar" id="avatar-temple">TEMPLE</div>
                 <strong>Temple</strong>
                 <div style="font-size: 10px; color: #a0a0ab; margin-top: 3px;">Mystic</div>
             </div>
@@ -237,7 +229,7 @@
 
                 <div class="panel-title">Card & Crisis Stream</div>
                 <div class="card-display-box" id="card-display">
-                    <em>Engine initialized. Draw from master 122-card catalog or roll antique brass dice to secure compartments.</em>
+                    <em>Engine initialized. Loading assets from GitHub release zip package...</em>
                 </div>
 
                 <div class="button-group">
@@ -254,6 +246,60 @@
     <script>
         let currentHero = "Jan Valek";
         let gameMode = "solo";
+        let assetImages = {};
+
+        // Automatically download and extract images from your GitHub Release zip file on load
+        async function loadAssetsFromZip() {
+            const zipUrl = "https://github.com/davidkcjames1976-tech/lightning-rail-game/releases/download/v3.0/Board.Game.Visuals.zip";
+            try {
+                const response = await fetch(zipUrl);
+                const blob = await response.blob();
+                const zip = await JSZip.loadAsync(blob);
+                
+                // Map files inside the zip package
+                for (let filename of Object.keys(zip.files)) {
+                    if (!zip.files[filename].dir && /\.(png|jpg|jpeg)$/i.test(filename)) {
+                        const imgData = await zip.files[filename].async("base64");
+                        const base64Flag = "data:image/png;base64," + imgData;
+                        
+                        // Clean filename key for matching
+                        let cleanName = filename.split('/').pop().toLowerCase();
+                        assetImages[cleanName] = base64Flag;
+                    }
+                }
+                
+                // Inject extracted images into character avatars
+                injectAvatars();
+                document.getElementById('card-display').innerHTML = `<em>Engine initialized. Visual assets successfully loaded from GitHub release archive.</em>`;
+            } catch (err) {
+                console.warn("Zip loading fallback active:", err);
+                document.getElementById('card-display').innerHTML = `<em>Engine initialized. Running with standard visual configuration.</em>`;
+            }
+        }
+
+        function injectAvatars() {
+            const mapping = {
+                'jan valek': 'jan_valek.png',
+                'fix': 'fix.png',
+                'caden': 'caden.png',
+                'bromli': 'bromli.png',
+                'temple': 'temple.png'
+            };
+
+            for (let [hero, filename] of Object.entries(mapping)) {
+                // Find matching key in loaded assets
+                let foundKey = Object.keys(assetImages).find(k => k.includes(filename.split('.')[0]));
+                if (foundKey) {
+                    let heroId = hero.replace(' ', '-');
+                    let el = document.getElementById(`avatar-${heroId}`);
+                    if (el) {
+                        el.innerHTML = `<img src="${assetImages[foundKey]}" alt="${hero}">`;
+                    }
+                }
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', loadAssetsFromZip);
 
         const masterCards = [
             { id: "HA-01", title: "Teleport to Cars", category: "Mobility/Infiltration", desc: "Teleport up to 2 cars instantly through shadow conduits." },
