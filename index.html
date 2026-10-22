@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lightning Rail: Sharn to Thrane (v3.0)</title>
-    <!-- Include JSZip library to read zip assets on the fly -->
+    <!-- Include JSZip for client-side unpacking of your release zip archive -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
         * { box-sizing: border-box; }
@@ -173,7 +173,7 @@
         
         <div class="setup-grid">
             <div class="character-card selected" onclick="selectHero('Jan Valek', this)">
-                <div class="character-avatar" id="avatar-jan">JAN VALEK</div>
+                <div class="character-avatar" id="avatar-jan-valek">JAN VALEK</div>
                 <strong>Jan Valek</strong>
                 <div style="font-size: 10px; color: #a0a0ab; margin-top: 3px;">Infiltrator</div>
             </div>
@@ -229,7 +229,7 @@
 
                 <div class="panel-title">Card & Crisis Stream</div>
                 <div class="card-display-box" id="card-display">
-                    <em>Engine initialized. Loading assets from GitHub release zip package...</em>
+                    <em>Unpacking visual asset archive from GitHub release package...</em>
                 </div>
 
                 <div class="button-group">
@@ -248,36 +248,32 @@
         let gameMode = "solo";
         let assetImages = {};
 
-        // Automatically download and extract images from your GitHub Release zip file on load
-        async function loadAssetsFromZip() {
+        // Fetch and unpack assets directly from your GitHub release zip
+        async function initVisualAssets() {
             const zipUrl = "https://github.com/davidkcjames1976-tech/lightning-rail-game/releases/download/v3.0/Board.Game.Visuals.zip";
             try {
                 const response = await fetch(zipUrl);
                 const blob = await response.blob();
                 const zip = await JSZip.loadAsync(blob);
                 
-                // Map files inside the zip package
                 for (let filename of Object.keys(zip.files)) {
                     if (!zip.files[filename].dir && /\.(png|jpg|jpeg)$/i.test(filename)) {
                         const imgData = await zip.files[filename].async("base64");
                         const base64Flag = "data:image/png;base64," + imgData;
-                        
-                        // Clean filename key for matching
-                        let cleanName = filename.split('/').pop().toLowerCase();
-                        assetImages[cleanName] = base64Flag;
+                        let cleanKey = filename.split('/').pop().toLowerCase();
+                        assetImages[cleanKey] = base64Flag;
                     }
                 }
                 
-                // Inject extracted images into character avatars
-                injectAvatars();
-                document.getElementById('card-display').innerHTML = `<em>Engine initialized. Visual assets successfully loaded from GitHub release archive.</em>`;
+                applyAvatars();
+                document.getElementById('card-display').innerHTML = `<em>Engine initialized. Visual assets successfully loaded and unpacked from GitHub release.</em>`;
             } catch (err) {
-                console.warn("Zip loading fallback active:", err);
-                document.getElementById('card-display').innerHTML = `<em>Engine initialized. Running with standard visual configuration.</em>`;
+                console.warn("Asset zip extraction warning:", err);
+                document.getElementById('card-display').innerHTML = `<em>Engine initialized. Standard interface active.</em>`;
             }
         }
 
-        function injectAvatars() {
+        function applyAvatars() {
             const mapping = {
                 'jan valek': 'jan_valek.png',
                 'fix': 'fix.png',
@@ -287,28 +283,25 @@
             };
 
             for (let [hero, filename] of Object.entries(mapping)) {
-                // Find matching key in loaded assets
-                let foundKey = Object.keys(assetImages).find(k => k.includes(filename.split('.')[0]));
-                if (foundKey) {
-                    let heroId = hero.replace(' ', '-');
-                    let el = document.getElementById(`avatar-${heroId}`);
+                let match = Object.keys(assetImages).find(k => k.includes(filename.split('.')[0]));
+                if (match) {
+                    let elementId = `avatar-${hero.replace(' ', '-')}`;
+                    let el = document.getElementById(elementId);
                     if (el) {
-                        el.innerHTML = `<img src="${assetImages[foundKey]}" alt="${hero}">`;
+                        el.innerHTML = `<img src="${assetImages[match]}" alt="${hero}">`;
                     }
                 }
             }
         }
 
-        window.addEventListener('DOMContentLoaded', loadAssetsFromZip);
+        window.addEventListener('DOMContentLoaded', initVisualAssets);
 
         const masterCards = [
             { id: "HA-01", title: "Teleport to Cars", category: "Mobility/Infiltration", desc: "Teleport up to 2 cars instantly through shadow conduits." },
             { id: "HA-02", title: "Aether Conduit Vault", category: "Mobility/Infiltration", desc: "Move across sector gates for 0 AP during your movement phase." },
-            { id: "HA-03", title: "Climb the Rigging", category: "Mobility/Roof Track", desc: "Shift to exterior roof movement track to bypass car blockades." },
             { id: "VIP-01", title: "Melindre's Directive", category: "VIP Safeguard", desc: "Grant +2 bonus to any defense check protecting VIP Melindre or Shetari." },
             { id: "VILL-01", title: "Lord of Blades Ambush", category: "Major Threat", desc: "Encounter forces deployed by Rybecht, Zerath, Orlok, or the Lord of Blades." },
-            { id: "CR-01", title: "Conduit Rail Arc Overload", tier: "Tier 1 - Sharn Outskirts", desc: "DC 12 Arcana / Tinkering, failure: Take 1d6 Lightning damage." },
-            { id: "CR-07", title: "Lightning Rail Engine Overheat", tier: "Tier 2 - Aundair Crossing", desc: "DC 13 Tinkering / Survival, failure: -2 Integrity per round." }
+            { id: "CR-01", title: "Conduit Rail Arc Overload", tier: "Tier 1 - Sharn Outskirts", desc: "DC 12 Arcana / Tinkering, failure: Take 1d6 Lightning damage." }
         ];
 
         let gameState = {
@@ -428,7 +421,6 @@
         function drawCard() {
             if (gameState.deck.length === 0) gameState.deck = [...masterCards];
             const card = gameState.deck.pop();
-            document.getElementById('deck-count').innerText = gameState.deck.length;
             
             document.getElementById('card-display').innerHTML = `
                 <strong style="color: #ffd700;">[${card.id}] ${card.title}</strong><br>
