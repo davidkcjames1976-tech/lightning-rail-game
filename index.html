@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightning Rail: Sharn to Thrane - Master Tactical Edition v7.1</title>
+    <title>Lightning Rail: Sharn to Thrane - Master Tactical Edition v7.3</title>
     <style>
         :root {
             --bg-deep: #070a12;
@@ -48,7 +48,80 @@
             z-index: 1;
         }
 
-        /* Top HUD Header - Increased font & sizing */
+        /* Player Mode Selection Modal Overlay */
+        .mode-select-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(7, 10, 18, 0.95);
+            backdrop-filter: blur(12px);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mode-select-card {
+            width: 520px;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 4px solid var(--gold-primary);
+            border-radius: 16px;
+            padding: 35px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 0 90px rgba(212,175,55,0.85);
+            text-align: center;
+            background-image: url('card_template_crisis_fantasy.png');
+            background-size: cover;
+        }
+
+        .mode-select-card h1 {
+            font-size: 24px;
+            color: var(--gold-primary);
+            letter-spacing: 2px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.9);
+        }
+
+        .mode-select-card p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .mode-buttons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .mode-btn {
+            background: linear-gradient(to bottom, #9a7b0c, #634b05);
+            border: 2px solid var(--gold-primary);
+            color: #fff;
+            padding: 16px;
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+        }
+
+        .mode-btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 25px rgba(212,175,55,0.9);
+            background: linear-gradient(to bottom, #b8920e, #7a5c06);
+        }
+
+        /* Top HUD Header */
         header {
             height: 80px;
             background: linear-gradient(to bottom, rgba(18, 24, 36, 0.96), rgba(8, 12, 20, 0.96));
@@ -118,7 +191,7 @@
             overflow: hidden;
         }
 
-        /* Sidebars - Larger readable fonts */
+        /* Sidebars */
         aside.left-sidebar {
             width: 410px;
             background: var(--panel-bg);
@@ -284,12 +357,12 @@
             border-radius: 4px;
         }
 
-        /* Central Master Board View using board_layout_tactical_grid.png */
+        /* Central Master Board View - Expanded to fit tokens perfectly */
         .board-workspace {
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 20px;
+            padding: 15px;
             align-items: center;
             justify-content: center;
             position: relative;
@@ -297,32 +370,32 @@
         }
 
         .master-board-container {
-            width: 980px;
-            height: 540px;
+            width: 1080px;
+            height: 600px;
             background-image: url('board_layout_tactical_grid.png');
             background-size: cover;
             background-position: center;
             border: 4px solid var(--gold-primary);
-            border-radius: 14px;
+            border-radius: 16px;
             position: relative;
             box-shadow: 0 20px 60px rgba(0,0,0,0.95), inset 0 0 35px rgba(0,0,0,0.7);
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            padding: 65px 50px 60px 50px;
-            gap: 16px;
+            padding: 75px 55px 70px 55px;
+            gap: 20px;
         }
 
         .board-car-column {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             grid-template-rows: repeat(5, 1fr);
-            gap: 6px;
+            gap: 8px;
             position: relative;
         }
 
         .grid-cell {
             background: rgba(255,255,255,0.01);
-            border: 1px solid rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
             border-radius: 6px;
             display: flex;
             align-items: center;
@@ -337,7 +410,7 @@
             box-shadow: inset 0 0 12px rgba(0,229,255,0.6);
         }
 
-        /* Custom Asset Tokens (Enlarged) */
+        /* Custom Asset Tokens */
         .token {
             width: 52px;
             height: 52px;
@@ -367,7 +440,7 @@
         .token.minion { border-color: var(--crimson-accent); }
         .token.vip { border-color: #f59e0b; }
 
-        /* Right Sidebar: Controls & Enlarged Dice Engine (+100% size) */
+        /* Right Sidebar */
         aside.right-sidebar {
             width: 410px;
             background: var(--panel-bg);
@@ -420,7 +493,7 @@
             font-weight: bold;
         }
 
-        /* Dice Rolling Engine Box (Dice increased 100% to 78px with large readable numbers) */
+        /* Dice Rolling Engine Box */
         .dice-engine-box {
             background: rgba(15, 23, 42, 0.95);
             border: 1.5px solid var(--border-metal);
@@ -486,7 +559,7 @@
             100% { transform: rotateX(360deg) rotateY(360deg) translateY(0); }
         }
 
-        /* Log Console - Larger readable text */
+        /* Log Console */
         .log-console {
             flex: 1;
             background: rgba(0,0,0,0.85);
@@ -512,7 +585,7 @@
         .log-entry.highlight { color: var(--azure-glow); font-weight: bold; }
         .log-entry.alert { color: var(--crimson-accent); font-weight: bold; }
 
-        /* Modal Overlay for Card & Crisis Inspector */
+        /* Modal Overlay */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -563,11 +636,23 @@
 
     <canvas id="weather-canvas"></canvas>
 
+    <!-- Player Selection Start Screen Modal -->
+    <div class="mode-select-overlay" id="mode-select-overlay">
+        <div class="mode-select-card">
+            <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
+            <p>Select your group player configuration to embark upon the magipunk express:</p>
+            <div class="mode-buttons-container">
+                <button class="mode-btn" onclick="game.startGameMode(2)">1 to 2 Player Mode (Compact Roster)</button>
+                <button class="mode-btn" onclick="game.startGameMode(5)">3 to 5 Player Mode (Full Operative Squad)</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Top Navigation & Global HUD -->
     <header>
         <div class="title-area">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <span>Master Tactical Edition v7.1 | Master Board Visuals & Enlarged UI</span>
+            <span>Master Tactical Edition v7.3 | Configurable Player Modes</span>
         </div>
         <div class="global-status">
             <div class="status-badge">
@@ -608,10 +693,9 @@
             </div>
         </aside>
 
-        <!-- Central Master Board View: Using board_layout_tactical_grid.png -->
+        <!-- Central Master Board View: Perfectly Resized Grid -->
         <main class="board-workspace">
             <div class="master-board-container" id="master-board-container">
-                <!-- 5 Train Car Columns with 10 Grid Cells Each mapped over tactical background -->
                 <div class="board-car-column" id="car-grid-1"></div>
                 <div class="board-car-column" id="car-grid-2"></div>
                 <div class="board-car-column" id="car-grid-3"></div>
@@ -620,7 +704,7 @@
             </div>
         </main>
 
-        <!-- Right Sidebar: Controls & Enlarged Dice Engine (+100%) -->
+        <!-- Right Sidebar -->
         <aside class="right-sidebar">
             <div class="round-control-box">
                 <h3 id="current-phase-title">Phase 1: Crisis Phase</h3>
@@ -635,7 +719,7 @@
                 </div>
             </div>
 
-            <div class="section-header">Dice Rolling Engine (Enlarged)</div>
+            <div class="section-header">Dice Rolling Engine</div>
             <div class="dice-engine-box">
                 <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: bold;">
                     <span>Target: 4+ (Success)</span>
@@ -652,12 +736,12 @@
 
             <div class="section-header">Event & Action Log</div>
             <div class="log-console" id="log-console">
-                <div class="log-entry highlight">[System] Lightning Rail v7.1 master tactical board & 100% enlarged dice active.</div>
+                <div class="log-entry highlight">[System] Lightning Rail v7.3 waiting for player configuration selection.</div>
             </div>
         </aside>
     </main>
 
-    <!-- Modal Inspector & Crisis Resolution -->
+    <!-- Modal Inspector -->
     <div class="modal-overlay" id="modal-overlay" onclick="game.closeModal(event)">
         <div class="modal-card" id="modal-card">
             <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
@@ -761,7 +845,7 @@
                 this.integrity = 10;
                 this.engineState = 'Operational';
                 
-                this.heroes = [
+                this.allHeroes = [
                     { id: 'jan', name: 'Jan Valek', role: 'Vampire Detective', hp: 12, maxHp: 12, def: 15, stress: 0, car: 1, cell: 2, ap: 2, maxAp: 2, img: 'token_hero_jan_valek.png' },
                     { id: 'caden', name: 'Caden', role: 'Arcane Sniper', hp: 10, maxHp: 10, def: 14, stress: 1, car: 2, cell: 4, ap: 2, maxAp: 2, img: 'token_hero_caden.png' },
                     { id: 'bromli', name: 'Bromli', role: 'Cannith Artificer', hp: 14, maxHp: 14, def: 16, stress: 0, car: 1, cell: 5, ap: 2, maxAp: 2, img: 'token_hero_bromli.png' },
@@ -769,6 +853,7 @@
                     { id: 'temple', name: 'Temple', role: 'Warforged Guardian', hp: 16, maxHp: 16, def: 17, stress: 0, car: 4, cell: 3, ap: 2, maxAp: 2, img: 'token_hero_temple.png' }
                 ];
 
+                this.heroes = [];
                 this.activeHeroIndex = 0;
 
                 this.minions = [
@@ -783,7 +868,16 @@
                 this.hand = [];
                 this.currentDice = [];
                 this.activeCrisis = null;
+            }
 
+            startGameMode(modeCount) {
+                this.sound.playClick();
+                if(modeCount === 2) {
+                    this.heroes = this.allHeroes.slice(0, 2); // Jan Valek & Caden
+                } else {
+                    this.heroes = [...this.allHeroes]; // All 5 operatives
+                }
+                document.getElementById('mode-select-overlay').style.display = 'none';
                 this.initUI();
             }
 
@@ -795,7 +889,7 @@
                 this.renderRoster();
                 this.renderMasterBoardGrid();
                 this.updateActionEconomyUI();
-                this.log("Lightning Rail v7.1 master tactical board & enlarged UI initialized.", "highlight");
+                this.log(`Lightning Rail v7.3 started successfully with ${this.heroes.length}-Player configuration.`, "highlight");
             }
 
             log(msg, type='') {
