@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightning Rail: Sharn to Thrane - Master Tactical Edition v7.0</title>
+    <title>Lightning Rail: Sharn to Thrane - Master Tactical Edition v7.1</title>
     <style>
         :root {
             --bg-deep: #070a12;
-            --panel-bg: rgba(15, 23, 42, 0.96);
+            --panel-bg: rgba(15, 23, 42, 0.97);
             --gold-primary: #d4af37;
             --gold-light: #f3e5ab;
             --azure-glow: #00e5ff;
             --crimson-accent: #ff1744;
             --text-main: #f5f2e9;
-            --text-muted: #cbd5e1;
+            --text-muted: #e2e8f0;
             --border-metal: #455a64;
         }
 
@@ -48,44 +48,45 @@
             z-index: 1;
         }
 
-        /* Top HUD Header */
+        /* Top HUD Header - Increased font & sizing */
         header {
-            height: 75px;
+            height: 80px;
             background: linear-gradient(to bottom, rgba(18, 24, 36, 0.96), rgba(8, 12, 20, 0.96));
-            border-bottom: 2px solid var(--gold-primary);
+            border-bottom: 3px solid var(--gold-primary);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 25px;
+            padding: 0 30px;
             z-index: 10;
-            box-shadow: 0 4px 30px rgba(0,0,0,0.9);
+            box-shadow: 0 4px 35px rgba(0,0,0,0.95);
             backdrop-filter: blur(10px);
         }
 
         .title-area h1 {
-            font-size: 24px;
+            font-size: 26px;
             color: var(--gold-primary);
             letter-spacing: 2px;
             text-shadow: 0 0 15px rgba(212,175,55,0.7);
         }
 
         .title-area span {
-            font-size: 13px;
+            font-size: 14px;
             color: var(--text-muted);
             letter-spacing: 1px;
+            font-weight: bold;
         }
 
         .global-status {
             display: flex;
-            gap: 18px;
+            gap: 20px;
             align-items: center;
-            font-size: 15px;
+            font-size: 16px;
         }
 
         .status-badge {
-            background: rgba(0,0,0,0.8);
-            border: 1px solid var(--border-metal);
-            padding: 6px 15px;
+            background: rgba(0,0,0,0.85);
+            border: 1.5px solid var(--border-metal);
+            padding: 8px 18px;
             border-radius: 6px;
             display: flex;
             flex-direction: column;
@@ -94,17 +95,18 @@
         }
 
         .status-badge label {
-            font-size: 10px;
+            font-size: 11px;
             color: var(--text-muted);
             text-transform: uppercase;
+            font-weight: bold;
         }
 
         .status-badge value {
             font-weight: bold;
             color: var(--azure-glow);
             font-family: monospace;
-            font-size: 16px;
-            text-shadow: 0 0 10px rgba(0,229,255,0.5);
+            font-size: 18px;
+            text-shadow: 0 0 10px rgba(0,229,255,0.6);
         }
 
         /* Main Workspace */
@@ -116,26 +118,26 @@
             overflow: hidden;
         }
 
-        /* Sidebar: Larger, more readable fonts */
+        /* Sidebars - Larger readable fonts */
         aside.left-sidebar {
-            width: 380px;
+            width: 410px;
             background: var(--panel-bg);
-            border-right: 2px solid var(--border-metal);
+            border-right: 3px solid var(--border-metal);
             display: flex;
             flex-direction: column;
-            padding: 20px;
-            gap: 18px;
+            padding: 22px;
+            gap: 20px;
             backdrop-filter: blur(14px);
-            box-shadow: 6px 0 25px rgba(0,0,0,0.7);
+            box-shadow: 6px 0 25px rgba(0,0,0,0.8);
             z-index: 6;
         }
 
         .section-header {
-            font-size: 14px;
+            font-size: 15px;
             color: var(--gold-primary);
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            border-bottom: 1px solid rgba(212,175,55,0.4);
+            border-bottom: 2px solid rgba(212,175,55,0.4);
             padding-bottom: 6px;
             margin-bottom: 10px;
             font-weight: bold;
@@ -144,16 +146,16 @@
         .hero-roster {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            max-height: 260px;
+            gap: 12px;
+            max-height: 280px;
             overflow-y: auto;
         }
 
         .hero-card-mini {
             background: rgba(18, 24, 36, 0.95);
-            border: 1px solid var(--border-metal);
+            border: 1.5px solid var(--border-metal);
             border-radius: 8px;
-            padding: 10px 12px;
+            padding: 12px 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -163,24 +165,25 @@
 
         .hero-card-mini:hover, .hero-card-mini.active {
             border-color: var(--gold-primary);
-            box-shadow: 0 0 15px rgba(212,175,55,0.5);
+            box-shadow: 0 0 15px rgba(212,175,55,0.6);
             transform: translateY(-2px);
         }
 
         .hero-info h4 {
-            font-size: 15px;
+            font-size: 16px;
             color: var(--text-main);
+            font-weight: bold;
         }
 
         .hero-info span {
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-muted);
         }
 
         .hero-stats-mini {
             display: flex;
-            gap: 10px;
-            font-size: 13px;
+            gap: 12px;
+            font-size: 14px;
             font-family: monospace;
             font-weight: bold;
         }
@@ -201,27 +204,27 @@
         .deck-buttons {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 12px;
         }
 
         .magipunk-btn {
             background: linear-gradient(to bottom, #1e293b, #0f172a);
-            border: 1px solid var(--gold-primary);
+            border: 1.5px solid var(--gold-primary);
             color: var(--gold-light);
-            padding: 10px 14px;
+            padding: 12px 16px;
             font-family: 'Cinzel', serif;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: bold;
             border-radius: 6px;
             cursor: pointer;
             transition: all 0.2s;
             text-align: center;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.6);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.7);
         }
 
         .magipunk-btn:hover {
             background: linear-gradient(to bottom, #334155, #1e293b);
-            box-shadow: 0 0 15px rgba(212,175,55,0.7);
+            box-shadow: 0 0 15px rgba(212,175,55,0.8);
             color: #fff;
         }
 
@@ -239,44 +242,45 @@
         .hand-container {
             flex: 1;
             background: rgba(0,0,0,0.6);
-            border: 1px dashed var(--border-metal);
+            border: 1.5px dashed var(--border-metal);
             border-radius: 8px;
-            padding: 10px;
+            padding: 12px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
 
         .card-item {
             background: #1e293b;
-            border: 1px solid var(--gold-primary);
+            border: 1.5px solid var(--gold-primary);
             border-radius: 6px;
-            padding: 10px 12px;
-            font-size: 13px;
+            padding: 12px 14px;
+            font-size: 14px;
+            font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
             position: relative;
             background-image: url('card_template_hero_brass.png');
             background-size: cover;
             color: #fff;
-            text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+            text-shadow: 0 1px 4px rgba(0,0,0,0.95);
         }
 
         .card-item:hover {
             transform: translateX(6px);
-            box-shadow: 0 0 15px rgba(0,229,255,0.7);
+            box-shadow: 0 0 18px rgba(0,229,255,0.8);
         }
 
         .card-item .cost {
             position: absolute;
             top: 8px;
-            right: 10px;
+            right: 12px;
             background: var(--azure-glow);
             color: #000;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: bold;
-            padding: 2px 6px;
+            padding: 3px 8px;
             border-radius: 4px;
         }
 
@@ -289,23 +293,23 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            background: radial-gradient(circle at center, rgba(7,10,18,0.6) 0%, rgba(7,10,18,0.95) 100%);
+            background: radial-gradient(circle at center, rgba(7,10,18,0.5) 0%, rgba(7,10,18,0.92) 100%);
         }
 
         .master-board-container {
-            width: 950px;
-            height: 520px;
+            width: 980px;
+            height: 540px;
             background-image: url('board_layout_tactical_grid.png');
             background-size: cover;
             background-position: center;
             border: 4px solid var(--gold-primary);
             border-radius: 14px;
             position: relative;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.95), inset 0 0 30px rgba(0,0,0,0.6);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.95), inset 0 0 35px rgba(0,0,0,0.7);
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            padding: 60px 45px 55px 45px;
-            gap: 15px;
+            padding: 65px 50px 60px 50px;
+            gap: 16px;
         }
 
         .board-car-column {
@@ -317,8 +321,8 @@
         }
 
         .grid-cell {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.01);
+            border: 1px solid rgba(255,255,255,0.06);
             border-radius: 6px;
             display: flex;
             align-items: center;
@@ -328,86 +332,87 @@
         }
 
         .grid-cell:hover {
-            background: rgba(0,229,255,0.22);
+            background: rgba(0,229,255,0.25);
             border-color: var(--azure-glow);
-            box-shadow: inset 0 0 10px rgba(0,229,255,0.5);
+            box-shadow: inset 0 0 12px rgba(0,229,255,0.6);
         }
 
         /* Custom Asset Tokens (Enlarged) */
         .token {
-            width: 48px;
-            height: 48px;
+            width: 52px;
+            height: 52px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: bold;
             cursor: grab;
-            box-shadow: 0 8px 22px rgba(0,0,0,0.95);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.95);
             position: absolute;
             z-index: 25;
             background-size: cover;
             background-position: center;
-            border: 2.5px solid var(--gold-primary);
+            border: 3px solid var(--gold-primary);
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s;
         }
 
         .token:active {
             cursor: grabbing;
-            transform: scale(1.3) translateY(-6px);
-            box-shadow: 0 16px 35px rgba(0,229,255,0.9);
+            transform: scale(1.35) translateY(-6px);
+            box-shadow: 0 18px 40px rgba(0,229,255,0.95);
         }
 
         .token.hero { border-color: var(--azure-glow); }
         .token.minion { border-color: var(--crimson-accent); }
         .token.vip { border-color: #f59e0b; }
 
-        /* Right Sidebar: Controls & Enlarged Dice Engine (+100%) */
+        /* Right Sidebar: Controls & Enlarged Dice Engine (+100% size) */
         aside.right-sidebar {
-            width: 380px;
+            width: 410px;
             background: var(--panel-bg);
-            border-left: 2px solid var(--border-metal);
+            border-left: 3px solid var(--border-metal);
             display: flex;
             flex-direction: column;
-            padding: 20px;
-            gap: 15px;
+            padding: 22px;
+            gap: 18px;
             backdrop-filter: blur(14px);
-            box-shadow: -6px 0 25px rgba(0,0,0,0.7);
+            box-shadow: -6px 0 25px rgba(0,0,0,0.8);
             z-index: 6;
         }
 
         .round-control-box {
-            background: rgba(0,0,0,0.7);
-            border: 1px solid var(--gold-primary);
+            background: rgba(0,0,0,0.75);
+            border: 1.5px solid var(--gold-primary);
             border-radius: 8px;
-            padding: 14px;
+            padding: 16px;
             text-align: center;
             background-image: url('dashboard_recessed_frame.png');
             background-size: cover;
         }
 
         .round-control-box h3 {
-            font-size: 15px;
+            font-size: 17px;
             color: var(--gold-primary);
-            margin-bottom: 4px;
-            text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+            margin-bottom: 6px;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.95);
+            font-weight: bold;
         }
 
         .round-control-box p {
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-muted);
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             line-height: 1.4;
         }
 
         .ap-tracker {
-            background: rgba(0,229,255,0.15);
-            border: 1px solid var(--azure-glow);
+            background: rgba(0,229,255,0.18);
+            border: 1.5px solid var(--azure-glow);
             border-radius: 6px;
-            padding: 8px 12px;
-            font-size: 14px;
-            margin-bottom: 10px;
+            padding: 10px 14px;
+            font-size: 15px;
+            margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -415,32 +420,32 @@
             font-weight: bold;
         }
 
-        /* Dice Rolling Engine Box (Dice increased 100% to 76px) */
+        /* Dice Rolling Engine Box (Dice increased 100% to 78px with large readable numbers) */
         .dice-engine-box {
             background: rgba(15, 23, 42, 0.95);
-            border: 1px solid var(--border-metal);
+            border: 1.5px solid var(--border-metal);
             border-radius: 8px;
-            padding: 14px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
         .dice-tray {
-            height: 110px;
-            background: rgba(0,0,0,0.8);
-            border: 1px inset var(--border-metal);
+            height: 120px;
+            background: rgba(0,0,0,0.85);
+            border: 1.5px inset var(--border-metal);
             border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 14px;
+            gap: 16px;
             perspective: 800px;
         }
 
         .die {
-            width: 76px;
-            height: 76px;
+            width: 78px;
+            height: 78px;
             background-image: url('dice_face_blank.png');
             background-size: cover;
             color: var(--gold-light);
@@ -449,18 +454,18 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 28px;
+            font-size: 30px;
             border: 2px solid var(--gold-primary);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.9);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.95);
             transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-shadow: 0 2px 5px rgba(0,0,0,0.9);
+            text-shadow: 0 2px 6px rgba(0,0,0,0.95);
         }
 
         .die.success {
             background-image: url('dice_face_success.png');
             color: #000;
             border-color: var(--azure-glow);
-            box-shadow: 0 0 25px var(--azure-glow);
+            box-shadow: 0 0 30px var(--azure-glow);
             text-shadow: none;
         }
 
@@ -468,7 +473,7 @@
             background-image: url('dice_face_critical.png');
             color: #fff;
             border-color: #f59e0b;
-            box-shadow: 0 0 30px #f59e0b;
+            box-shadow: 0 0 35px #f59e0b;
         }
 
         .die.rolling {
@@ -481,31 +486,31 @@
             100% { transform: rotateX(360deg) rotateY(360deg) translateY(0); }
         }
 
-        /* Log Console */
+        /* Log Console - Larger readable text */
         .log-console {
             flex: 1;
-            background: rgba(0,0,0,0.8);
-            border: 1px solid var(--border-metal);
+            background: rgba(0,0,0,0.85);
+            border: 1.5px solid var(--border-metal);
             border-radius: 8px;
-            padding: 10px;
+            padding: 12px;
             font-family: monospace;
-            font-size: 12px;
+            font-size: 13px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            max-height: 180px;
+            gap: 8px;
+            max-height: 200px;
             line-height: 1.4;
         }
 
         .log-entry {
             color: var(--text-muted);
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            padding-bottom: 3px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding-bottom: 4px;
         }
 
-        .log-entry.highlight { color: var(--azure-glow); }
-        .log-entry.alert { color: var(--crimson-accent); }
+        .log-entry.highlight { color: var(--azure-glow); font-weight: bold; }
+        .log-entry.alert { color: var(--crimson-accent); font-weight: bold; }
 
         /* Modal Overlay for Card & Crisis Inspector */
         .modal-overlay {
@@ -514,7 +519,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.92);
             backdrop-filter: blur(10px);
             z-index: 100;
             display: none;
@@ -523,15 +528,15 @@
         }
 
         .modal-card {
-            width: 440px;
+            width: 480px;
             background: linear-gradient(135deg, #1e293b, #0f172a);
             border: 4px solid var(--gold-primary);
             border-radius: 14px;
-            padding: 26px;
+            padding: 30px;
             display: flex;
             flex-direction: column;
-            gap: 18px;
-            box-shadow: 0 0 70px rgba(212,175,55,0.7);
+            gap: 20px;
+            box-shadow: 0 0 80px rgba(212,175,55,0.8);
             position: relative;
             animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             background-image: url('card_template_crisis_fantasy.png');
@@ -545,9 +550,9 @@
 
         .modal-close {
             position: absolute;
-            top: 12px;
-            right: 18px;
-            font-size: 24px;
+            top: 14px;
+            right: 20px;
+            font-size: 26px;
             color: var(--gold-primary);
             cursor: pointer;
             text-shadow: 0 2px 5px rgba(0,0,0,0.9);
@@ -562,7 +567,7 @@
     <header>
         <div class="title-area">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <span>Master Tactical Edition v7.0 | Master Board Visuals & Enlarged UI</span>
+            <span>Master Tactical Edition v7.1 | Master Board Visuals & Enlarged UI</span>
         </div>
         <div class="global-status">
             <div class="status-badge">
@@ -598,7 +603,7 @@
                     <button class="magipunk-btn" id="btn-draw-crisis" onclick="game.drawCrisisCard()">Draw Crisis</button>
                 </div>
                 <div class="hand-container" id="hand-container">
-                    <div style="text-align: center; color: var(--text-muted); font-size: 13px; margin-top: 30px;">Your hand is empty. Draw cards to begin.</div>
+                    <div style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 35px; font-weight: bold;">Your hand is empty. Draw cards to begin.</div>
                 </div>
             </div>
         </aside>
@@ -606,7 +611,7 @@
         <!-- Central Master Board View: Using board_layout_tactical_grid.png -->
         <main class="board-workspace">
             <div class="master-board-container" id="master-board-container">
-                <!-- 5 Train Car Columns with 10 Grid Cells Each -->
+                <!-- 5 Train Car Columns with 10 Grid Cells Each mapped over tactical background -->
                 <div class="board-car-column" id="car-grid-1"></div>
                 <div class="board-car-column" id="car-grid-2"></div>
                 <div class="board-car-column" id="car-grid-3"></div>
@@ -615,7 +620,7 @@
             </div>
         </main>
 
-        <!-- Right Sidebar: Controls & Enlarged Dice Engine -->
+        <!-- Right Sidebar: Controls & Enlarged Dice Engine (+100%) -->
         <aside class="right-sidebar">
             <div class="round-control-box">
                 <h3 id="current-phase-title">Phase 1: Crisis Phase</h3>
@@ -630,14 +635,14 @@
                 </div>
             </div>
 
-            <div class="section-header">Dice Rolling Engine (+100% Size)</div>
+            <div class="section-header">Dice Rolling Engine (Enlarged)</div>
             <div class="dice-engine-box">
-                <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold;">
+                <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: bold;">
                     <span>Target: 4+ (Success)</span>
                     <span id="dice-status" style="color: var(--azure-glow);">Ready</span>
                 </div>
                 <div class="dice-tray" id="dice-tray">
-                    <span style="color: var(--text-muted); font-size: 13px;">Roll dice to test stats</span>
+                    <span style="color: var(--text-muted); font-size: 14px; font-weight: bold;">Roll dice to test stats</span>
                 </div>
                 <div class="deck-buttons">
                     <button class="magipunk-btn" onclick="game.rollDicePool(3)">Roll 3d6</button>
@@ -647,7 +652,7 @@
 
             <div class="section-header">Event & Action Log</div>
             <div class="log-console" id="log-console">
-                <div class="log-entry highlight">[System] Lightning Rail v7.0 master board & enlarged UI active.</div>
+                <div class="log-entry highlight">[System] Lightning Rail v7.1 master tactical board & 100% enlarged dice active.</div>
             </div>
         </aside>
     </main>
@@ -790,7 +795,7 @@
                 this.renderRoster();
                 this.renderMasterBoardGrid();
                 this.updateActionEconomyUI();
-                this.log("Lightning Rail v7.0 master board loaded with enlarged readable UI and 100% larger dice.", "highlight");
+                this.log("Lightning Rail v7.1 master tactical board & enlarged UI initialized.", "highlight");
             }
 
             log(msg, type='') {
@@ -969,17 +974,17 @@
                 const content = document.getElementById('modal-content');
                 content.innerHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
-                    <h2 style="color: var(--crimson-accent); margin-bottom: 6px; font-size: 18px;">CRISIS EVENT RESOLUTION</h2>
-                    <h3 style="color: var(--gold-primary); margin-bottom: 12px; font-size: 16px;">${crisis.title}</h3>
-                    <div style="background: rgba(255,23,68,0.2); border: 1px solid var(--crimson-accent); padding: 10px; font-size: 13px; margin-bottom: 12px; line-height: 1.4;">
+                    <h2 style="color: var(--crimson-accent); margin-bottom: 8px; font-size: 20px;">CRISIS EVENT RESOLUTION</h2>
+                    <h3 style="color: var(--gold-primary); margin-bottom: 14px; font-size: 18px;">${crisis.title}</h3>
+                    <div style="background: rgba(255,23,68,0.2); border: 1.5px solid var(--crimson-accent); padding: 12px; font-size: 14px; margin-bottom: 14px; line-height: 1.5;">
                         <strong>Required Skill Check:</strong> Target DC ${crisis.dc}<br>
                         <strong>Failure Penalty:</strong> ${crisis.penalty}<br>
                         <strong>Success Bonus:</strong> ${crisis.success}
                     </div>
-                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 18px; line-height: 1.4;">
+                    <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.4;">
                         Have active hero (${this.getActiveHero().name}) roll their dice pool below to resolve this crisis!
                     </p>
-                    <button class="magipunk-btn primary" style="width: 100%; font-size: 14px; padding: 12px;" onclick="game.resolveCrisisCheck(${crisis.dc})">Roll Dice to Resolve Crisis</button>
+                    <button class="magipunk-btn primary" style="width: 100%; font-size: 15px; padding: 14px;" onclick="game.resolveCrisisCheck(${crisis.dc})">Roll Dice to Resolve Crisis</button>
                 `;
                 modal.style.display = 'flex';
             }
@@ -992,30 +997,30 @@
                 const content = document.getElementById('modal-content');
                 let resultHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
-                    <div style="margin-top: 10px; font-size: 14px; font-family: monospace; background: rgba(0,0,0,0.7); padding: 10px; border-radius: 6px;">
+                    <div style="margin-top: 10px; font-size: 15px; font-family: monospace; background: rgba(0,0,0,0.75); padding: 12px; border-radius: 6px;">
                         Rolled [${dice.join(', ')}] -> <strong>${successes} Successes</strong> (Needed DC ${dc >= 13 ? 2 : 1})
                     </div>
                 `;
 
                 if(successes >= (dc >= 13 ? 2 : 1)) {
                     this.sound.playSuccess();
-                    resultHTML += `<div style="color: #4ade80; font-weight: bold; margin-top: 12px; font-size: 15px;">Crisis Averted! ${this.activeCrisis.success}</div>`;
+                    resultHTML += `<div style="color: #4ade80; font-weight: bold; margin-top: 14px; font-size: 16px;">Crisis Averted! ${this.activeCrisis.success}</div>`;
                     this.log(`Crisis Resolved Successfully: ${this.activeCrisis.title}`, "highlight");
                 } else {
                     this.integrity = Math.max(0, this.integrity - 2);
                     document.getElementById('hud-integrity').innerText = `${this.integrity} HP`;
-                    resultHTML += `<div style="color: var(--crimson-accent); font-weight: bold; margin-top: 12px; font-size: 15px;">Crisis Failed! Penalty applied: ${this.activeCrisis.penalty}</div>`;
+                    resultHTML += `<div style="color: var(--crimson-accent); font-weight: bold; margin-top: 14px; font-size: 16px;">Crisis Failed! Penalty applied: ${this.activeCrisis.penalty}</div>`;
                     this.log(`Crisis Failed! Train Integrity dropped to ${this.integrity} HP.`, "alert");
                 }
 
-                resultHTML += `<button class="magipunk-btn primary" style="width: 100%; margin-top: 18px; padding: 12px; font-size: 14px;" onclick="game.closeModal(null)">Close & Continue</button>`;
+                resultHTML += `<button class="magipunk-btn primary" style="width: 100%; margin-top: 20px; padding: 14px; font-size: 15px;" onclick="game.closeModal(null)">Close & Continue</button>`;
                 content.innerHTML = resultHTML;
             }
 
             renderHand() {
                 const container = document.getElementById('hand-container');
                 if(this.hand.length === 0) {
-                    container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 13px; margin-top: 30px;">Your hand is empty. Draw cards to begin.</div>`;
+                    container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 35px; font-weight: bold;">Your hand is empty. Draw cards to begin.</div>`;
                     return;
                 }
                 container.innerHTML = '';
@@ -1163,11 +1168,11 @@
                 const content = document.getElementById('modal-content');
                 content.innerHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
-                    <h2 style="color: var(--gold-primary); margin-bottom: 12px; font-size: 18px;">${card.title}</h2>
-                    <div style="background: rgba(0,229,255,0.2); border: 1px solid var(--azure-glow); padding: 8px 12px; margin-bottom: 15px; font-size: 13px; color: var(--azure-glow);">
+                    <h2 style="color: var(--gold-primary); margin-bottom: 12px; font-size: 20px;">${card.title}</h2>
+                    <div style="background: rgba(0,229,255,0.2); border: 1.5px solid var(--azure-glow); padding: 10px 14px; margin-bottom: 16px; font-size: 14px; color: var(--azure-glow); font-weight: bold;">
                         Action Point Cost: ${card.cost} AP
                     </div>
-                    <p style="font-size: 14px; line-height: 1.6; color: var(--text-main); margin-bottom: 20px;">${card.desc}</p>
+                    <p style="font-size: 15px; line-height: 1.6; color: var(--text-main); margin-bottom: 22px;">${card.desc}</p>
                 `;
                 modal.style.display = 'flex';
             }
@@ -1178,13 +1183,13 @@
                 const content = document.getElementById('modal-content');
                 content.innerHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
-                    <h2 style="color: var(--gold-primary); margin-bottom: 6px; font-size: 18px;">${hero.name}</h2>
-                    <div style="color: var(--text-muted); font-size: 13px; margin-bottom: 15px;">${hero.role}</div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; font-size: 13px;">
-                        <div>Hit Points: <span style="color:#4ade80;">${hero.hp} / ${hero.maxHp}</span></div>
-                        <div>Defense: <span style="color:var(--azure-glow);">${hero.def}</span></div>
-                        <div>Stress Level: <span style="color:#f87171;">${hero.stress} / 5</span></div>
-                        <div>Action Points: <span style="color:var(--gold-light);">${hero.ap} / ${hero.maxAp}</span></div>
+                    <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">${hero.name}</h2>
+                    <div style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px; font-weight: bold;">${hero.role}</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; font-size: 14px;">
+                        <div>Hit Points: <span style="color:#4ade80; font-weight: bold;">${hero.hp} / ${hero.maxHp}</span></div>
+                        <div>Defense: <span style="color:var(--azure-glow); font-weight: bold;">${hero.def}</span></div>
+                        <div>Stress Level: <span style="color:#f87171; font-weight: bold;">${hero.stress} / 5</span></div>
+                        <div>Action Points: <span style="color:var(--gold-light); font-weight: bold;">${hero.ap} / ${hero.maxAp}</span></div>
                     </div>
                 `;
                 modal.style.display = 'flex';
