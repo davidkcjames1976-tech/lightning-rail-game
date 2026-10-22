@@ -3,425 +3,1213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightning Rail: Sharn to Thrane (v3.0)</title>
+    <title>Lightning Rail: Sharn to Thrane - Production Master v5.0</title>
     <style>
-        * { box-sizing: border-box; }
-        body {
+        :root {
+            --bg-deep: #070a12;
+            --panel-bg: rgba(15, 23, 42, 0.92);
+            --gold-primary: #d4af37;
+            --gold-light: #f3e5ab;
+            --azure-glow: #00e5ff;
+            --crimson-accent: #ff1744;
+            --text-main: #f5f2e9;
+            --text-muted: #94a3b8;
+            --border-metal: #455a64;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
-            background: radial-gradient(circle at center, #181820 0%, #0a0a0e 100%);
-            color: #f3e5ab;
-            font-family: 'Cinzel', 'Segoe UI', serif;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: 'Cinzel', 'Trajan Pro', Georgia, serif;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            padding: 15px;
         }
-        header {
-            text-align: center;
-            margin-bottom: 10px;
-            border-bottom: 2px solid #c5a059;
-            padding-bottom: 8px;
-            width: 100%;
-            max-width: 1200px;
-        }
-        h1 { margin: 0; font-size: 24px; letter-spacing: 2px; color: #ffd700; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-        .subtitle { font-size: 11px; color: #a0a0ab; text-transform: uppercase; letter-spacing: 1px; margin-top: 3px; }
-        
-        #setup-screen, #game-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            max-width: 1200px;
-        }
-        #setup-screen {
-            background: rgba(20, 20, 28, 0.95);
-            border: 2px solid #c5a059;
-            border-radius: 8px;
-            padding: 25px;
-            margin-top: 15px;
-            box-shadow: 0 0 40px rgba(0,0,0,0.8);
-            text-align: center;
-        }
-        .section-title { font-size: 13px; font-weight: bold; color: #ffd700; margin: 12px 0 6px 0; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #443720; padding-bottom: 4px; }
-        .setup-grid {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin: 5px 0;
-        }
-        .character-card {
-            border: 2px solid #554422;
-            background: #14141a;
-            border-radius: 6px;
-            padding: 8px;
-            width: 120px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .character-card:hover, .character-card.selected {
-            border-color: #ffd700;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
-            transform: translateY(-3px);
-        }
-        .character-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: #2a2a35;
-            margin: 0 auto 6px auto;
-            border: 2px solid #c5a059;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 8px;
-            color: #f3e5ab;
-            font-weight: bold;
-            overflow: hidden;
-        }
-        .character-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-        .flex-row {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            margin: 5px 0;
-            flex-wrap: wrap;
-        }
-        .sub-card {
-            border: 2px solid #554422;
-            background: #1c1814;
-            border-radius: 6px;
-            padding: 6px;
-            width: 100px;
-            text-align: center;
-        }
-        .sub-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: #2a221a;
-            margin: 0 auto 4px auto;
-            border: 2px solid #c5a059;
-            overflow: hidden;
-        }
-        .sub-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-        #game-layout {
-            display: flex;
-            gap: 15px;
-            width: 100%;
-            margin-top: 10px;
-        }
-        #board-viewport {
-            border: 3px solid #c5a059;
-            box-shadow: 0 0 30px rgba(197, 160, 89, 0.2);
-            background: #121216;
-            border-radius: 6px;
-            overflow: hidden;
-            width: 760px;
-            height: 460px;
-            position: relative;
-        }
-        #board-viewport img {
+        #weather-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            pointer-events: none;
+            z-index: 1;
         }
-        .sidebar {
-            flex: 1;
-            background: rgba(20, 20, 26, 0.95);
-            border: 2px solid #8c6d36;
-            border-radius: 6px;
-            padding: 12px;
+
+        /* Top HUD Header */
+        header {
+            height: 60px;
+            background: linear-gradient(to bottom, #121824, #080c14);
+            border-bottom: 2px solid var(--gold-primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 10;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+        }
+
+        .title-area h1 {
+            font-size: 20px;
+            color: var(--gold-primary);
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(212,175,55,0.4);
+        }
+
+        .title-area span {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        .global-status {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .status-badge {
+            background: rgba(0,0,0,0.6);
+            border: 1px solid var(--border-metal);
+            padding: 5px 12px;
+            border-radius: 4px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            max-height: 520px;
-            overflow-y: auto;
+            align-items: center;
         }
-        .panel-title {
-            font-size: 13px;
-            font-weight: bold;
-            color: #ffd700;
-            border-bottom: 1px solid #443720;
-            padding-bottom: 4px;
+
+        .status-badge label {
+            font-size: 9px;
+            color: var(--text-muted);
             text-transform: uppercase;
         }
-        .stat-box {
-            background: #17171f;
-            padding: 8px;
-            border-radius: 4px;
-            border-left: 4px solid #c5a059;
-            font-size: 12px;
+
+        .status-badge value {
+            font-weight: bold;
+            color: var(--azure-glow);
+            font-family: monospace;
+            font-size: 14px;
         }
-        .card-display-box {
-            background: #0e0e12;
-            border: 2px solid #443720;
-            border-radius: 6px;
-            padding: 12px;
-            min-height: 120px;
-            font-size: 12px;
-            color: #dcdce6;
-            line-height: 1.4;
+
+        /* Main Workspace */
+        main {
+            flex: 1;
+            display: flex;
+            position: relative;
+            z-index: 5;
+            overflow: hidden;
         }
-        .button-group {
+
+        /* Sidebar: Heroes & Decks */
+        aside.left-sidebar {
+            width: 320px;
+            background: var(--panel-bg);
+            border-right: 2px solid var(--border-metal);
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            gap: 15px;
+            backdrop-filter: blur(12px);
+            box-shadow: 5px 0 20px rgba(0,0,0,0.5);
+            z-index: 6;
+        }
+
+        .section-header {
+            font-size: 12px;
+            color: var(--gold-primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(212,175,55,0.3);
+            padding-bottom: 4px;
+            margin-bottom: 8px;
+        }
+
+        .hero-roster {
             display: flex;
             flex-direction: column;
             gap: 8px;
-            margin-top: auto;
+            max-height: 220px;
+            overflow-y: auto;
         }
-        button {
-            background: linear-gradient(to bottom, #d4af37, #997a25);
-            color: #121212;
-            border: 1px solid #ffd700;
-            padding: 7px;
-            font-weight: bold;
-            font-family: 'Cinzel', sans-serif;
+
+        .hero-card-mini {
+            background: rgba(18, 24, 36, 0.9);
+            border: 1px solid var(--border-metal);
+            border-radius: 6px;
+            padding: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             cursor: pointer;
-            border-radius: 4px;
-            text-transform: uppercase;
-            font-size: 11px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-            transition: all 0.2s ease;
+            transition: all 0.2s;
         }
-        button:hover { background: linear-gradient(to bottom, #e6c555, #b38f30); box-shadow: 0 0 8px rgba(255, 215, 0, 0.4); }
-        .hidden { display: none !important; }
+
+        .hero-card-mini:hover, .hero-card-mini.active {
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 10px rgba(212,175,55,0.3);
+            transform: translateY(-1px);
+        }
+
+        .hero-info h4 {
+            font-size: 13px;
+            color: var(--text-main);
+        }
+
+        .hero-info span {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .hero-stats-mini {
+            display: flex;
+            gap: 6px;
+            font-size: 11px;
+            font-family: monospace;
+        }
+
+        .stat-hp { color: #4ade80; }
+        .stat-def { color: var(--azure-glow); }
+        .stat-stress { color: #f87171; }
+
+        /* Action Decks & Hand */
+        .action-deck-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow: hidden;
+        }
+
+        .deck-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .magipunk-btn {
+            background: linear-gradient(to bottom, #1e293b, #0f172a);
+            border: 1px solid var(--gold-primary);
+            color: var(--gold-light);
+            padding: 8px 10px;
+            font-family: 'Cinzel', serif;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .magipunk-btn:hover {
+            background: linear-gradient(to bottom, #334155, #1e293b);
+            box-shadow: 0 0 10px rgba(212,175,55,0.5);
+            color: #fff;
+        }
+
+        .magipunk-btn.primary {
+            background: linear-gradient(to bottom, #9a7b0c, #634b05);
+            color: #fff;
+        }
+
+        .magipunk-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: var(--border-metal);
+        }
+
+        .hand-container {
+            flex: 1;
+            background: rgba(0,0,0,0.4);
+            border: 1px dashed var(--border-metal);
+            border-radius: 6px;
+            padding: 8px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .card-item {
+            background: #1e293b;
+            border: 1px solid var(--gold-primary);
+            border-radius: 4px;
+            padding: 6px 10px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .card-item:hover {
+            background: #334155;
+            transform: translateX(4px);
+            box-shadow: 0 0 8px rgba(0,229,255,0.4);
+        }
+
+        .card-item .cost {
+            position: absolute;
+            top: 4px;
+            right: 6px;
+            background: var(--azure-glow);
+            color: #000;
+            font-size: 9px;
+            font-weight: bold;
+            padding: 1px 4px;
+            border-radius: 3px;
+        }
+
+        /* Central Board View: 5 Train Cars */
+        .board-workspace {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 15px;
+            position: relative;
+            overflow-x: auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .train-express-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .train-car {
+            width: 175px;
+            height: 390px;
+            background: linear-gradient(135deg, #1b263b, #0d131f);
+            border: 3px solid var(--gold-primary);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 25px rgba(0,0,0,0.9);
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .train-car:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(0,229,255,0.25), inset 0 0 25px rgba(0,0,0,0.9);
+        }
+
+        .car-header {
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 2px solid var(--gold-primary);
+            padding: 8px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--gold-light);
+            letter-spacing: 1px;
+        }
+
+        .car-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            gap: 4px;
+            padding: 8px;
+            position: relative;
+        }
+
+        .grid-cell {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: background 0.2s;
+        }
+
+        .grid-cell:hover {
+            background: rgba(0,229,255,0.12);
+            border-color: var(--azure-glow);
+        }
+
+        /* Draggable Tokens with Floating Lift Physics */
+        .token {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: grab;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.9);
+            position: absolute;
+            z-index: 20;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s;
+        }
+
+        .token:active {
+            cursor: grabbing;
+            transform: scale(1.2) translateY(-4px);
+            box-shadow: 0 12px 25px rgba(0,229,255,0.7);
+        }
+
+        .token.hero {
+            background: radial-gradient(circle, var(--azure-glow), #0284c7);
+            color: #0f172a;
+            border: 2px solid #fff;
+        }
+
+        .token.minion {
+            background: radial-gradient(circle, var(--crimson-accent), #991b1b);
+            color: #fff;
+            border: 2px solid var(--gold-primary);
+        }
+
+        .token.vip {
+            background: radial-gradient(circle, #f59e0b, #b45309);
+            color: #fff;
+            border: 2px solid #fff;
+        }
+
+        /* Right Sidebar: Control Panel & Dice Engine */
+        aside.right-sidebar {
+            width: 330px;
+            background: var(--panel-bg);
+            border-left: 2px solid var(--border-metal);
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            gap: 12px;
+            backdrop-filter: blur(12px);
+            box-shadow: -5px 0 20px rgba(0,0,0,0.5);
+            z-index: 6;
+        }
+
+        .round-control-box {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--gold-primary);
+            border-radius: 6px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .round-control-box h3 {
+            font-size: 13px;
+            color: var(--gold-primary);
+            margin-bottom: 2px;
+        }
+
+        .round-control-box p {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .ap-tracker {
+            background: rgba(0,229,255,0.1);
+            border: 1px solid var(--azure-glow);
+            border-radius: 4px;
+            padding: 6px;
+            font-size: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--azure-glow);
+            font-weight: bold;
+        }
+
+        /* Dice Rolling Engine Box */
+        .dice-engine-box {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid var(--border-metal);
+            border-radius: 6px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .dice-tray {
+            height: 75px;
+            background: rgba(0,0,0,0.6);
+            border: 1px inset var(--border-metal);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            perspective: 600px;
+        }
+
+        .die {
+            width: 34px;
+            height: 34px;
+            background: #f8fafc;
+            color: #0f172a;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .die.success {
+            background: var(--azure-glow);
+            color: #000;
+            box-shadow: 0 0 15px var(--azure-glow);
+        }
+
+        .die.rolling {
+            animation: rollDice 0.6s infinite linear;
+        }
+
+        @keyframes rollDice {
+            0% { transform: rotateX(0deg) rotateY(0deg) translateY(0); }
+            50% { transform: rotateX(180deg) rotateY(180deg) translateY(-15px); }
+            100% { transform: rotateX(360deg) rotateY(360deg) translateY(0); }
+        }
+
+        /* Log Console */
+        .log-console {
+            flex: 1;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid var(--border-metal);
+            border-radius: 6px;
+            padding: 8px;
+            font-family: monospace;
+            font-size: 11px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            max-height: 150px;
+        }
+
+        .log-entry {
+            color: var(--text-muted);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 2px;
+        }
+
+        .log-entry.highlight { color: var(--azure-glow); }
+        .log-entry.alert { color: var(--crimson-accent); }
+
+        /* Modal Overlay for Card & Crisis Inspector */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-card {
+            width: 380px;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 4px solid var(--gold-primary);
+            border-radius: 12px;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 0 0 60px rgba(212,175,55,0.5);
+            position: relative;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 20px;
+            color: var(--gold-primary);
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
+    <canvas id="weather-canvas"></canvas>
+
+    <!-- Top Navigation & Global HUD -->
     <header>
-        <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-        <div class="subtitle">Master Digital Edition • Version 3.0 • Eberron Campaign Modules</div>
+        <div class="title-area">
+            <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
+            <span>Production Master v5.0 | Immersive Magipunk Edition</span>
+        </div>
+        <div class="global-status">
+            <div class="status-badge">
+                <label>Phase</label>
+                <value id="hud-phase">1. Crisis</value>
+            </div>
+            <div class="status-badge">
+                <label>Speed</label>
+                <value id="hud-speed">3 / 12</value>
+            </div>
+            <div class="status-badge">
+                <label>Train HP</label>
+                <value id="hud-integrity">10 HP</value>
+            </div>
+            <div class="status-badge">
+                <label>Engine</label>
+                <value id="hud-engine">Operational</value>
+            </div>
+        </div>
     </header>
 
-    <!-- SETUP & PLAYER SELECTION SCREEN -->
-    <div id="setup-screen">
-        <h2>Operation Setup & Roster Configuration</h2>
-        
-        <div class="section-title">Select Canon Operative</div>
-        <div class="setup-grid">
-            <div class="character-card selected" onclick="selectHero('Jan Valek', this)">
-                <div class="character-avatar">
-                    <img src="token_jan_valek.png" alt="Jan Valek" onerror="this.src='https://raw.githubusercontent.com/davidkcjames1976-tech/lightning-rail-game/main/Board%20Game%20Visuals/Jan_Valek.png';">
-                </div>
-                <strong>Jan Valek</strong>
-                <div style="font-size: 9px; color: #a0a0ab; margin-top: 2px;">Infiltrator</div>
-            </div>
-            <div class="character-card" onclick="selectHero('Fix', this)">
-                <div class="character-avatar">
-                    <img src="token_fix.png" alt="Fix" onerror="this.src='https://raw.githubusercontent.com/davidkcjames1976-tech/lightning-rail-game/main/Board%20Game%20Visuals/Fix.png';">
-                </div>
-                <strong>Fix</strong>
-                <div style="font-size: 9px; color: #a0a0ab; margin-top: 2px;">Operative</div>
-            </div>
-            <div class="character-card" onclick="selectHero('Caden', this)">
-                <div class="character-avatar">
-                    <img src="token_caden.png" alt="Caden" onerror="this.src='https://raw.githubusercontent.com/davidkcjames1976-tech/lightning-rail-game/main/Board%20Game%20Visuals/Caden.png';">
-                </div>
-                <strong>Caden</strong>
-                <div style="font-size: 9px; color: #a0a0ab; margin-top: 2px;">Vanguard</div>
-            </div>
-            <div class="character-card" onclick="selectHero('Bromli', this)">
-                <div class="character-avatar">
-                    <img src="token_bromli.png" alt="Bromli" onerror="this.src='https://raw.githubusercontent.com/davidkcjames1976-tech/lightning-rail-game/main/Board%20Game%20Visuals/Bromli.png';">
-                </div>
-                <strong>Bromli</strong>
-                <div style="font-size: 9px; color: #a0a0ab; margin-top: 2px;">Artificer</div>
-            </div>
-            <div class="character-card" onclick="selectHero('Temple', this)">
-                <div class="character-avatar">
-                    <img src="token_temple.png" alt="Temple" onerror="this.src='https://raw.githubusercontent.com/davidkcjames1976-tech/lightning-rail-game/main/Board%20Game%20Visuals/Temple.png';">
-                </div>
-                <strong>Temple</strong>
-                <div style="font-size: 9px; color: #a0a0ab; margin-top: 2px;">Mystic</div>
-            </div>
-        </div>
+    <!-- Main Workspace -->
+    <main>
+        <!-- Left Sidebar: Heroes & Hand Cards -->
+        <aside class="left-sidebar">
+            <div class="section-header">Active Heroes</div>
+            <div class="hero-roster" id="hero-roster"></div>
 
-        <div class="section-title">Protected VIP Escort Targets</div>
-        <div class="flex-row">
-            <div class="sub-card" style="border-color: #ffd700;">
-                <div class="sub-avatar">
-                    <img src="token_melindre.png" alt="Melindre" onerror="this.style.display='none';">
+            <div class="section-header">Action Decks & Hand</div>
+            <div class="action-deck-area">
+                <div class="deck-buttons">
+                    <button class="magipunk-btn" id="btn-draw-hero" onclick="game.drawHeroCard()">Draw Action</button>
+                    <button class="magipunk-btn" id="btn-draw-crisis" onclick="game.drawCrisisCard()">Draw Crisis</button>
                 </div>
-                <strong style="font-size: 10px; color: #ffd700;">Melindre</strong>[cite: 10]
-            </div>
-            <div class="sub-card" style="border-color: #ffd700;">
-                <div class="sub-avatar">
-                    <img src="token_shetari.png" alt="Shetari" onerror="this.style.display='none';">
+                <div class="hand-container" id="hand-container">
+                    <div style="text-align: center; color: var(--text-muted); font-size: 11px; margin-top: 20px;">Your hand is empty. Draw cards to begin.</div>
                 </div>
-                <strong style="font-size: 10px; color: #ffd700;">Shetari</strong>[cite: 11]
             </div>
-        </div>
+        </aside>
 
-        <div class="section-title">Active Villains & Threat Matrix</div>
-        <div class="flex-row">
-            <div class="sub-card" style="border-color: #aa4444;">
-                <div class="sub-avatar" style="border-color: #aa4444; background: #2a1a1a;">
-                    <img src="token_rybecht.png" alt="Rybecht" onerror="this.style.display='none';">
-                </div>
-                <strong style="font-size: 10px; color: #ff9999;">Rybecht</strong>[cite: 8]
-            </div>
-            <div class="sub-card" style="border-color: #aa4444;">
-                <div class="sub-avatar" style="border-color: #aa4444; background: #2a1a1a;">
-                    <img src="token_zerath.png" alt="Zerath" onerror="this.style.display='none';">
-                </div>
-                <strong style="font-size: 10px; color: #ff9999;">Zerath</strong>[cite: 9]
-            </div>
-            <div class="sub-card" style="border-color: #aa4444;">
-                <div class="sub-avatar" style="border-color: #aa4444; background: #2a1a1a;">
-                    <img src="token_orlok.png" alt="Orlok" onerror="this.style.display='none';">
-                </div>
-                <strong style="font-size: 10px; color: #ff9999;">Orlok</strong>[cite: 7]
-            </div>
-            <div class="sub-card" style="border-color: #aa4444;">
-                <div class="sub-avatar" style="border-color: #aa4444; background: #2a1a1a;">
-                    <img src="token_lord_of_blades.png" alt="Lord of Blades" onerror="this.style.display='none';">
-                </div>
-                <strong style="font-size: 9px; color: #ff9999;">Lord of Blades</strong>[cite: 6]
-            </div>
-        </div>
+        <!-- Central Board View: 5 Train Cars -->
+        <main class="board-workspace">
+            <div class="train-express-container" id="train-container"></div>
+        </main>
 
-        <div style="margin: 12px 0 4px 0;">
-            <label style="font-size: 11px; margin-right: 6px;">Game Mode:</label>
-            <select id="mode-select" style="background: #17171f; color: #f3e5ab; border: 1px solid #c5a059; padding: 4px; border-radius: 4px; font-size: 11px;">
-                <option value="solo">Solo Operation (1 Player + AI System)</option>
-                <option value="coop">Full Cooperative (Multi-Token)</option>
-            </select>
-        </div>
-
-        <button onclick="startGame()" style="padding: 9px 22px; font-size: 12px; margin-top: 4px;">Board Lightning Rail</button>
-    </div>
-
-    <!-- MAIN GAME SCREEN -->
-    <div id="game-screen" class="hidden">
-        <div id="game-layout">
-            <div id="board-viewport">
-                <!-- Master Board Layout: Aether-Rail: The Magipunk Express -->
-                <img src="image_23243d.jpg" alt="Aether-Rail Board Layout" onerror="this.src='sharn_skyline_bg.png';">
+        <!-- Right Sidebar: Controls & Dice Engine -->
+        <aside class="right-sidebar">
+            <div class="round-control-box">
+                <h3 id="current-phase-title">Phase 1: Crisis Phase</h3>
+                <p id="current-phase-desc">Resolve active environmental crisis or draw a new threat card.</p>
+                <div class="ap-tracker">
+                    <span id="active-hero-label">Active: Jan Valek</span>
+                    <span id="active-ap-label">AP: 2 / 2</span>
+                </div>
+                <div class="deck-buttons">
+                    <button class="magipunk-btn primary" id="btn-end-turn" onclick="game.endHeroTurn()">End Hero Turn</button>
+                    <button class="magipunk-btn" onclick="game.advancePhase()">Advance Phase</button>
+                </div>
             </div>
 
-            <div class="sidebar">
-                <div class="panel-title">Train Command Console</div>
-                
-                <div class="stat-box" id="status-text">
-                    Active Operative: <strong id="selected-hero-display">Jan Valek</strong><br>
-                    VIP Protection: <strong style="color: #ffd700;">Melindre & Shetari</strong>[cite: 6]<br>
-                    Active Threat: <strong style="color: #ff9999;">Rybecht, Zerath, Orlok, Lord of Blades</strong>[cite: 6]<br>
-                    Train Speed: <strong>30 MPH | AP: <span id="ap-display">2</span></strong>
+            <div class="section-header">Dice Rolling Engine</div>
+            <div class="dice-engine-box">
+                <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                    <span>Target: 4+ (Success)</span>
+                    <span id="dice-status" style="color: var(--azure-glow);">Ready</span>
                 </div>
-
-                <div class="panel-title">Card & Crisis Stream</div>
-                <div class="card-display-box" id="card-display">
-                    <em>Engine initialized with master board layout, modular cars, and brass dice mechanics.</em>
+                <div class="dice-tray" id="dice-tray">
+                    <span style="color: var(--text-muted); font-size: 11px;">Roll dice to test stats</span>
                 </div>
-
-                <div class="button-group">
-                    <button onclick="drawCard()">Draw Master Card</button>
-                    <button onclick="rollBrassDice()">Roll Antique Brass d6</button>
-                    <button onclick="toggleAudioEngine()">Toggle Procedural Audio</button>
-                    <button onclick="exportMasterPDF()">Export 300 DPI Print Package</button>
-                    <button onclick="returnToSetup()" style="background: #442222; border-color: #aa4444; color: #ffcccc;">Reconfigure Setup</button>
+                <div class="deck-buttons">
+                    <button class="magipunk-btn" onclick="game.rollDicePool(3)">Roll 3d6</button>
+                    <button class="magipunk-btn" onclick="game.rerollDicePool()">Reroll (Push)</button>
                 </div>
             </div>
+
+            <div class="section-header">Event & Action Log</div>
+            <div class="log-console" id="log-console">
+                <div class="log-entry highlight">[System] Lightning Rail v5.0 initialized. Immersive physics & audio active.</div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Modal Inspector & Crisis Resolution -->
+    <div class="modal-overlay" id="modal-overlay" onclick="game.closeModal(event)">
+        <div class="modal-card" id="modal-card">
+            <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
+            <div id="modal-content"></div>
         </div>
     </div>
 
+    <!-- Script Engine -->
     <script>
-        let currentHero = "Jan Valek";
-        let gameMode = "solo";
-
-        const masterCards = [
-            { id: "HA-01", type: "Hero Action", title: "Mist Step", cat: "House Orien", desc: "Move instantly to any unoccupied space within line of sight. Discard after use." },
-            { id: "HA-02", type: "Hero Action", title: "Thunderous Discharge", cat: "Bromli Overclock", desc: "Deal 5 Lightning Damage to target foe. Overclock: Deal 3 additional damage." },
-            { id: "CR-01", type: "Crisis Event", title: "Core Instability", cat: "Engine Hazard", desc: "Tap to deal 3 damage to target creature. If destroyed, deal 5 damage to all players." },
-            { id: "CR-02", type: "Crisis Event", title: "Mournland Surge", cat: "Ethereal Encounter", desc: "Spectral phantoms haunt the rails, disrupting all movement. Roll a D20 to proceed." },
-            { id: "TV-01", type: "Threat Card", title: "Blood Eclipse Curse", cat: "Orlok's Domain", desc: "When revealed, each player discards 2 resources. Vampire Sorcerer activates immediately." },
-            { id: "TV-02", type: "Threat Card", title: "Rybecht's Chain Lightning", cat: "Arcane Disruption", desc: "Arcane surge tears through compartments, dealing 1d6 Lightning damage to crew." },
-            { id: "TR-01", type: "Traitor Persona", title: "The Sleeper Agent", cat: "Quori Subversion", desc: "A hidden operative works from within the cabins. Identify before sector breach." }
-        ];
-
-        let gameState = {
-            speed: 30,
-            ap: 2,
-            deck: [...masterCards],
-            audioActive: false,
-            audioCtx: null,
-            osc: null,
-            gainNode: null
-        };
-
-        function selectHero(heroName, element) {
-            document.querySelectorAll('.character-card').forEach(c => c.classList.remove('selected'));
-            element.classList.add('selected');
-            currentHero = heroName;
-        }
-
-        function startGame() {
-            gameMode = document.getElementById('mode-select').value;
-            document.getElementById('selected-hero-display').innerText = currentHero + (gameMode === 'solo' ? ' (Solo + AI)' : ' (Co-op)');
-            document.getElementById('setup-screen').classList.add('hidden');
-            document.getElementById('game-screen').classList.remove('hidden');
-        }
-
-        function returnToSetup() {
-            document.getElementById('game-screen').classList.add('hidden');
-            document.getElementById('setup-screen').classList.remove('hidden');
-            if (gameState.audioActive) toggleAudioEngine();
-        }
-
-        function drawCard() {
-            if (gameState.deck.length === 0) gameState.deck = [...masterCards];
-            const card = gameState.deck.pop();
-            
-            document.getElementById('card-display').innerHTML = `
-                <div style="border-bottom: 1px solid #c5a059; padding-bottom: 4px; margin-bottom: 6px;">
-                    <strong style="color: #ffd700; font-size: 13px;">[${card.id}] ${card.title}</strong><br>
-                    <span style="color: #a0a0ab; font-size: 10px; text-transform: uppercase;">${card.type} • ${card.cat}</span>
-                </div>
-                <p style="margin: 0; color: #f3e5ab; font-size: 11px;">${card.desc}</p>
-            `;
-        }
-
-        function rollBrassDice() {
-            const roll = Math.floor(Math.random() * 6) + 1;
-            let outcome = roll === 6 ? "🌟 CRITICAL SUCCESS (Sapphire Conduit Triggered)" : (roll >= 4 ? "⚡ SUCCESS" : "⚙️ STRAIN INCURRED");
-            document.getElementById('card-display').innerHTML = `
-                <strong style="color: #ffd700;">Antique Brass d6 Check Result</strong><br>
-                <p style="font-size: 16px; margin: 4px 0; color: #fff;">🎲 Roll: <strong>${roll}</strong> — ${outcome}</p>
-                <span style="color: #a0a0ab; font-size: 10px;">Check resolved against train inertia and compartment stress.</span>
-            `;
-        }
-
-        function toggleAudioEngine() {
-            if (!gameState.audioActive) {
-                gameState.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                gameState.osc = gameState.audioCtx.createOscillator();
-                gameState.gainNode = gameState.audioCtx.createGain();
-                
-                gameState.osc.type = 'triangle';
-                gameState.osc.frequency.setValueAtTime(65, gameState.audioCtx.currentTime);
-                gameState.gainNode.gain.setValueAtTime(0.04, gameState.audioCtx.currentTime);
-                
-                gameState.osc.connect(gameState.gainNode);
-                gameState.gainNode.connect(gameState.audioCtx.destination);
-                gameState.osc.start();
-                gameState.audioActive = true;
-                
-                document.getElementById('card-display').innerHTML = `<strong style="color: #ffd700;">Procedural Audio Active</strong><br>Synthesizing real-time rail rumbling frequencies.`;
-            } else {
-                if (gameState.audioCtx) gameState.audioCtx.close();
-                gameState.audioActive = false;
-                document.getElementById('card-display').innerHTML = `<strong style="color: #ff9999;">Procedural Audio Muted</strong>`;
+        class SoundEngine {
+            constructor() { this.ctx = null; }
+            init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
+            playClick() {
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(400, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(120, this.ctx.currentTime + 0.05);
+                gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.05);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.05);
+            }
+            playDiceRoll() {
+                this.init();
+                for(let i=0; i<4; i++) {
+                    setTimeout(() => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = 'square';
+                        osc.frequency.setValueAtTime(150 + Math.random()*200, this.ctx.currentTime);
+                        gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.08);
+                        osc.connect(gain); gain.connect(this.ctx.destination);
+                        osc.start(); osc.stop(this.ctx.currentTime + 0.08);
+                    }, i * 70);
+                }
+            }
+            playSuccess() {
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, this.ctx.currentTime);
+                osc.frequency.setValueAtTime(659.25, this.ctx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.3);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.3);
             }
         }
 
-        function exportMasterPDF() {
-            alert("Master PDF package compiled successfully! 300 DPI layout ready for print.");
+        class WeatherEngine {
+            constructor(canvasId) {
+                this.canvas = document.getElementById(canvasId);
+                this.ctx = this.canvas.getContext('2d');
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+                this.drops = [];
+                for(let i=0; i<70; i++) {
+                    this.drops.push({
+                        x: Math.random() * this.width,
+                        y: Math.random() * this.height,
+                        length: 15 + Math.random() * 25,
+                        speed: 14 + Math.random() * 8
+                    });
+                }
+            }
+            resize() {
+                this.width = window.innerWidth;
+                this.height = window.innerHeight;
+                this.canvas.width = this.width;
+                this.canvas.height = this.height;
+            }
+            update() {
+                this.ctx.clearRect(0, 0, this.width, this.height);
+                this.ctx.strokeStyle = 'rgba(0, 229, 255, 0.3)';
+                this.ctx.lineWidth = 1.5;
+                for(let drop of this.drops) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(drop.x, drop.y);
+                    this.ctx.lineTo(drop.x - 2, drop.y + drop.length);
+                    this.ctx.stroke();
+                    drop.y += drop.speed;
+                    drop.x -= 0.5;
+                    if(drop.y > this.height) {
+                        drop.y = -30;
+                        drop.x = Math.random() * this.width;
+                    }
+                }
+                requestAnimationFrame(() => this.update());
+            }
         }
+
+        class LightningRailGame {
+            constructor() {
+                this.sound = new SoundEngine();
+                this.phase = 1; // 1: Crisis, 2: Hero, 3: Enemy, 4: Train
+                this.speed = 3;
+                this.integrity = 10;
+                this.engineState = 'Operational';
+                
+                this.heroes = [
+                    { id: 'jan', name: 'Jan Valek', role: 'Vampire Detective', hp: 12, maxHp: 12, def: 15, stress: 0, car: 1, cell: 2, ap: 2, maxAp: 2 },
+                    { id: 'caden', name: 'Caden', role: 'Arcane Sniper', hp: 10, maxHp: 10, def: 14, stress: 1, car: 2, cell: 4, ap: 2, maxAp: 2 },
+                    { id: 'bromli', name: 'Bromli', role: 'Cannith Artificer', hp: 14, maxHp: 14, def: 16, stress: 0, car: 1, cell: 5, ap: 2, maxAp: 2 },
+                    { id: 'fix', name: 'Fix', role: 'Changeling Bard', hp: 10, maxHp: 10, def: 14, stress: 2, car: 3, cell: 1, ap: 2, maxAp: 2 },
+                    { id: 'temple', name: 'Temple', role: 'Warforged Guardian', hp: 16, maxHp: 16, def: 17, stress: 0, car: 4, cell: 3, ap: 2, maxAp: 2 }
+                ];
+
+                this.activeHeroIndex = 0;
+                this.activeHeroId = this.heroes[0].id;
+
+                this.minions = [
+                    { id: 'm1', name: 'Daask Enforcer', hp: 4, car: 5, cell: 8 },
+                    { id: 'm2', name: 'Vampire Spawn', hp: 5, car: 4, cell: 2 }
+                ];
+
+                this.vips = [
+                    { id: 'melindre', name: 'Melindre', role: 'Voice of Silver Flame', hp: 8, car: 2, cell: 2 }
+                ];
+
+                this.cars = [
+                    { id: 1, name: '1. Elemental Engine' },
+                    { id: 2, name: '2. Luxury Car' },
+                    { id: 3, name: '3. Cargo Hold' },
+                    { id: 4, name: '4. Dining Lounge' },
+                    { id: 5, name: '5. Observation Deck' }
+                ];
+
+                this.hand = [];
+                this.currentDice = [];
+                this.activeCrisis = null;
+
+                this.initUI();
+            }
+
+            getActiveHero() {
+                return this.heroes[this.activeHeroIndex];
+            }
+
+            initUI() {
+                this.renderRoster();
+                this.renderTrainCars();
+                this.updateActionEconomyUI();
+                this.log("Lightning Rail v5.0 loaded. Immersive physics & audio active.", "highlight");
+            }
+
+            log(msg, type='') {
+                const consoleEl = document.getElementById('log-console');
+                const entry = document.createElement('div');
+                entry.className = `log-entry ${type}`;
+                entry.innerText = `> ${msg}`;
+                consoleEl.appendChild(entry);
+                consoleEl.scrollTop = consoleEl.scrollHeight;
+            }
+
+            renderRoster() {
+                const rosterEl = document.getElementById('hero-roster');
+                rosterEl.innerHTML = '';
+                this.heroes.forEach((h, idx) => {
+                    const card = document.createElement('div');
+                    card.className = `hero-card-mini ${this.activeHeroIndex === idx ? 'active' : ''}`;
+                    card.innerHTML = `
+                        <div class="hero-info">
+                            <h4>${h.name} ${this.activeHeroIndex === idx ? '⭐' : ''}</h4>
+                            <span>${h.role} (AP: ${h.ap}/${h.maxAp})</span>
+                        </div>
+                        <div class="hero-stats-mini">
+                            <span class="stat-hp">HP:${h.hp}</span>
+                            <span class="stat-def">DEF:${h.def}</span>
+                            <span class="stat-stress">S:${h.stress}</span>
+                        </div>
+                    `;
+                    rosterEl.appendChild(card);
+                });
+            }
+
+            renderTrainCars() {
+                const container = document.getElementById('train-container');
+                container.innerHTML = '';
+
+                this.cars.forEach(car => {
+                    const carEl = document.createElement('div');
+                    carEl.className = 'train-car';
+                    carEl.innerHTML = `
+                        <div class="car-header">${car.name}</div>
+                        <div class="car-grid" id="car-grid-${car.id}"></div>
+                    `;
+                    container.appendChild(carEl);
+
+                    const grid = carEl.querySelector(`#car-grid-${car.id}`);
+                    for(let i=0; i<10; i++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'grid-cell';
+                        cell.dataset.car = car.id;
+                        cell.dataset.cell = i;
+                        cell.ondragover = (e) => e.preventDefault();
+                        cell.ondrop = (e) => this.handleTokenDrop(e, car.id, i);
+                        grid.appendChild(cell);
+                    }
+                });
+                this.renderTokens();
+            }
+
+            renderTokens() {
+                document.querySelectorAll('.token').forEach(t => t.remove());
+
+                this.heroes.forEach(h => {
+                    const cell = document.querySelector(`.grid-cell[data-car="${h.car}"][data-cell="${h.cell}"]`);
+                    if(cell) {
+                        const token = document.createElement('div');
+                        token.className = 'token hero';
+                        token.draggable = (this.phase === 2 && h.id === this.getActiveHero().id && h.ap > 0);
+                        token.innerText = h.name.substring(0,2).toUpperCase();
+                        token.title = `${h.name} (AP: ${h.ap})`;
+                        token.ondragstart = (e) => {
+                            if(this.phase !== 2 || h.id !== this.getActiveHero().id || h.ap <= 0) {
+                                e.preventDefault();
+                                this.log(`Action denied: Not active hero's turn or 0 AP remaining.`, "alert");
+                                return;
+                            }
+                            e.dataTransfer.setData('text/plain', JSON.stringify({type: 'hero', id: h.id}));
+                        };
+                        token.onclick = () => this.inspectHero(h);
+                        cell.appendChild(token);
+                    }
+                });
+
+                this.minions.forEach(m => {
+                    const cell = document.querySelector(`.grid-cell[data-car="${m.car}"][data-cell="${m.cell}"]`);
+                    if(cell) {
+                        const token = document.createElement('div');
+                        token.className = 'token minion';
+                        token.innerText = 'MIN';
+                        token.title = m.name;
+                        cell.appendChild(token);
+                    }
+                });
+
+                this.vips.forEach(v => {
+                    const cell = document.querySelector(`.grid-cell[data-car="${v.car}"][data-cell="${v.cell}"]`);
+                    if(cell) {
+                        const token = document.createElement('div');
+                        token.className = 'token vip';
+                        token.innerText = 'VIP';
+                        token.title = v.name;
+                        cell.appendChild(token);
+                    }
+                });
+            }
+
+            handleTokenDrop(e, targetCar, targetCell) {
+                e.preventDefault();
+                if(this.phase !== 2) {
+                    this.log("Movement allowed only during Phase 2 (Hero Phase).", "alert");
+                    return;
+                }
+                const hero = this.getActiveHero();
+                if(hero.ap <= 0) {
+                    this.log(`${hero.name} has no Action Points (AP) remaining this turn!`, "alert");
+                    return;
+                }
+
+                const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+                if(data.type === 'hero' && data.id === hero.id) {
+                    hero.car = parseInt(targetCar);
+                    hero.cell = parseInt(targetCell);
+                    hero.ap--;
+                    this.sound.playClick();
+                    this.log(`${hero.name} moved (1 AP spent). AP remaining: ${hero.ap}`);
+                    this.renderTokens();
+                    this.renderRoster();
+                    this.updateActionEconomyUI();
+                }
+            }
+
+            updateActionEconomyUI() {
+                const hero = this.getActiveHero();
+                document.getElementById('active-hero-label').innerText = `Active: ${hero.name}`;
+                document.getElementById('active-ap-label').innerText = `AP: ${hero.ap} / ${hero.maxAp}`;
+                
+                const btnEnd = document.getElementById('btn-end-turn');
+                btnEnd.disabled = (this.phase !== 2);
+            }
+
+            drawHeroCard() {
+                if(this.phase !== 2) {
+                    this.log("Hero Action cards can only be drawn during Phase 2.", "alert");
+                    return;
+                }
+                const hero = this.getActiveHero();
+                if(hero.ap <= 0) {
+                    this.log(`${hero.name} has 0 AP remaining and cannot draw cards.`, "alert");
+                    return;
+                }
+                hero.ap--;
+                this.sound.playClick();
+
+                const sampleCards = [
+                    { title: "Mist Step", cost: 1, desc: "Teleport up to 2 cars instantly through shadow conduits." },
+                    { title: "Arcane Shielding", cost: 1, desc: "Reduce incoming damage to Train Integrity or VIP Melindre by 2." },
+                    { title: "Overclock Resonance", cost: 1, desc: "Gain +2 to any Repair or Tinkering check in Car 1." },
+                    { title: "Pinning Shot", cost: 1, desc: "Force an active minion or saboteur to lose their next activation." }
+                ];
+                const card = sampleCards[Math.floor(Math.random() * sampleCards.length)];
+                this.hand.push(card);
+                this.renderHand();
+                this.log(`${hero.name} drew Action: ${card.title} (1 AP spent). AP left: ${hero.ap}`);
+                this.renderRoster();
+                this.updateActionEconomyUI();
+            }
+
+            drawCrisisCard() {
+                if(this.phase !== 1) {
+                    this.log("Crisis cards can only be drawn during Phase 1 (Crisis Phase).", "alert");
+                    return;
+                }
+                this.sound.playClick();
+                const crises = [
+                    { title: "Conduit Rail Arc Overload", dc: 12, penalty: "Train Integrity -2 HP", success: "Engine remains fully operational." },
+                    { title: "Daask Ogre Skycoach Ramming", dc: 13, penalty: "Spawn 2 Enforcers in Car 4; Integrity -2", success: "Skycoach repelled successfully." },
+                    { title: "Lightning Rail Engine Overheat", dc: 13, penalty: "Engine Damaged (+0 Speed/turn)", success: "Heat sinks stabilized." }
+                ];
+                this.activeCrisis = crises[Math.floor(Math.random() * crises.length)];
+                this.showCrisisModal(this.activeCrisis);
+                this.log(`[Crisis Event Drawn] ${this.activeCrisis.title} (Target DC ${this.activeCrisis.dc})`, "alert");
+            }
+
+            showCrisisModal(crisis) {
+                const modal = document.getElementById('modal-overlay');
+                const content = document.getElementById('modal-content');
+                content.innerHTML = `
+                    <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
+                    <h2 style="color: var(--crimson-accent); margin-bottom: 5px; font-size: 16px;">CRISIS EVENT RESOLUTION</h2>
+                    <h3 style="color: var(--gold-primary); margin-bottom: 10px; font-size: 14px;">${crisis.title}</h3>
+                    <div style="background: rgba(255,23,68,0.1); border: 1px solid var(--crimson-accent); padding: 8px; font-size: 11px; margin-bottom: 10px;">
+                        <strong>Required Skill Check:</strong> Target DC ${crisis.dc}<br>
+                        <strong>Failure Penalty:</strong> ${crisis.penalty}<br>
+                        <strong>Success Bonus:</strong> ${crisis.success}
+                    </div>
+                    <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 15px;">
+                        Have the active hero (${this.getActiveHero().name}) roll their dice pool below to resolve this crisis!
+                    </p>
+                    <button class="magipunk-btn primary" style="width: 100%;" onclick="game.resolveCrisisCheck(${crisis.dc})">Roll Dice to Resolve Crisis</button>
+                `;
+                modal.style.display = 'flex';
+            }
+
+            resolveCrisisCheck(dc) {
+                this.sound.playDiceRoll();
+                const dice = [Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1];
+                let successes = dice.filter(d => d >= 4).length;
+                
+                const content = document.getElementById('modal-content');
+                let resultHTML = `
+                    <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
+                    <div style="margin-top: 10px; font-size: 12px; font-family: monospace; background: rgba(0,0,0,0.5); padding: 8px; border-radius: 4px;">
+                        Rolled [${dice.join(', ')}] -> <strong>${successes} Successes</strong> (Needed DC ${dc >= 13 ? 2 : 1})
+                    </div>
+                `;
+
+                if(successes >= (dc >= 13 ? 2 : 1)) {
+                    this.sound.playSuccess();
+                    resultHTML += `<div style="color: #4ade80; font-weight: bold; margin-top: 10px; font-size: 13px;">Crisis Averted! ${this.activeCrisis.success}</div>`;
+                    this.log(`Crisis Resolved Successfully: ${this.activeCrisis.title}`, "highlight");
+                } else {
+                    this.integrity = Math.max(0, this.integrity - 2);
+                    document.getElementById('hud-integrity').innerText = `${this.integrity} HP`;
+                    resultHTML += `<div style="color: var(--crimson-accent); font-weight: bold; margin-top: 10px; font-size: 13px;">Crisis Failed! Penalty applied: ${this.activeCrisis.penalty}</div>`;
+                    this.log(`Crisis Failed! Train Integrity dropped to ${this.integrity} HP.`, "alert");
+                }
+
+                resultHTML += `<button class="magipunk-btn primary" style="width: 100%; margin-top: 15px;" onclick="game.closeModal(null)">Close & Continue</button>`;
+                content.innerHTML = resultHTML;
+            }
+
+            renderHand() {
+                const container = document.getElementById('hand-container');
+                if(this.hand.length === 0) {
+                    container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 11px; margin-top: 20px;">Your hand is empty. Draw cards to begin.</div>`;
+                    return;
+                }
+                container.innerHTML = '';
+                this.hand.forEach((c, idx) => {
+                    const item = document.createElement('div');
+                    item.className = 'card-item';
+                    item.innerHTML = `<strong>${c.title}</strong><div class="cost">${c.cost} AP</div>`;
+                    item.onclick = () => this.inspectCard(c);
+                    container.appendChild(item);
+                });
+            }
+
+            rollDicePool(numDice) {
+                this.sound.playDiceRoll();
+                document.getElementById('dice-status').innerText = "Rolling...";
+                const tray = document.getElementById('dice-tray');
+                tray.innerHTML = '';
+
+                this.currentDice = [];
+                for(let i=0; i<numDice; i++) {
+                    const val = Math.floor(Math.random() * 6) + 1;
+                    this.currentDice.push(val);
+                    const die = document.createElement('div');
+                    die.className = 'die rolling';
+                    die.innerText = val;
+                    tray.appendChild(die);
+                }
+
+                setTimeout(() => {
+                    let successes = 0;
+                    tray.childNodes.forEach((die, idx) => {
+                        die.classList.remove('rolling');
+                        const val = this.currentDice[idx];
+                        if(val >= 4) {
+                            die.classList.add('success');
+                            successes++;
+                        }
+                    });
+                    document.getElementById('dice-status').innerText = `${successes} Successes (4+)`;
+                    if(successes > 0) this.sound.playSuccess();
+                    this.log(`Rolled ${numDice}d6: [${this.currentDice.join(', ')}] -> ${successes} Successes.`);
+                }, 600);
+            }
+
+            rerollDicePool() {
+                if(this.currentDice.length === 0) {
+                    this.log("No active dice pool to reroll.", "alert");
+                    return;
+                }
+                this.sound.playDiceRoll();
+                document.getElementById('dice-status').innerText = "Pushing Luck...";
+                const tray = document.getElementById('dice-tray');
+                tray.innerHTML = '';
+
+                let successes = 0;
+                let onesRolled = 0;
+                this.currentDice = this.currentDice.map(val => {
+                    if(val >= 4) return val;
+                    const newVal = Math.floor(Math.random() * 6) + 1;
+                    if(newVal === 1) onesRolled++;
+                    return newVal;
+                });
+
+                if(onesRolled > 0) {
+                    const hero = this.getActiveHero();
+                    hero.stress = Math.min(5, hero.stress + onesRolled);
+                    this.log(`Push-your-luck backfire! Rolled ${onesRolled} '1's. ${hero.name} gained +${onesRolled} Stress (Total: ${hero.stress}).`, "alert");
+                    this.renderRoster();
+                }
+
+                this.currentDice.forEach((val) => {
+                    const die = document.createElement('div');
+                    die.className = 'die';
+                    die.innerText = val;
+                    if(val >= 4) {
+                        die.classList.add('success');
+                        successes++;
+                    }
+                    tray.appendChild(die);
+                });
+
+                document.getElementById('dice-status').innerText = `${successes} Successes (Push)`;
+                this.sound.playSuccess();
+                this.log(`Push Reroll -> [${this.currentDice.join(', ')}] (${successes} Successes).`);
+            }
+
+            endHeroTurn() {
+                const hero = this.getActiveHero();
+                this.sound.playClick();
+                this.log(`${hero.name} ended their turn.`);
+                
+                this.activeHeroIndex = (this.activeHeroIndex + 1) % this.heroes.length;
+                const nextHero = this.getActiveHero();
+                nextHero.ap = nextHero.maxAp;
+
+                this.log(`Turn passed to ${nextHero.name}. AP reset to ${nextHero.maxAp}.`, "highlight");
+                this.renderRoster();
+                this.renderTokens();
+                this.updateActionEconomyUI();
+            }
+
+            advancePhase() {
+                this.sound.playClick();
+                this.phase++;
+                if(this.phase > 4) this.phase = 1;
+
+                const titles = [
+                    "Phase 1: Crisis Phase",
+                    "Phase 2: Hero Phase (2 AP)",
+                    "Phase 3: Enemy Phase",
+                    "Phase 4: Train & Track Phase"
+                ];
+                const descs = [
+                    "Resolve active environmental crisis or draw a new threat card.",
+                    "Heroes spend Action Points to move, attack, or repair.",
+                    "Minions and Bosses activate along automated AI target ladders.",
+                    "Evaluate Engine state, advance Speed Track, and verify win conditions."
+                ];
+
+                document.getElementById('hud-phase').innerText = titles[this.phase - 1].split(':')[0];
+                document.getElementById('current-phase-title').innerText = titles[this.phase - 1];
+                document.getElementById('current-phase-desc').innerText = descs[this.phase - 1];
+
+                if(this.phase === 4) {
+                    if(this.engineState === 'Operational') {
+                        this.speed++;
+                        document.getElementById('hud-speed').innerText = `${this.speed} / 12`;
+                        this.log(`Train advanced! Speed track is now at Unit ${this.speed}.`, "highlight");
+                    }
+                }
+
+                this.renderTokens();
+                this.updateActionEconomyUI();
+            }
+
+            inspectCard(card) {
+                this.sound.playClick();
+                const modal = document.getElementById('modal-overlay');
+                const content = document.getElementById('modal-content');
+                content.innerHTML = `
+                    <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
+                    <h2 style="color: var(--gold-primary); margin-bottom: 10px; font-size: 16px;">${card.title}</h2>
+                    <div style="background: rgba(0,229,255,0.1); border: 1px solid var(--azure-glow); padding: 6px 10px; margin-bottom: 15px; font-size: 11px; color: var(--azure-glow);">
+                        Action Point Cost: ${card.cost} AP
+                    </div>
+                    <p style="font-size: 12px; line-height: 1.5; color: var(--text-main); margin-bottom: 20px;">${card.desc}</p>
+                `;
+                modal.style.display = 'flex';
+            }
+
+            inspectHero(hero) {
+                this.sound.playClick();
+                const modal = document.getElementById('modal-overlay');
+                const content = document.getElementById('modal-content');
+                content.innerHTML = `
+                    <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
+                    <h2 style="color: var(--gold-primary); margin-bottom: 5px; font-size: 16px;">${hero.name}</h2>
+                    <div style="color: var(--text-muted); font-size: 11px; margin-bottom: 15px;">${hero.role}</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; font-size: 11px;">
+                        <div>Hit Points: <span style="color:#4ade80;">${hero.hp} / ${hero.maxHp}</span></div>
+                        <div>Defense: <span style="color:var(--azure-glow);">${hero.def}</span></div>
+                        <div>Stress Level: <span style="color:#f87171;">${hero.stress} / 5</span></div>
+                        <div>Action Points: <span style="color:var(--gold-light);">${hero.ap} / ${hero.maxAp}</span></div>
+                    </div>
+                `;
+                modal.style.display = 'flex';
+            }
+
+            closeModal(e) {
+                if(!e || e.target.id === 'modal-overlay' || e.target.classList.contains('modal-close') || e.target.tagName === 'BUTTON') {
+                    document.getElementById('modal-overlay').style.display = 'none';
+                }
+            }
+        }
+
+        const weather = new WeatherEngine('weather-canvas');
+        weather.update();
+        const game = new LightningRailGame();
     </script>
 </body>
 </html>
