@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightning Rail: Sharn to Thrane - Production Master v5.0</title>
+    <title>Lightning Rail: Sharn to Thrane - Production Master v6.0 Asset-Integrated Edition</title>
     <style>
         :root {
             --bg-deep: #070a12;
-            --panel-bg: rgba(15, 23, 42, 0.92);
+            --panel-bg: rgba(15, 23, 42, 0.94);
             --gold-primary: #d4af37;
             --gold-light: #f3e5ab;
             --azure-glow: #00e5ff;
@@ -33,6 +33,9 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
+            background-image: url('sharn_skyline_background.png');
+            background-size: cover;
+            background-position: center;
         }
 
         #weather-canvas {
@@ -47,22 +50,23 @@
 
         /* Top HUD Header */
         header {
-            height: 60px;
-            background: linear-gradient(to bottom, #121824, #080c14);
+            height: 65px;
+            background: linear-gradient(to bottom, rgba(18, 24, 36, 0.95), rgba(8, 12, 20, 0.95));
             border-bottom: 2px solid var(--gold-primary);
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 20px;
             z-index: 10;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+            box-shadow: 0 4px 25px rgba(0,0,0,0.9);
+            backdrop-filter: blur(8px);
         }
 
         .title-area h1 {
             font-size: 20px;
             color: var(--gold-primary);
             letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(212,175,55,0.4);
+            text-shadow: 0 0 12px rgba(212,175,55,0.6);
         }
 
         .title-area span {
@@ -79,13 +83,14 @@
         }
 
         .status-badge {
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.75);
             border: 1px solid var(--border-metal);
             padding: 5px 12px;
             border-radius: 4px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.8);
         }
 
         .status-badge label {
@@ -99,6 +104,7 @@
             color: var(--azure-glow);
             font-family: monospace;
             font-size: 14px;
+            text-shadow: 0 0 8px rgba(0,229,255,0.4);
         }
 
         /* Main Workspace */
@@ -120,7 +126,7 @@
             padding: 15px;
             gap: 15px;
             backdrop-filter: blur(12px);
-            box-shadow: 5px 0 20px rgba(0,0,0,0.5);
+            box-shadow: 5px 0 20px rgba(0,0,0,0.6);
             z-index: 6;
         }
 
@@ -156,7 +162,7 @@
 
         .hero-card-mini:hover, .hero-card-mini.active {
             border-color: var(--gold-primary);
-            box-shadow: 0 0 10px rgba(212,175,55,0.3);
+            box-shadow: 0 0 10px rgba(212,175,55,0.4);
             transform: translateY(-1px);
         }
 
@@ -213,7 +219,7 @@
 
         .magipunk-btn:hover {
             background: linear-gradient(to bottom, #334155, #1e293b);
-            box-shadow: 0 0 10px rgba(212,175,55,0.5);
+            box-shadow: 0 0 10px rgba(212,175,55,0.6);
             color: #fff;
         }
 
@@ -230,7 +236,7 @@
 
         .hand-container {
             flex: 1;
-            background: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.5);
             border: 1px dashed var(--border-metal);
             border-radius: 6px;
             padding: 8px;
@@ -244,28 +250,31 @@
             background: #1e293b;
             border: 1px solid var(--gold-primary);
             border-radius: 4px;
-            padding: 6px 10px;
+            padding: 8px 10px;
             font-size: 11px;
             cursor: pointer;
             transition: all 0.2s;
             position: relative;
+            background-image: url('card_template_hero_brass.png');
+            background-size: cover;
+            color: #fff;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.9);
         }
 
         .card-item:hover {
-            background: #334155;
             transform: translateX(4px);
-            box-shadow: 0 0 8px rgba(0,229,255,0.4);
+            box-shadow: 0 0 12px rgba(0,229,255,0.6);
         }
 
         .card-item .cost {
             position: absolute;
-            top: 4px;
-            right: 6px;
+            top: 6px;
+            right: 8px;
             background: var(--azure-glow);
             color: #000;
             font-size: 9px;
             font-weight: bold;
-            padding: 1px 4px;
+            padding: 2px 5px;
             border-radius: 3px;
         }
 
@@ -280,11 +289,12 @@
             overflow-x: auto;
             align-items: center;
             justify-content: center;
+            background: radial-gradient(circle at center, rgba(7,10,18,0.7) 0%, rgba(7,10,18,0.95) 100%);
         }
 
         .train-express-container {
             display: flex;
-            gap: 15px;
+            gap: 14px;
             align-items: center;
             justify-content: center;
             position: relative;
@@ -293,24 +303,25 @@
         .train-car {
             width: 175px;
             height: 390px;
-            background: linear-gradient(135deg, #1b263b, #0d131f);
             border: 3px solid var(--gold-primary);
             border-radius: 12px;
             display: flex;
             flex-direction: column;
             position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 25px rgba(0,0,0,0.9);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.9), inset 0 0 25px rgba(0,0,0,0.8);
             overflow: hidden;
-            transition: transform 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
+            background-size: cover;
+            background-position: center;
         }
 
         .train-car:hover {
             transform: translateY(-4px);
-            box-shadow: 0 15px 40px rgba(0,229,255,0.25), inset 0 0 25px rgba(0,0,0,0.9);
+            box-shadow: 0 15px 45px rgba(0,229,255,0.35), inset 0 0 25px rgba(0,0,0,0.8);
         }
 
         .car-header {
-            background: rgba(15, 23, 42, 0.95);
+            background: rgba(15, 23, 42, 0.92);
             border-bottom: 2px solid var(--gold-primary);
             padding: 8px;
             text-align: center;
@@ -318,6 +329,7 @@
             font-weight: bold;
             color: var(--gold-light);
             letter-spacing: 1px;
+            backdrop-filter: blur(4px);
         }
 
         .car-grid {
@@ -328,64 +340,55 @@
             gap: 4px;
             padding: 8px;
             position: relative;
+            background: rgba(0,0,0,0.35);
         }
 
         .grid-cell {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.07);
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            transition: background 0.2s;
+            transition: background 0.2s, border-color 0.2s;
         }
 
         .grid-cell:hover {
-            background: rgba(0,229,255,0.12);
+            background: rgba(0,229,255,0.2);
             border-color: var(--azure-glow);
+            box-shadow: inset 0 0 8px rgba(0,229,255,0.4);
         }
 
-        /* Draggable Tokens with Floating Lift Physics */
+        /* Custom Asset Tokens */
         .token {
-            width: 38px;
-            height: 38px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: 10px;
             font-weight: bold;
             cursor: grab;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.9);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.9);
             position: absolute;
             z-index: 20;
+            background-size: cover;
+            background-position: center;
+            border: 2px solid var(--gold-primary);
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s;
         }
 
         .token:active {
             cursor: grabbing;
-            transform: scale(1.2) translateY(-4px);
-            box-shadow: 0 12px 25px rgba(0,229,255,0.7);
+            transform: scale(1.25) translateY(-6px);
+            box-shadow: 0 14px 30px rgba(0,229,255,0.8);
         }
 
-        .token.hero {
-            background: radial-gradient(circle, var(--azure-glow), #0284c7);
-            color: #0f172a;
-            border: 2px solid #fff;
-        }
-
-        .token.minion {
-            background: radial-gradient(circle, var(--crimson-accent), #991b1b);
-            color: #fff;
-            border: 2px solid var(--gold-primary);
-        }
-
-        .token.vip {
-            background: radial-gradient(circle, #f59e0b, #b45309);
-            color: #fff;
-            border: 2px solid #fff;
-        }
+        .token.hero { border-color: var(--azure-glow); }
+        .token.minion { border-color: var(--crimson-accent); }
+        .token.vip { border-color: #f59e0b; }
 
         /* Right Sidebar: Control Panel & Dice Engine */
         aside.right-sidebar {
@@ -397,22 +400,25 @@
             padding: 15px;
             gap: 12px;
             backdrop-filter: blur(12px);
-            box-shadow: -5px 0 20px rgba(0,0,0,0.5);
+            box-shadow: -5px 0 20px rgba(0,0,0,0.6);
             z-index: 6;
         }
 
         .round-control-box {
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.6);
             border: 1px solid var(--gold-primary);
             border-radius: 6px;
             padding: 10px;
             text-align: center;
+            background-image: url('dashboard_recessed_frame.png');
+            background-size: cover;
         }
 
         .round-control-box h3 {
             font-size: 13px;
             color: var(--gold-primary);
             margin-bottom: 2px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
         }
 
         .round-control-box p {
@@ -422,7 +428,7 @@
         }
 
         .ap-tracker {
-            background: rgba(0,229,255,0.1);
+            background: rgba(0,229,255,0.12);
             border: 1px solid var(--azure-glow);
             border-radius: 4px;
             padding: 6px;
@@ -437,7 +443,7 @@
 
         /* Dice Rolling Engine Box */
         .dice-engine-box {
-            background: rgba(15, 23, 42, 0.9);
+            background: rgba(15, 23, 42, 0.92);
             border: 1px solid var(--border-metal);
             border-radius: 6px;
             padding: 10px;
@@ -447,36 +453,48 @@
         }
 
         .dice-tray {
-            height: 75px;
-            background: rgba(0,0,0,0.6);
+            height: 80px;
+            background: rgba(0,0,0,0.7);
             border: 1px inset var(--border-metal);
             border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             perspective: 600px;
         }
 
         .die {
-            width: 34px;
-            height: 34px;
-            background: #f8fafc;
-            color: #0f172a;
+            width: 38px;
+            height: 38px;
+            background-image: url('dice_face_blank.png');
+            background-size: cover;
+            color: var(--gold-light);
             border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 16px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            font-size: 15px;
+            border: 1px solid var(--gold-primary);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.8);
             transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.9);
         }
 
         .die.success {
-            background: var(--azure-glow);
+            background-image: url('dice_face_success.png');
             color: #000;
+            border-color: var(--azure-glow);
             box-shadow: 0 0 15px var(--azure-glow);
+            text-shadow: none;
+        }
+
+        .die.critical {
+            background-image: url('dice_face_critical.png');
+            color: #fff;
+            border-color: #f59e0b;
+            box-shadow: 0 0 20px #f59e0b;
         }
 
         .die.rolling {
@@ -492,7 +510,7 @@
         /* Log Console */
         .log-console {
             flex: 1;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.7);
             border: 1px solid var(--border-metal);
             border-radius: 6px;
             padding: 8px;
@@ -502,7 +520,7 @@
             display: flex;
             flex-direction: column;
             gap: 4px;
-            max-height: 150px;
+            max-height: 140px;
         }
 
         .log-entry {
@@ -521,7 +539,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0,0,0,0.88);
             backdrop-filter: blur(8px);
             z-index: 100;
             display: none;
@@ -530,7 +548,7 @@
         }
 
         .modal-card {
-            width: 380px;
+            width: 400px;
             background: linear-gradient(135deg, #1e293b, #0f172a);
             border: 4px solid var(--gold-primary);
             border-radius: 12px;
@@ -538,9 +556,11 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
-            box-shadow: 0 0 60px rgba(212,175,55,0.5);
+            box-shadow: 0 0 60px rgba(212,175,55,0.6);
             position: relative;
             animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background-image: url('card_template_crisis_fantasy.png');
+            background-size: cover;
         }
 
         @keyframes popIn {
@@ -552,9 +572,10 @@
             position: absolute;
             top: 10px;
             right: 15px;
-            font-size: 20px;
+            font-size: 22px;
             color: var(--gold-primary);
             cursor: pointer;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.9);
         }
     </style>
 </head>
@@ -566,7 +587,7 @@
     <header>
         <div class="title-area">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <span>Production Master v5.0 | Immersive Magipunk Edition</span>
+            <span>Production Master v6.0 | Asset-Integrated Edition</span>
         </div>
         <div class="global-status">
             <div class="status-badge">
@@ -644,7 +665,7 @@
 
             <div class="section-header">Event & Action Log</div>
             <div class="log-console" id="log-console">
-                <div class="log-entry highlight">[System] Lightning Rail v5.0 initialized. Immersive physics & audio active.</div>
+                <div class="log-entry highlight">[System] Lightning Rail v6.0 initialized with full custom asset suite.</div>
             </div>
         </aside>
     </main>
@@ -748,37 +769,36 @@
         class LightningRailGame {
             constructor() {
                 this.sound = new SoundEngine();
-                this.phase = 1; // 1: Crisis, 2: Hero, 3: Enemy, 4: Train
+                this.phase = 1;
                 this.speed = 3;
                 this.integrity = 10;
                 this.engineState = 'Operational';
                 
                 this.heroes = [
-                    { id: 'jan', name: 'Jan Valek', role: 'Vampire Detective', hp: 12, maxHp: 12, def: 15, stress: 0, car: 1, cell: 2, ap: 2, maxAp: 2 },
-                    { id: 'caden', name: 'Caden', role: 'Arcane Sniper', hp: 10, maxHp: 10, def: 14, stress: 1, car: 2, cell: 4, ap: 2, maxAp: 2 },
-                    { id: 'bromli', name: 'Bromli', role: 'Cannith Artificer', hp: 14, maxHp: 14, def: 16, stress: 0, car: 1, cell: 5, ap: 2, maxAp: 2 },
-                    { id: 'fix', name: 'Fix', role: 'Changeling Bard', hp: 10, maxHp: 10, def: 14, stress: 2, car: 3, cell: 1, ap: 2, maxAp: 2 },
-                    { id: 'temple', name: 'Temple', role: 'Warforged Guardian', hp: 16, maxHp: 16, def: 17, stress: 0, car: 4, cell: 3, ap: 2, maxAp: 2 }
+                    { id: 'jan', name: 'Jan Valek', role: 'Vampire Detective', hp: 12, maxHp: 12, def: 15, stress: 0, car: 1, cell: 2, ap: 2, maxAp: 2, img: 'token_hero_jan_valek.png' },
+                    { id: 'caden', name: 'Caden', role: 'Arcane Sniper', hp: 10, maxHp: 10, def: 14, stress: 1, car: 2, cell: 4, ap: 2, maxAp: 2, img: 'token_hero_caden.png' },
+                    { id: 'bromli', name: 'Bromli', role: 'Cannith Artificer', hp: 14, maxHp: 14, def: 16, stress: 0, car: 1, cell: 5, ap: 2, maxAp: 2, img: 'token_hero_bromli.png' },
+                    { id: 'fix', name: 'Fix', role: 'Changeling Bard', hp: 10, maxHp: 10, def: 14, stress: 2, car: 3, cell: 1, ap: 2, maxAp: 2, img: 'token_hero_fix.png' },
+                    { id: 'temple', name: 'Temple', role: 'Warforged Guardian', hp: 16, maxHp: 16, def: 17, stress: 0, car: 4, cell: 3, ap: 2, maxAp: 2, img: 'token_hero_temple.png' }
                 ];
 
                 this.activeHeroIndex = 0;
-                this.activeHeroId = this.heroes[0].id;
 
                 this.minions = [
-                    { id: 'm1', name: 'Daask Enforcer', hp: 4, car: 5, cell: 8 },
-                    { id: 'm2', name: 'Vampire Spawn', hp: 5, car: 4, cell: 2 }
+                    { id: 'm1', name: 'Daask Enforcer', hp: 4, car: 5, cell: 8, img: 'token_minion_generic.png' },
+                    { id: 'm2', name: 'Vampire Spawn', hp: 5, car: 4, cell: 2, img: 'token_minion_generic.png' }
                 ];
 
                 this.vips = [
-                    { id: 'melindre', name: 'Melindre', role: 'Voice of Silver Flame', hp: 8, car: 2, cell: 2 }
+                    { id: 'melindre', name: 'Melindre', role: 'Voice of Silver Flame', hp: 8, car: 2, cell: 2, img: 'token_vip_melindre.png' }
                 ];
 
                 this.cars = [
-                    { id: 1, name: '1. Elemental Engine' },
-                    { id: 2, name: '2. Luxury Car' },
-                    { id: 3, name: '3. Cargo Hold' },
-                    { id: 4, name: '4. Dining Lounge' },
-                    { id: 5, name: '5. Observation Deck' }
+                    { id: 1, name: '1. Elemental Engine', bg: 'car_1_elemental_engine.png' },
+                    { id: 2, name: '2. Luxury Car', bg: 'car_2_luxury.png' },
+                    { id: 3, name: '3. Cargo Hold', bg: 'car_3_arcane.png' },
+                    { id: 4, name: '4. Dining Lounge', bg: 'car_4_dining.png' },
+                    { id: 5, name: '5. Observation Deck', bg: 'car_5_observation.png' }
                 ];
 
                 this.hand = [];
@@ -796,7 +816,7 @@
                 this.renderRoster();
                 this.renderTrainCars();
                 this.updateActionEconomyUI();
-                this.log("Lightning Rail v5.0 loaded. Immersive physics & audio active.", "highlight");
+                this.log("Lightning Rail v6.0 asset-integrated engine active.", "highlight");
             }
 
             log(msg, type='') {
@@ -836,6 +856,7 @@
                 this.cars.forEach(car => {
                     const carEl = document.createElement('div');
                     carEl.className = 'train-car';
+                    carEl.style.backgroundImage = `url('${car.bg}')`;
                     carEl.innerHTML = `
                         <div class="car-header">${car.name}</div>
                         <div class="car-grid" id="car-grid-${car.id}"></div>
@@ -864,8 +885,8 @@
                     if(cell) {
                         const token = document.createElement('div');
                         token.className = 'token hero';
+                        token.style.backgroundImage = `url('${h.img}')`;
                         token.draggable = (this.phase === 2 && h.id === this.getActiveHero().id && h.ap > 0);
-                        token.innerText = h.name.substring(0,2).toUpperCase();
                         token.title = `${h.name} (AP: ${h.ap})`;
                         token.ondragstart = (e) => {
                             if(this.phase !== 2 || h.id !== this.getActiveHero().id || h.ap <= 0) {
@@ -885,7 +906,7 @@
                     if(cell) {
                         const token = document.createElement('div');
                         token.className = 'token minion';
-                        token.innerText = 'MIN';
+                        token.style.backgroundImage = `url('${m.img}')`;
                         token.title = m.name;
                         cell.appendChild(token);
                     }
@@ -896,7 +917,7 @@
                     if(cell) {
                         const token = document.createElement('div');
                         token.className = 'token vip';
-                        token.innerText = 'VIP';
+                        token.style.backgroundImage = `url('${v.img}')`;
                         token.title = v.name;
                         cell.appendChild(token);
                     }
@@ -951,10 +972,10 @@
                 this.sound.playClick();
 
                 const sampleCards = [
-                    { title: "Mist Step", cost: 1, desc: "Teleport up to 2 cars instantly through shadow conduits." },
-                    { title: "Arcane Shielding", cost: 1, desc: "Reduce incoming damage to Train Integrity or VIP Melindre by 2." },
-                    { title: "Overclock Resonance", cost: 1, desc: "Gain +2 to any Repair or Tinkering check in Car 1." },
-                    { title: "Pinning Shot", cost: 1, desc: "Force an active minion or saboteur to lose their next activation." }
+                    { title: "Mist Step", cost: 1, desc: "Teleport up to 2 cars instantly through shadow conduits.", art: "card_hero_mist_step.png" },
+                    { title: "Arcane Shielding", cost: 1, desc: "Reduce incoming damage to Train Integrity or VIP Melindre by 2.", art: "card_relic_dragon_force_arm.png" },
+                    { title: "Overclock Resonance", cost: 1, desc: "Gain +2 to any Repair or Tinkering check in Car 1.", art: "card_hero_overclock.png" },
+                    { title: "Aether Conduit Vault", cost: 1, desc: "Bypass locked doors and instantly traverse compartments.", art: "card_hero_aether_conduit_vault.png" }
                 ];
                 const card = sampleCards[Math.floor(Math.random() * sampleCards.length)];
                 this.hand.push(card);
@@ -971,9 +992,9 @@
                 }
                 this.sound.playClick();
                 const crises = [
-                    { title: "Conduit Rail Arc Overload", dc: 12, penalty: "Train Integrity -2 HP", success: "Engine remains fully operational." },
-                    { title: "Daask Ogre Skycoach Ramming", dc: 13, penalty: "Spawn 2 Enforcers in Car 4; Integrity -2", success: "Skycoach repelled successfully." },
-                    { title: "Lightning Rail Engine Overheat", dc: 13, penalty: "Engine Damaged (+0 Speed/turn)", success: "Heat sinks stabilized." }
+                    { title: "Conduit Rail Arc Overload", dc: 12, penalty: "Train Integrity -2 HP", success: "Engine remains fully operational.", art: "card_crisis_conduit_overload.png" },
+                    { title: "Core Instability", dc: 13, penalty: "Engine Damaged; Integrity -2", success: "Heat sinks stabilized.", art: "card_crisis_core_instability.png" },
+                    { title: "Mournland Surge", dc: 14, penalty: "Spectral Phantoms disrupt all movement.", success: "Phantoms repelled successfully.", art: "card_crisis_mournland_surge.png" }
                 ];
                 this.activeCrisis = crises[Math.floor(Math.random() * crises.length)];
                 this.showCrisisModal(this.activeCrisis);
@@ -987,13 +1008,13 @@
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
                     <h2 style="color: var(--crimson-accent); margin-bottom: 5px; font-size: 16px;">CRISIS EVENT RESOLUTION</h2>
                     <h3 style="color: var(--gold-primary); margin-bottom: 10px; font-size: 14px;">${crisis.title}</h3>
-                    <div style="background: rgba(255,23,68,0.1); border: 1px solid var(--crimson-accent); padding: 8px; font-size: 11px; margin-bottom: 10px;">
+                    <div style="background: rgba(255,23,68,0.15); border: 1px solid var(--crimson-accent); padding: 8px; font-size: 11px; margin-bottom: 10px;">
                         <strong>Required Skill Check:</strong> Target DC ${crisis.dc}<br>
                         <strong>Failure Penalty:</strong> ${crisis.penalty}<br>
                         <strong>Success Bonus:</strong> ${crisis.success}
                     </div>
                     <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 15px;">
-                        Have the active hero (${this.getActiveHero().name}) roll their dice pool below to resolve this crisis!
+                        Have active hero (${this.getActiveHero().name}) roll their dice pool below to resolve this crisis!
                     </p>
                     <button class="magipunk-btn primary" style="width: 100%;" onclick="game.resolveCrisisCheck(${crisis.dc})">Roll Dice to Resolve Crisis</button>
                 `;
@@ -1008,7 +1029,7 @@
                 const content = document.getElementById('modal-content');
                 let resultHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
-                    <div style="margin-top: 10px; font-size: 12px; font-family: monospace; background: rgba(0,0,0,0.5); padding: 8px; border-radius: 4px;">
+                    <div style="margin-top: 10px; font-size: 12px; font-family: monospace; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px;">
                         Rolled [${dice.join(', ')}] -> <strong>${successes} Successes</strong> (Needed DC ${dc >= 13 ? 2 : 1})
                     </div>
                 `;
@@ -1065,7 +1086,10 @@
                     tray.childNodes.forEach((die, idx) => {
                         die.classList.remove('rolling');
                         const val = this.currentDice[idx];
-                        if(val >= 4) {
+                        if(val >= 6) {
+                            die.classList.add('critical');
+                            successes += 2;
+                        } else if(val >= 4) {
                             die.classList.add('success');
                             successes++;
                         }
@@ -1098,7 +1122,7 @@
                 if(onesRolled > 0) {
                     const hero = this.getActiveHero();
                     hero.stress = Math.min(5, hero.stress + onesRolled);
-                    this.log(`Push-your-luck backfire! Rolled ${onesRolled} '1's. ${hero.name} gained +${onesRolled} Stress (Total: ${hero.stress}).`, "alert");
+                    this.log(`Push backfire! Rolled ${onesRolled} '1's. ${hero.name} gained +${onesRolled} Stress (Total: ${hero.stress}).`, "alert");
                     this.renderRoster();
                 }
 
@@ -1106,7 +1130,10 @@
                     const die = document.createElement('div');
                     die.className = 'die';
                     die.innerText = val;
-                    if(val >= 4) {
+                    if(val >= 6) {
+                        die.classList.add('critical');
+                        successes += 2;
+                    } else if(val >= 4) {
                         die.classList.add('success');
                         successes++;
                     }
@@ -1174,7 +1201,7 @@
                 content.innerHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
                     <h2 style="color: var(--gold-primary); margin-bottom: 10px; font-size: 16px;">${card.title}</h2>
-                    <div style="background: rgba(0,229,255,0.1); border: 1px solid var(--azure-glow); padding: 6px 10px; margin-bottom: 15px; font-size: 11px; color: var(--azure-glow);">
+                    <div style="background: rgba(0,229,255,0.15); border: 1px solid var(--azure-glow); padding: 6px 10px; margin-bottom: 15px; font-size: 11px; color: var(--azure-glow);">
                         Action Point Cost: ${card.cost} AP
                     </div>
                     <p style="font-size: 12px; line-height: 1.5; color: var(--text-main); margin-bottom: 20px;">${card.desc}</p>
