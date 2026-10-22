@@ -75,11 +75,11 @@
             align-items: center;
             justify-content: center;
             font-size: 11px;
-            color: #888;
+            color: #f3e5ab;
+            text-align: center;
+            font-weight: bold;
             overflow: hidden;
         }
-        .character-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
         #game-layout {
             display: flex;
             gap: 15px;
@@ -102,7 +102,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            max-height: 720px;
+            max-height: 600px;
             overflow-y: auto;
         }
         .panel-title {
@@ -125,7 +125,7 @@
             border: 1px dashed #685229;
             border-radius: 4px;
             padding: 10px;
-            min-height: 100px;
+            min-height: 90px;
             font-size: 12px;
             color: #dcdce6;
             line-height: 1.3;
@@ -168,23 +168,17 @@
         
         <div class="setup-grid">
             <div class="character-card selected" onclick="selectHero('Jan Valek', this)">
-                <div class="character-avatar">
-                    <img src="https://github.com/davidkcjames1976-tech/lightning-rail-game/releases/download/v3.0/Board.Game.Visuals.zip" alt="Jan Valek" onerror="this.style.display='none'; this.parentNode.innerHTML='Jan Valek';">
-                </div>
+                <div class="character-avatar">JAN VALEK</div>
                 <strong>Jan Valek</strong>
                 <div style="font-size: 11px; color: #a0a0ab; margin-top: 4px;">Infiltrator / Rogue</div>
             </div>
             <div class="character-card" onclick="selectHero('Bromli', this)">
-                <div class="character-avatar">
-                    <img src="" alt="Bromli" onerror="this.style.display='none'; this.parentNode.innerHTML='Bromli';">
-                </div>
+                <div class="character-avatar">BROMLI</div>
                 <strong>Bromli</strong>
                 <div style="font-size: 11px; color: #a0a0ab; margin-top: 4px;">Artificer / Heavy</div>
             </div>
             <div class="character-card" onclick="selectHero('Temple', this)">
-                <div class="character-avatar">
-                    <img src="" alt="Temple" onerror="this.style.display='none'; this.parentNode.innerHTML='Temple';">
-                </div>
+                <div class="character-avatar">TEMPLE</div>
                 <strong>Temple</strong>
                 <div style="font-size: 11px; color: #a0a0ab; margin-top: 4px;">Tactician / Mystic</div>
             </div>
@@ -205,7 +199,7 @@
     <div id="game-screen" class="hidden">
         <div id="game-layout">
             <div id="canvas-container">
-                <canvas id="gameCanvas" width="760" height="600"></canvas>
+                <canvas id="gameCanvas" width="760" height="500"></canvas>
             </div>
 
             <div class="sidebar">
@@ -304,54 +298,54 @@
             ];
 
             cars.forEach((car, index) => {
-                let x = 25 + (index * 145);
-                let y = 180;
+                let x = 20 + (index * 145);
+                let y = 140;
                 
                 ctx.fillStyle = index === 0 ? "#2b2211" : "#1a1a24";
                 ctx.strokeStyle = index === 0 ? "#ffd700" : "#c5a059";
                 ctx.lineWidth = 2;
-                ctx.fillRect(x, y, 130, 200);
-                ctx.strokeRect(x, y, 130, 200);
+                ctx.fillRect(x, y, 130, 180);
+                ctx.strokeRect(x, y, 130, 180);
 
                 ctx.fillStyle = "#c5a059";
-                ctx.fillRect(x, y, 130, 32);
+                ctx.fillRect(x, y, 130, 30);
                 ctx.fillStyle = "#121212";
                 ctx.font = "bold 12px 'Cinzel'";
-                ctx.fillText(`CAR 0${index + 1}`, x + 10, y + 21);
+                ctx.fillText(`CAR 0${index + 1}`, x + 10, y + 20);
 
                 ctx.fillStyle = "#f3e5ab";
                 ctx.font = "bold 11px 'Segoe UI'";
-                ctx.fillText(car.name.split(": ")[1], x + 10, y + 60);
+                ctx.fillText(car.name.split(": ")[1], x + 10, y + 55);
                 ctx.fillStyle = "#a0a0ab";
                 ctx.font = "10px 'Segoe UI'";
-                ctx.fillText(car.desc, x + 10, y + 80);
+                ctx.fillText(car.desc, x + 10, y + 75);
 
                 if (index === 0) {
                     ctx.fillStyle = "rgba(255, 215, 0, 0.15)";
-                    ctx.fillRect(x + 8, y + 110, 114, 75);
+                    ctx.fillRect(x + 8, y + 95, 114, 75);
                     ctx.strokeStyle = "#ffd700";
-                    ctx.strokeRect(x + 8, y + 110, 114, 75);
+                    ctx.strokeRect(x + 8, y + 95, 114, 75);
 
                     ctx.fillStyle = "#ffd700";
                     ctx.font = "bold 11px 'Segoe UI'";
-                    ctx.fillText(`📍 ${currentHero}`, x + 12, y + 135);
+                    ctx.fillText(`📍 ${currentHero}`, x + 12, y + 120);
                     ctx.font = "10px 'Segoe UI'";
-                    ctx.fillText("Active Operative", x + 12, y + 155);
+                    ctx.fillText("Active Operative", x + 12, y + 140);
                 }
             });
 
             ctx.strokeStyle = "#ffd700";
             ctx.lineWidth = 4;
-            ctx.beginPath(); ctx.moveTo(15, 410); ctx.lineTo(745, 410); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(15, 360); ctx.lineTo(745, 360); ctx.stroke();
 
             ctx.fillStyle = "rgba(18, 18, 22, 0.9)";
-            ctx.fillRect(15, 15, 730, 50);
+            ctx.fillRect(15, 15, 730, 45);
             ctx.strokeStyle = "#c5a059";
-            ctx.strokeRect(15, 15, 730, 50);
+            ctx.strokeRect(15, 15, 730, 45);
 
             ctx.fillStyle = "#ffd700";
-            ctx.font = "bold 14px 'Cinzel'";
-            ctx.fillText(`⚡ RUN ACTIVE: SHARN TO THRANE | OPERATIVE: ${currentHero.toUpperCase()}`, 30, 45);
+            ctx.font = "bold 13px 'Cinzel'";
+            ctx.fillText(`⚡ RUN ACTIVE: SHARN TO THRANE | OPERATIVE: ${currentHero.toUpperCase()}`, 30, 42);
         }
 
         function drawCard() {
