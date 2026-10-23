@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightning Rail: Sharn to Thrane - Ultimate Master Edition v9.0</title>
+    <title>Lightning Rail: Sharn to Thrane - Playable Repair Edition v9.1</title>
     <style>
         :root {
             --bg-deep: #070a12;
@@ -27,9 +27,9 @@
             background-color: var(--bg-deep);
             color: var(--text-main);
             font-family: 'Cinzel', 'Trajan Pro', Georgia, serif;
-            overflow: hidden;
-            width: 100vw;
-            height: 100vh;
+            overflow: auto;
+            width: 100%;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             background-image: url('sharn_skyline_background.png');
@@ -385,8 +385,10 @@
         }
 
         .master-board-container {
-            width: 1040px;
+            width: min(1040px, 100%);
+            min-width: 720px;
             height: 600px;
+            flex: 0 0 auto;
             background-image: url('board_layout_tactical_grid.png');
             background-size: cover;
             background-position: center;
@@ -410,6 +412,9 @@
         }
 
         .grid-cell {
+            min-width: 0;
+            min-height: 0;
+            isolation: isolate;
             background: rgba(255,255,255,0.02);
             border: 1px solid rgba(0, 229, 255, 0.25);
             border-radius: 4px;
@@ -418,8 +423,18 @@
             justify-content: center;
             position: relative;
             overflow: hidden;
+            contain: layout paint;
+            isolation: isolate;
             transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
         }
+
+        .grid-cell.legal-move {
+            background: rgba(74, 222, 128, 0.20);
+            border: 2px solid rgba(74, 222, 128, 0.9);
+            box-shadow: inset 0 0 10px rgba(74, 222, 128, 0.35);
+            cursor: pointer;
+        }
+        .grid-cell.occupied-target { outline: 2px solid rgba(255, 90, 90, .8); outline-offset: -3px; }
 
         .grid-cell:hover {
             background: rgba(0,229,255,0.35);
@@ -435,8 +450,15 @@
 
         /* Custom Asset Tokens */
         .token {
-            width: 32px;
-            height: 32px;
+            width: 62%;
+            max-width: 30px;
+            aspect-ratio: 1 / 1;
+            height: auto;
+            min-width: 0;
+            min-height: 0;
+            max-height: 90%;
+            flex: 0 0 auto;
+            touch-action: none;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -445,8 +467,12 @@
             font-weight: bold;
             cursor: grab;
             box-shadow: 0 4px 10px rgba(0,0,0,0.95);
-            position: relative;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
             z-index: 25;
+            flex-shrink: 0;
             background-size: cover;
             background-position: center;
             border: 2px solid var(--gold-primary);
@@ -455,13 +481,16 @@
 
         .token:active {
             cursor: grabbing;
-            transform: scale(1.2);
+            transform: translate(-50%, -50%) scale(1.12);
             box-shadow: 0 8px 18px rgba(0,229,255,0.95);
         }
 
         .token.hero { border-color: var(--azure-glow); }
         .token.minion { border-color: var(--crimson-accent); }
         .token.vip { border-color: #f59e0b; }
+        /* Multiple tokens can share a space without pushing one another outside the cell. */
+        .grid-cell .token:nth-of-type(2) { left: 72%; top: 30%; width: 48%; z-index: 26; }
+        .grid-cell .token:nth-of-type(3) { left: 28%; top: 72%; width: 48%; z-index: 27; }
 
         /* Right Sidebar */
         aside.right-sidebar {
@@ -647,6 +676,21 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
+        @media (max-width: 1500px) {
+            header { padding: 10px 16px; height: auto; min-height: 80px; gap: 12px; flex-wrap: wrap; }
+            .title-area h1 { font-size: 18px; }
+            .global-status { gap: 8px; flex-wrap: wrap; }
+            aside.left-sidebar, aside.right-sidebar { width: 300px; padding: 14px; }
+            .board-workspace { align-items: flex-start; justify-content: flex-start; }
+        }
+        @media (max-width: 1000px) {
+            body { height: auto; min-height: 100vh; }
+            main { flex-direction: column; overflow: visible; }
+            aside.left-sidebar, aside.right-sidebar { width: 100%; max-height: none; }
+            .board-workspace { overflow-x: auto; min-height: 640px; }
+            .master-board-container { width: 1040px; }
+        }
+
         .modal-close {
             position: absolute;
             top: 14px;
@@ -666,7 +710,7 @@
     <div class="mode-select-overlay" id="mode-select-overlay">
         <div class="mode-select-card">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <p><strong>Ultimate Master Edition v9.0 (5/5 Polish):</strong><br>
+            <p><strong>Playable Repair Edition v9.1:</strong><br>
             • <strong>Signature Abilities:</strong> Jan Valek, Caden, Bromli, Fix & Temple active.<br>
             • <strong>Boss AI & Traitor Mechanics:</strong> Daask Commander boss encounters & Secret Traitor sabotage integration.<br>
             • <strong>Interactive Pathfinding:</strong> Hover over grid cells to preview valid movement ranges.</p>
@@ -681,7 +725,7 @@
     <header>
         <div class="title-area">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <span>Ultimate Master Edition v9.0 | Signature Abilities, Boss AI & Traitor Mechanics</span>
+            <span>Playable Repair Edition v9.1 | Movement, Actions & Combat</span>
         </div>
         <div class="global-status">
             <div class="status-badge">
@@ -695,6 +739,10 @@
             <div class="status-badge">
                 <label>Train HP</label>
                 <value id="hud-integrity">10 HP</value>
+            </div>
+            <div class="status-badge">
+                <label>Melindre</label>
+                <value id="hud-vip-hp">8 / 8 HP</value>
             </div>
             <div class="status-badge">
                 <label>Engine</label>
@@ -726,7 +774,10 @@
         </aside>
 
         <!-- Central Master Board View with Pathfinding Hovers -->
-        <main class="board-workspace">
+        <div class="board-workspace">
+            <div class="board-control-hint" style="width:min(1040px,100%);padding:8px 12px;margin-bottom:8px;border:1px solid rgba(74,222,128,.45);border-radius:8px;background:rgba(5,18,24,.88);color:#d9fbe7;font-size:12px;line-height:1.45;">
+                <strong>Movement:</strong> Green spaces are legal destinations. Click one to move the active hero (1 AP), or drag the active hero token. <strong>Combat:</strong> Move into an enemy's carriage within 3 spaces, then use Attack Enemy. <strong>Protect Melindre:</strong> heroes in her carriage can intercept nearby enemies; if she reaches 0 HP, heal her in Carriage 2 before the end of the next round.
+            </div>
             <div class="master-board-container" id="master-board-container">
                 <div class="board-car-column" id="car-grid-1"></div>
                 <div class="board-car-column" id="car-grid-2"></div>
@@ -734,7 +785,7 @@
                 <div class="board-car-column" id="car-grid-4"></div>
                 <div class="board-car-column" id="car-grid-5"></div>
             </div>
-        </main>
+        </div>
 
         <!-- Right Sidebar -->
         <aside class="right-sidebar">
@@ -748,6 +799,8 @@
                 <div class="deck-buttons">
                     <button class="magipunk-btn primary" id="btn-end-turn" onclick="game.endHeroTurn()">End Hero Turn</button>
                     <button class="magipunk-btn" onclick="game.advancePhase()">Advance Phase</button>
+                    <button class="magipunk-btn" onclick="game.attackNearestEnemy()">Attack Enemy (1 AP)</button>
+                    <button class="magipunk-btn" onclick="game.performCarriageAction()">Carriage Action (1 AP)</button>
                 </div>
             </div>
 
@@ -768,7 +821,7 @@
 
             <div class="section-header">Event & Action Log</div>
             <div class="log-console" id="log-console">
-                <div class="log-entry highlight">[System] Lightning Rail v9.0 Ultimate Edition active. All scores 5/5.</div>
+                <div class="log-entry highlight">[System] Lightning Rail v9.2 tactical repair active. Movement, protection and action controls enabled.</div>
             </div>
         </aside>
     </main>
@@ -909,6 +962,14 @@
                 this.hand = [];
                 this.currentDice = [];
                 this.activeCrisis = null;
+                this.pendingCrisisSuccesses = null;
+                this.gameOver = false;
+                this.selectedDestination = null;
+                this.guardMelindreUntilEnemyPhase = false;
+                this.vipDownedRound = null;
+                this.arcaneShieldCharges = 0;
+                this.janInsightBonus = false;
+                this.cadenRerollReady = false;
             }
 
             startGameMode(modeCount, enableTraitor) {
@@ -938,7 +999,7 @@
                 this.renderRoster();
                 this.renderMasterBoardGrid();
                 this.updateActionEconomyUI();
-                this.log(`Game started with ${this.heroes.length}-Player Ultimate Edition v9.0.`, "highlight");
+                this.log(`Game started with ${this.heroes.length}-Player Tactical Repair Edition v9.2.`, "highlight");
             }
 
             log(msg, type='') {
@@ -973,30 +1034,49 @@
             }
 
             useSignatureAbility(hero) {
-                this.sound.playClick();
-                if(hero.ap <= 0) {
-                    this.log(`${hero.name} has no AP available to trigger signature ability!`, "alert");
+                if (this.phase !== 2 || !hero || hero.id !== this.getActiveHero().id) {
+                    this.log("Only the active hero may use a signature ability during the Hero Phase.", "alert");
                     return;
                 }
+                if (hero.ap <= 0) { this.log(`${hero.name} has no AP available.`, "alert"); return; }
                 hero.ap--;
-                if(hero.id === 'jan') {
-                    this.log(`[Signature] Jan Valek uses Investigative Insight! +2 bonus applied to upcoming crisis checks.`, "highlight");
-                } else if(hero.id === 'caden') {
-                    this.log(`[Signature] Caden fires Precision Overmatch! Guaranteed re-aim ready for next roll.`, "highlight");
-                } else if(hero.id === 'bromli') {
+                if (hero.id === 'jan') {
+                    this.janInsightBonus = true;
+                    this.log("[Signature] Jan's Investigative Insight is ready: +1 success on the next crisis check.", "highlight");
+                } else if (hero.id === 'caden') {
+                    this.cadenRerollReady = true;
+                    this.log("[Signature] Caden may reroll one failed die on his next skill check.", "highlight");
+                } else if (hero.id === 'bromli') {
                     this.engineState = 'Operational';
                     this.integrity = Math.min(10, this.integrity + 2);
-                    document.getElementById('hud-engine').innerText = 'Operational';
+                    document.getElementById('hud-engine').innerText = this.engineState;
                     document.getElementById('hud-integrity').innerText = `${this.integrity} HP`;
-                    this.log(`[Signature] Bromli uses Master Artifice! Engine restored & Train Integrity +2 HP.`, "highlight");
-                } else if(hero.id === 'fix') {
+                    this.log("[Signature] Bromli restores the engine to Operational and repairs 2 Integrity.", "highlight");
+                } else if (hero.id === 'fix') {
                     hero.stress = Math.max(0, hero.stress - 1);
-                    this.log(`[Signature] Fix uses Sleight of Hand! Stress reduced to ${hero.stress}.`, "highlight");
-                } else if(hero.id === 'temple') {
-                    this.log(`[Signature] Temple engages Impenetrable Hull! Guardian ward active against minion attacks.`, "highlight");
+                    this.log(`[Signature] Fix reduces own Stress to ${hero.stress}.`, "highlight");
+                } else if (hero.id === 'temple') {
+                    this.guardMelindreUntilEnemyPhase = true;
+                    this.log("[Signature] Temple guards Melindre; the next enemy attack against her is prevented.", "highlight");
                 }
-                this.renderRoster();
-                this.updateActionEconomyUI();
+                this.renderRoster(); this.updateActionEconomyUI(); this.checkGameOverConditions();
+            }
+
+            updateVIPStatus() {
+                const vip = this.vips[0];
+                const el = document.getElementById('hud-vip-hp');
+                if (el && vip) el.innerText = `${vip.hp} / ${vip.maxHp} HP${vip.hp <= 0 ? ' — DOWN' : ''}`;
+            }
+
+            refreshLegalMoves() {
+                document.querySelectorAll('.grid-cell').forEach(cell => {
+                    cell.classList.remove('legal-move', 'occupied-target');
+                    if (this.phase !== 2 || this.gameOver) return;
+                    const hero = this.getActiveHero();
+                    if (!hero || hero.ap <= 0) return;
+                    const car = Number(cell.dataset.car), space = Number(cell.dataset.cell);
+                    if (this.canMoveTo(hero, car, space)) cell.classList.add('legal-move');
+                });
             }
 
             renderMasterBoardGrid() {
@@ -1008,15 +1088,14 @@
                         cell.className = 'grid-cell';
                         cell.dataset.car = carId;
                         cell.dataset.cell = i;
-                        cell.ondragover = (e) => {
-                            e.preventDefault();
-                            if(this.phase === 2) cell.classList.add('valid-move');
+                        cell.title = `Carriage ${carId}, space ${i}. During your turn, click an empty space to move the active hero (1 AP).`;
+                        cell.onclick = (e) => {
+                            if (e.target.classList && e.target.classList.contains('token')) return;
+                            if (this.phase === 2) this.moveActiveHeroTo(carId, i);
                         };
+                        cell.ondragover = (e) => { e.preventDefault(); if(this.phase === 2) cell.classList.add('valid-move'); };
                         cell.ondragleave = () => cell.classList.remove('valid-move');
-                        cell.ondrop = (e) => {
-                            cell.classList.remove('valid-move');
-                            this.handleTokenDrop(e, carId, i);
-                        };
+                        cell.ondrop = (e) => { cell.classList.remove('valid-move'); this.handleTokenDrop(e, carId, i); };
                         col.appendChild(cell);
                     }
                 }
@@ -1033,7 +1112,9 @@
                         token.className = 'token hero';
                         token.style.backgroundImage = `url('${h.img}')`;
                         token.draggable = (this.phase === 2 && h.id === this.getActiveHero().id && h.ap > 0);
-                        token.title = `${h.name} (AP: ${h.ap})`;
+                        token.setAttribute('role', 'button');
+                        token.setAttribute('aria-label', `${h.name}, Carriage ${h.car}, space ${h.cell}, ${h.ap} AP`);
+                        token.title = `${h.name} — Carriage ${h.car}, space ${h.cell} (AP: ${h.ap})`;
                         token.ondragstart = (e) => {
                             if(this.phase !== 2 || h.id !== this.getActiveHero().id || h.ap <= 0) {
                                 e.preventDefault();
@@ -1041,7 +1122,7 @@
                             }
                             e.dataTransfer.setData('text/plain', JSON.stringify({type: 'hero', id: h.id}));
                         };
-                        token.onclick = () => this.inspectHero(h);
+                        token.onclick = (e) => { e.stopPropagation(); this.inspectHero(h); };
                         cell.appendChild(token);
                     }
                 });
@@ -1074,48 +1155,125 @@
                         const token = document.createElement('div');
                         token.className = 'token vip';
                         token.style.backgroundImage = `url('${v.img}')`;
-                        token.title = `${v.name} (HP: ${v.hp}/${v.maxHp})`;
+                        token.title = `${v.name} (HP: ${v.hp}/${v.maxHp})${v.hp <= 0 ? ' — DOWN: stabilise this round' : ''}`;
                         cell.appendChild(token);
                     }
                 });
+                this.refreshLegalMoves();
+                this.updateVIPStatus();
+            }
+
+            canMoveTo(hero, targetCar, targetCell) {
+                const car = Number(targetCar), cell = Number(targetCell);
+                if (!Number.isInteger(car) || car < 1 || car > 5 || !Number.isInteger(cell) || cell < 0 || cell > 9) return false;
+                const carDiff = Math.abs(hero.car - car);
+                const cellDiff = Math.abs(hero.cell - cell);
+                // Prototype movement rule: up to 3 spaces within a carriage; crossing to an adjacent carriage uses a doorway and requires the same/adjacent space number.
+                if (carDiff === 0) return cellDiff > 0 && cellDiff <= 3;
+                return carDiff === 1 && cellDiff <= 1;
+            }
+
+            moveActiveHeroTo(targetCar, targetCell) {
+                if (this.phase !== 2 || this.gameOver) { this.log("Movement is only available during the Hero Phase.", "alert"); return; }
+                const hero = this.getActiveHero();
+                if (!hero || hero.ap <= 0) { this.log("The active hero has no AP remaining.", "alert"); return; }
+                if (!this.canMoveTo(hero, targetCar, targetCell)) {
+                    this.log("Invalid move. Spend 1 AP to move up to 3 spaces within a carriage, or cross to an adjacent carriage at the same/adjacent space number.", "alert");
+                    return;
+                }
+                hero.car = Number(targetCar); hero.cell = Number(targetCell); hero.ap--;
+                this.sound.playClick();
+                this.log(`${hero.name} moves to Carriage ${hero.car}, space ${hero.cell} (1 AP spent; ${hero.ap} AP left).`);
+                this.renderTokens(); this.renderRoster(); this.updateActionEconomyUI(); this.refreshLegalMoves();
             }
 
             handleTokenDrop(e, targetCar, targetCell) {
                 e.preventDefault();
-                if(this.phase !== 2) {
-                    this.log("Tactical movement allowed only during Phase 2.", "alert");
-                    return;
-                }
+                let data;
+                try { data = JSON.parse(e.dataTransfer.getData('text/plain')); } catch (_) { return; }
                 const hero = this.getActiveHero();
-                if(hero.ap <= 0) {
-                    this.log(`${hero.name} has no Action Points remaining!`, "alert");
-                    return;
+                if (!data || data.type !== 'hero' || !hero || data.id !== hero.id) {
+                    this.log("Only the active hero token can be moved.", "alert"); return;
                 }
+                this.moveActiveHeroTo(targetCar, targetCell);
+            }
 
-                const carDiff = Math.abs(hero.car - parseInt(targetCar));
-                const cellDiff = Math.abs(hero.cell - parseInt(targetCell));
-                if(carDiff > 1 || cellDiff > 3) {
-                    this.log(`Tactical movement restriction: Target out of range.`, "alert");
-                    return;
+            markVIPDownedIfNeeded() {
+                const vip = this.vips[0];
+                if (vip && vip.hp <= 0 && this.vipDownedRound === null) {
+                    this.vipDownedRound = this.round;
+                    this.log(`CRITICAL: Melindre is down! The party has until the end of Round ${this.round + 1} to stabilise her with a Carriage Action in Carriage 2.`, "alert");
                 }
+                this.updateVIPStatus();
+            }
 
-                const data = JSON.parse(e.dataTransfer.getData('text/plain'));
-                if(data.type === 'hero' && data.id === hero.id) {
-                    hero.car = parseInt(targetCar);
-                    hero.cell = parseInt(targetCell);
-                    hero.ap--;
-                    this.sound.playClick();
-                    this.log(`${hero.name} repositioned tactically (1 AP spent). AP left: ${hero.ap}`);
-                    this.renderTokens();
-                    this.renderRoster();
-                    this.updateActionEconomyUI();
+            nearestHeroForEnemy(enemy) {
+                return this.heroes
+                    .filter(h => h.hp > 0 && h.car === enemy.car && Math.abs(h.cell - enemy.cell) <= 3)
+                    .sort((a, b) => Math.abs(a.cell - enemy.cell) - Math.abs(b.cell - enemy.cell))[0] || null;
+            }
+
+            attackNearestEnemy() {
+                if (this.phase !== 2 || this.gameOver) { this.log("Attacks are only available during the Hero Phase.", "alert"); return; }
+                const hero = this.getActiveHero();
+                if (!hero || hero.ap < 1) { this.log("The active hero needs at least 1 AP to attack.", "alert"); return; }
+                const enemies = [...this.minions, ...this.bosses].filter(e => e.hp > 0 && e.car === hero.car)
+                    .sort((a,b) => Math.abs(a.cell-hero.cell)-Math.abs(b.cell-hero.cell));
+                const target = enemies.find(e => Math.abs(e.cell-hero.cell) <= 3);
+                if (!target) { this.log("No enemy is in attack range. Move into the same carriage and within 3 spaces of an enemy.", "alert"); return; }
+                hero.ap--;
+                const dice = Math.max(1, hero.skill);
+                const rolls = Array.from({length:dice}, () => Math.floor(Math.random()*6)+1);
+                const successes = rolls.filter(n => n >= 4).length;
+                const damage = Math.max(1, successes);
+                target.hp = Math.max(0, target.hp - damage);
+                this.log(`[Attack] ${hero.name} attacks ${target.name}: ${rolls.join(', ')} → ${successes} successes, ${damage} damage. Target HP: ${target.hp}.`, successes ? "highlight" : "alert");
+                if (target.hp <= 0) {
+                    this.log(`${target.name} is defeated and removed from the board.`, "highlight");
+                    this.minions = this.minions.filter(e => e.hp > 0); this.bosses = this.bosses.filter(e => e.hp > 0);
                 }
+                this.renderTokens(); this.renderRoster(); this.updateActionEconomyUI(); this.checkGameOverConditions();
+            }
+
+            performCarriageAction() {
+                if (this.phase !== 2 || this.gameOver) { this.log("Carriage actions are only available during the Hero Phase.", "alert"); return; }
+                const hero = this.getActiveHero();
+                if (!hero || hero.ap < 1) { this.log("The active hero needs at least 1 AP.", "alert"); return; }
+                hero.ap--;
+                if (hero.car === 1) {
+                    const before = this.integrity;
+                    this.integrity = Math.min(10, this.integrity + 2);
+                    this.engineState = 'Operational';
+                    document.getElementById('hud-engine').innerText = this.engineState;
+                    document.getElementById('hud-integrity').innerText = `${this.integrity} HP`;
+                    this.log(`${hero.name} works in the Engine Room: engine Operational, Integrity ${before} → ${this.integrity} (1 AP).`, "highlight");
+                } else if (hero.car === 2) {
+                    const vip = this.vips[0];
+                    if (vip) {
+                        const before = vip.hp;
+                        vip.hp = Math.min(vip.maxHp, vip.hp + 2);
+                        if (vip.hp > 0) this.vipDownedRound = null;
+                        this.log(`${hero.name} protects and tends Melindre: VIP HP ${before} → ${vip.hp} (1 AP).${before <= 0 && vip.hp > 0 ? ' Melindre is stabilised and back in the fight!' : ''}`, "highlight");
+                    }
+                } else if (hero.car === 3) {
+                    hero.stress = Math.max(0, hero.stress - 1);
+                    this.log(`${hero.name} searches the Cargo Hold and steadies themselves: Stress is now ${hero.stress} (1 AP).`);
+                } else if (hero.car === 4) {
+                    this.heroes.filter(h => h.car === 4).forEach(h => h.stress = Math.max(0, h.stress - 1));
+                    this.log(`${hero.name} rallies the group in the Dining Lounge. Heroes in this carriage each reduce Stress by 1 (1 AP).`, "highlight");
+                } else {
+                    this.guardMelindreUntilEnemyPhase = true;
+                    this.log(`${hero.name} secures the rear carriage, reducing the next attack against Melindre to 0 (1 AP).`, "highlight");
+                }
+                this.renderRoster(); this.updateActionEconomyUI(); this.checkGameOverConditions();
             }
 
             updateActionEconomyUI() {
                 const hero = this.getActiveHero();
-                document.getElementById('active-hero-label').innerText = `Active: ${hero.name}`;
+                if (!hero) return;
+                document.getElementById('active-hero-label').innerText = `Active: ${hero.name} — Car ${hero.car}, space ${hero.cell}`;
                 document.getElementById('active-ap-label').innerText = `AP: ${hero.ap} / ${hero.maxAp}`;
+                this.refreshLegalMoves();
                 const btnEnd = document.getElementById('btn-end-turn');
                 btnEnd.disabled = (this.phase !== 2);
             }
@@ -1206,6 +1364,14 @@
             }
 
             rollHeroSkillCheck() {
+                if (this.phase !== 1 || !this.activeCrisis) {
+                    this.log("Draw a Crisis card first. Crisis skill checks are only available during Phase 1.", "alert");
+                    return;
+                }
+                if(this.pendingCrisisSuccesses !== null) {
+                    this.log("A roll is already pending. Accept it or use the one permitted Push reroll.", "alert");
+                    return;
+                }
                 if(this.crisisResolvedThisRound) {
                     this.log("This crisis has already been resolved for the round.", "alert");
                     return;
@@ -1229,20 +1395,29 @@
 
                 setTimeout(() => {
                     let successes = 0;
-                    tray.childNodes.forEach((die, idx) => {
-                        die.classList.remove('rolling');
-                        const val = this.currentDice[idx];
-                        if(val >= 4) {
-                            die.classList.add('success');
-                            successes++;
+                    if (hero.id === 'caden' && this.cadenRerollReady) {
+                        const failedIndex = this.currentDice.findIndex(v => v < 4);
+                        if (failedIndex >= 0) {
+                            this.currentDice[failedIndex] = Math.floor(Math.random() * 6) + 1;
+                            this.log(`[Signature] Caden rerolls one failed die: now ${this.currentDice[failedIndex]}.`, "highlight");
                         }
+                        this.cadenRerollReady = false;
+                    }
+                    tray.innerHTML = '';
+                    this.currentDice.forEach(val => {
+                        const die = document.createElement('div'); die.className = 'die'; die.innerText = val;
+                        if (val >= 4) { die.classList.add('success'); successes++; }
+                        tray.appendChild(die);
                     });
+                    if (hero.id === 'jan' && this.janInsightBonus) { successes++; this.janInsightBonus = false; this.log("[Signature] Jan's Investigative Insight adds +1 success.", "highlight"); }
                     document.getElementById('dice-status').innerText = `${successes} Successes (4,5,6 = 1)`;
                     if(successes > 0) this.sound.playSuccess();
                     this.log(`${hero.name} Skill Check (Pool ${hero.skill}d6) -> Rolled [${this.currentDice.join(', ')}] -> ${successes} Successes.`);
 
+                    this.pendingCrisisSuccesses = successes;
                     if(this.activeCrisis) {
-                        this.evaluateCrisisOutcome(successes);
+                        document.getElementById('dice-status').innerText = `${successes} Successes — reroll or accept`;
+                        this.log("Crisis roll is pending. Use Reroll (Push) to reroll failures once, or Advance Phase to accept the result.");
                     }
                 }, 600);
             }
@@ -1276,6 +1451,8 @@
                 }
 
                 this.crisisResolvedThisRound = true;
+                this.pendingCrisisSuccesses = null;
+                document.getElementById('hud-integrity').innerText = `${this.integrity} HP`;
                 resultHTML += `<button class="magipunk-btn primary" style="width: 100%; padding: 14px; font-size: 15px;" onclick="game.closeModal(null)">Close & Continue</button>`;
                 content.innerHTML = resultHTML;
             }
@@ -1292,6 +1469,9 @@
                 if(this.crisisResolvedThisRound) {
                     this.log("Crisis already locked and resolved.", "alert");
                     return;
+                }
+                if (!this.activeCrisis || this.pendingCrisisSuccesses === null) {
+                    this.log("Roll a crisis check first, then choose whether to push.", "alert"); return;
                 }
                 this.hasRerolledThisCheck = true;
                 this.sound.playDiceRoll();
@@ -1330,8 +1510,10 @@
                 this.sound.playSuccess();
                 this.log(`Push Reroll -> [${this.currentDice.join(', ')}] (${successes} Successes). Reroll guard engaged.`);
 
+                this.pendingCrisisSuccesses = successes;
                 if(this.activeCrisis && !this.crisisResolvedThisRound) {
-                    this.evaluateCrisisOutcome(successes);
+                    document.getElementById('dice-status').innerText = `${successes} Successes — result pending`;
+                    this.log("Push resolved. Accept the final crisis result with Advance Phase.");
                 }
             }
 
@@ -1352,140 +1534,138 @@
             }
 
             endHeroTurn() {
-                if(this.phase !== 2) {
-                    this.log("Turn ending allowed only during Phase 2.", "alert");
-                    return;
-                }
+                if (this.phase !== 2 || this.gameOver) { this.log("End Hero Turn is only available during Phase 2.", "alert"); return; }
                 const hero = this.getActiveHero();
-                this.sound.playClick();
-                this.log(`${hero.name} ended their turn.`);
-                
+                this.sound.playClick(); this.log(`${hero.name} ended their turn.`);
                 this.heroTurnsCompleted++;
-                this.activeHeroIndex++;
-
-                if(this.activeHeroIndex >= this.heroes.length || this.heroTurnsCompleted >= this.heroes.length) {
-                    this.activeHeroIndex = 0;
-                    this.heroTurnsCompleted = 0;
-                    this.log("All heroes have completed their turns. Transitioning to Enemy Phase (Phase 3).", "highlight");
+                if (this.heroTurnsCompleted >= this.heroes.length) {
+                    this.activeHeroIndex = 0; this.heroTurnsCompleted = 0;
+                    this.heroes.forEach(h => h.ap = h.maxAp);
                     this.phase = 3;
+                    this.log("All heroes have acted. Enemy Phase begins.", "highlight");
                     this.executeEnemyPhase();
                 } else {
+                    this.activeHeroIndex++;
                     const nextHero = this.getActiveHero();
                     nextHero.ap = nextHero.maxAp;
                     this.log(`Turn passed to ${nextHero.name}. AP reset to ${nextHero.maxAp}.`, "highlight");
                 }
-                this.renderRoster();
-                this.renderTokens();
-                this.updateActionEconomyUI();
+                this.renderTokens(); this.renderRoster(); this.updateActionEconomyUI();
             }
 
             executeEnemyPhase() {
                 this.log("[Phase 3: Enemy Phase] Minions & Boss AI execute automated pursuit and combat attacks.", "alert");
                 
-                // Spawn Boss if round 5+
-                if(this.round >= 5 && this.bosses.length === 0) {
+                if (this.gameOver) return;
+                // Prototype boss entrance cadence: first boss arrives in Round 2; no duplicate boss spawns.
+                if(this.round >= 2 && this.bosses.length === 0) {
                     this.bosses.push({ id: 'boss1', name: 'Daask Commander Xant', hp: 10, car: 5, cell: 5 });
                     this.log(`[Boss Entrance] Daask Commander Xant boards Car 5 with 10 HP!`, "alert");
                 }
 
-                // Secret Traitor Sabotage check
-                if(this.hasTraitorMode && Math.random() < 0.4) {
-                    this.sabotageTokens++;
-                    this.integrity = Math.max(0, this.integrity - 1);
-                    this.log(`[Secret Traitor] Sabotage token deployed! Train Integrity suffers covert damage (-1 HP).`, "alert");
+                // Traitor sabotage is kept visible as a prototype reminder; no random integrity damage is applied.
+                if (this.hasTraitorMode && this.traitorHeroId) {
+                    this.sabotageTokens = Math.max(0, this.sabotageTokens);
                 }
 
-                // Minion & Boss Attacks
-                this.minions.forEach(m => {
-                    if(m.car > 2) {
-                        m.car--;
-                    } else if(this.vips.length > 0) {
-                        let vip = this.vips[0];
-                        vip.hp = Math.max(0, vip.hp - 2);
-                        this.log(`[Combat] ${m.name} strikes VIP ${vip.name} for 2 damage! (VIP HP: ${vip.hp}/${vip.maxHp})`, "alert");
+                // Enemies advance toward the VIP carriage. Heroes in the same carriage can intercept attacks.
+                const allEnemies = [...this.minions, ...this.bosses];
+                allEnemies.forEach(enemy => {
+                    if (this.gameOver || enemy.hp <= 0) return;
+                    if (enemy.car > 2) {
+                        enemy.car--;
+                        this.log(`[Enemy Movement] ${enemy.name || enemy.id} advances to Carriage ${enemy.car}.`);
+                        return;
+                    }
+                    if (enemy.car < 2) {
+                        enemy.car++;
+                        this.log(`[Enemy Movement] ${enemy.name || enemy.id} advances toward the VIP to Carriage ${enemy.car}.`);
+                        return;
+                    }
+                    // Attack a nearby hero first; this makes positioning and interception matter.
+                    const defender = this.nearestHeroForEnemy(enemy);
+                    const vip = this.vips[0];
+                    if (defender) {
+                        const damage = this.bosses.includes(enemy) ? 3 : 2;
+                        defender.hp = Math.max(0, defender.hp - damage);
+                        this.log(`[Interception] ${defender.name} intercepts ${enemy.name || enemy.id} and takes ${damage} damage (HP ${defender.hp}/${defender.maxHp}).`, "alert");
+                    } else if (vip) {
+                        if (this.guardMelindreUntilEnemyPhase) {
+                            this.log(`[Guard] ${enemy.name || enemy.id}'s attack on Melindre is prevented.`, "highlight");
+                            this.guardMelindreUntilEnemyPhase = false;
+                        } else {
+                            const damage = this.bosses.includes(enemy) ? 3 : 2;
+                            const before = vip.hp;
+                            vip.hp = Math.max(0, vip.hp - damage);
+                            this.log(`[Combat] ${enemy.name || enemy.id} attacks Melindre for ${damage} damage (${before} → ${vip.hp} HP).`, "alert");
+                            this.markVIPDownedIfNeeded();
+                        }
                     }
                 });
-
-                this.bosses.forEach(b => {
-                    if(b.car > 2) {
-                        b.car--;
-                    } else if(this.vips.length > 0) {
-                        let vip = this.vips[0];
-                        vip.hp = Math.max(0, vip.hp - 3);
-                        this.log(`[Boss Combat] ${b.name} devastates VIP ${vip.name} for 3 damage! (VIP HP: ${vip.hp}/${vip.maxHp})`, "alert");
-                    }
+                this.heroes.forEach(h => {
+                    if (h.hp <= 0) this.log(`[Incapacitated] ${h.name} has been knocked out and cannot intercept until restored.`, "alert");
                 });
 
-                if(this.vips.length > 0 && this.vips[0].hp <= 0) {
-                    this.triggerGameOver(false, "Catastrophic Failure: VIP Melindre has fallen during enemy engagement.");
-                }
-
+                document.getElementById('hud-integrity').innerText = `${this.integrity} HP`;
+                this.checkGameOverConditions();
                 document.getElementById('hud-phase').innerText = '3. Enemy';
                 document.getElementById('current-phase-title').innerText = 'Phase 3: Enemy Phase (Boss AI & Combat)';
-                document.getElementById('current-phase-desc').innerText = 'Minions and Bosses inflict damage on targets.';
+                document.getElementById('current-phase-desc').innerText = 'Enemies advance toward Carriage 2; heroes in the same carriage and within 3 spaces can intercept attacks. Melindre at 0 HP has one full round to be stabilised.';
                 this.renderTokens();
             }
 
             advancePhase() {
                 this.sound.playClick();
-                if(this.phase === 1 && !this.crisisResolvedThisRound) {
-                    this.log("Rulebook Enforcement: You must resolve the Crisis Phase before advancing.", "alert");
-                    return;
-                }
-                if(this.phase === 2 && this.heroTurnsCompleted < this.heroes.length && this.activeHeroIndex !== 0) {
-                    this.log("Rulebook Enforcement: All hero turns must conclude before advancing to Enemy Phase.", "alert");
-                    return;
-                }
-
-                this.phase++;
-                if(this.phase > 4) {
-                    this.phase = 1;
-                    this.round++;
-                    this.crisisResolvedThisRound = false;
-                    this.heroTurnsCompleted = 0;
-                    if(this.round > 10) {
-                        this.triggerGameOver(false, "Time Expired: Round 10 limit reached before arriving in Thrane.");
+                if (this.gameOver) return;
+                if (this.phase === 1) {
+                    if (!this.activeCrisis) { this.log("Draw a Crisis card before leaving Phase 1.", "alert"); return; }
+                    if (!this.crisisResolvedThisRound) {
+                        if (this.pendingCrisisSuccesses === null) { this.log("Resolve the crisis: roll the skill check first.", "alert"); return; }
+                        this.evaluateCrisisOutcome(this.pendingCrisisSuccesses);
+                        return; // player closes result and clicks again to enter Hero Phase
+                    }
+                    this.phase = 2;
+                    this.activeHeroIndex = 0; this.heroTurnsCompleted = 0;
+                    this.heroes.forEach(h => h.ap = h.maxAp);
+                } else if (this.phase === 2) {
+                    if (this.heroTurnsCompleted < this.heroes.length) { this.log("Every hero must end their turn before advancing. Use End Hero Turn for each hero.", "alert"); return; }
+                    this.phase = 3; this.executeEnemyPhase(); return;
+                } else if (this.phase === 3) {
+                    this.phase = 4;
+                    const vip = this.vips[0];
+                    if (vip && vip.hp <= 0 && this.vipDownedRound !== null && this.round > this.vipDownedRound) {
+                        this.triggerGameOver(false, `Defeat: Melindre was not stabilised by the end of Round ${this.round}.`);
                         return;
                     }
-                }
-
-                const titles = [
-                    "Phase 1: Crisis Phase",
-                    "Phase 2: Hero Phase (2 AP)",
-                    "Phase 3: Enemy Phase (Boss AI)",
-                    "Phase 4: Train & Track Phase"
-                ];
-                const descs = [
-                    "Resolve active environmental crisis or draw a new threat card.",
-                    "Heroes spend Action Points to move, attack, or repair.",
-                    "Minions and Bosses activate along automated AI target ladders.",
-                    "Evaluate Engine state, advance Speed Track, and verify win conditions."
-                ];
-
-                document.getElementById('hud-phase').innerText = titles[this.phase - 1].split(':')[0];
-                document.getElementById('current-phase-title').innerText = titles[this.phase - 1];
-                document.getElementById('current-phase-desc').innerText = descs[this.phase - 1];
-
-                if(this.phase === 4) {
-                    if(this.engineState === 'Operational') {
+                    if (this.engineState === 'Operational') {
                         this.speed++;
                         document.getElementById('hud-speed').innerText = `${this.speed} / 12`;
-                        this.log(`Train advanced! Speed track is now at Unit ${this.speed} / 12.`, "highlight");
-                        this.checkGameOverConditions();
-                    } else {
-                        this.log(`Engine is ${this.engineState}! Speed track stalled. Heroes must repair immediately.`, "alert");
-                    }
+                        this.log(`Train advanced! Speed track is now ${this.speed} / 12.`, "highlight");
+                    } else this.log(`Engine is ${this.engineState}; the train cannot gain Speed this round.`, "alert");
+                    this.checkGameOverConditions();
+                    if (this.round >= 10 && this.speed < 12 && !this.gameOver) { this.triggerGameOver(false, "Time Expired: Round 10 ended before the train reached Thrane."); return; }
+                } else {
+                    this.round++;
+                    this.phase = 1; this.crisisResolvedThisRound = false;
+                    this.pendingCrisisSuccesses = null; this.activeCrisis = null;
+                    this.currentDice = []; this.hasRerolledThisCheck = false;
+                    if (this.round > 10 && this.speed < 12) { this.triggerGameOver(false, "Time Expired: Round 10 limit reached before arriving in Thrane."); return; }
+                    this.log(`Round ${this.round} begins. Draw and resolve a new Crisis card.`, "highlight");
                 }
-
-                this.renderTokens();
-                this.updateActionEconomyUI();
+                const titles = ["Phase 1: Crisis Phase", "Phase 2: Hero Phase (2 AP)", "Phase 3: Enemy Phase", "Phase 4: Train & Track Phase"];
+                const descs = ["Draw and resolve one crisis; roll, optionally push once, then accept the result.", "Each hero gets 2 AP to move, attack, use a carriage action or ability.", "Minions and bosses move and attack automatically.", "If the engine is Operational, gain 1 Speed. Check victory and defeat."];
+                document.getElementById('hud-phase').innerText = titles[this.phase-1].split(':')[0];
+                document.getElementById('current-phase-title').innerText = titles[this.phase-1];
+                document.getElementById('current-phase-desc').innerText = descs[this.phase-1];
+                this.renderTokens(); this.renderRoster(); this.updateActionEconomyUI();
             }
 
             checkGameOverConditions() {
                 if(this.integrity <= 0) {
                     this.triggerGameOver(false, "Catastrophic Failure: Train Integrity reached 0 HP.");
                 } else if(this.vips.length > 0 && this.vips[0].hp <= 0) {
-                    this.triggerGameOver(false, "Defeat: VIP Melindre was eliminated during enemy engagement.");
+                    // Melindre may be stabilised during the following full round; deadline is checked after that enemy phase.
+                    this.markVIPDownedIfNeeded();
                 } else if(this.speed >= 12) {
                     if(this.vips.length > 0 && this.vips[0].hp > 0) {
                         this.triggerGameOver(true, "Victory! The Lightning Rail successfully arrived in Thrane with VIP Melindre safe.");
@@ -1496,6 +1676,8 @@
             }
 
             triggerGameOver(isVictory, message) {
+                if (this.gameOver) return;
+                this.gameOver = true;
                 const modal = document.getElementById('modal-overlay');
                 const content = document.getElementById('modal-content');
                 const color = isVictory ? '#4ade80' : '#ff1744';
@@ -1515,14 +1697,16 @@
                 const content = document.getElementById('modal-content');
                 content.innerHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
-                    <h2 style="color: var(--gold-primary); margin-bottom: 12px; font-size: 20px;">ULTIMATE RULEBOOK V9.0</h2>
-                    <p style="font-size: 13px; line-height: 1.6; color: var(--text-main); margin-bottom: 15px; text-align: left;">
-                        <strong>1. Signature Abilities:</strong> Click any hero portrait in the left sidebar to activate their unique signature power (Costs 1 AP).<br><br>
-                        <strong>2. Boss AI & Traitor:</strong> Daask Commander Xant spawns on Round 5+. Secret traitor mechanics introduce covert sabotage tokens.<br><br>
-                        <strong>3. Pathfinding:</strong> Hover over board grid cells during Phase 2 to preview valid movement zones.
-                    </p>
-                    <button class="magipunk-btn primary" style="width: 100%; font-size: 14px; padding: 12px;" onclick="game.closeModal(null)">Got It</button>
-                `;
+                    <h2 style="color: var(--gold-primary); margin-bottom: 12px; font-size: 20px;">HOW TO PLAY — QUICK GUIDE</h2>
+                    <div style="font-size:13px;line-height:1.65;text-align:left;color:var(--text-main)">
+                    <strong>1. Phase 1 — Crisis:</strong> Draw one Crisis card, roll the active hero's skill dice (4–6 are successes), optionally reroll failures once, then click Advance Phase to accept the result. The result modal appears before you continue.<br><br>
+                    <strong>2. Phase 2 — Heroes:</strong> Each hero gets 2 AP. Click a green-highlighted empty board space or drag the active hero token to move (1 AP). Tokens are anchored inside spaces; stacked tokens offset slightly. Within a carriage, move up to 3 spaces; to cross into the next carriage, use the same or adjacent space number. The active hero is shown in the right panel. Click End Hero Turn to pass to the next hero.<br><br>
+                    <strong>3. Attack:</strong> Move into the same carriage as an enemy and within 3 spaces. Click Attack Enemy (1 AP). The hero rolls skill dice; 4–6 succeed, and the attack deals at least 1 damage. Defeated enemies are removed.<br><br>
+                    <strong>4. Carriage Action (1 AP):</strong> Car 1 Engine Room: restore 2 Integrity and set engine Operational. Car 2: heal or stabilise Melindre by 2 (she has a one-round rescue window at 0 HP). Car 3: reduce your Stress by 1. Car 4: reduce Stress by 1 for heroes there. Car 5: guard Melindre against the next enemy attack.<br><br>
+                    <strong>5. Phases 3–4:</strong> Enemies move/attack automatically; then advance to Train Phase. Operational engine gains 1 Speed. Reach 12 Speed with Melindre alive and train Integrity above 0 to win.<br><br>
+                    <em>Note: movement, generic attacks and carriage actions in this repair edition are clearly defined prototype rules added to make the board playable; they are not claimed to be verbatim rules from the source rulebook.</em>
+                    </div>
+                    <button class="magipunk-btn primary" style="width:100%;padding:12px;margin-top:14px" onclick="game.closeModal(null)">Got It</button>`;
                 modal.style.display = 'flex';
             }
 
