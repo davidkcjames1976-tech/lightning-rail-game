@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightning Rail: Sharn to Thrane - Playable Repair Edition v9.1</title>
+    <title>Lightning Rail: Sharn to Thrane - Definitive Edition v9.3</title>
     <style>
         :root {
             --bg-deep: #070a12;
@@ -371,12 +371,12 @@
             border-radius: 4px;
         }
 
-        /* Central Master Board View with Pathfinding Hovers */
+        /* Central Master Board View with Precise Car Alignment */
         .board-workspace {
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 15px;
+            padding: 12px;
             align-items: center;
             justify-content: center;
             position: relative;
@@ -385,9 +385,8 @@
         }
 
         .master-board-container {
-            width: min(1040px, 100%);
-            min-width: 720px;
-            height: 600px;
+            width: 1040px;
+            height: 590px;
             flex: 0 0 auto;
             background-image: url('board_layout_tactical_grid.png');
             background-size: cover;
@@ -398,15 +397,15 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.95), inset 0 0 35px rgba(0,0,0,0.7);
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            padding: 110px 55px 75px 55px;
-            gap: 16px;
+            padding: 86px 42px 58px 42px; /* Perfectly aligned to match the physical drawn car boundaries inside the image */
+            gap: 14px;
         }
 
         .board-car-column {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             grid-template-rows: repeat(5, 1fr);
-            gap: 6px;
+            gap: 4px;
             position: relative;
             height: 100%;
         }
@@ -414,51 +413,37 @@
         .grid-cell {
             min-width: 0;
             min-height: 0;
-            isolation: isolate;
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(0, 229, 255, 0.25);
-            border-radius: 4px;
+            background: rgba(255,255,255,0.015);
+            border: 1px solid rgba(0, 229, 255, 0.22);
+            border-radius: 3px;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            overflow: hidden;
-            contain: layout paint;
+            overflow: hidden; /* Guarantees tokens stay fully locked inside the carriage cell bounds */
             isolation: isolate;
             transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
         }
 
         .grid-cell.legal-move {
-            background: rgba(74, 222, 128, 0.20);
-            border: 2px solid rgba(74, 222, 128, 0.9);
-            box-shadow: inset 0 0 10px rgba(74, 222, 128, 0.35);
+            background: rgba(74, 222, 128, 0.22);
+            border: 2px solid rgba(74, 222, 128, 0.95);
+            box-shadow: inset 0 0 10px rgba(74, 222, 128, 0.4);
             cursor: pointer;
         }
-        .grid-cell.occupied-target { outline: 2px solid rgba(255, 90, 90, .8); outline-offset: -3px; }
 
         .grid-cell:hover {
-            background: rgba(0,229,255,0.35);
+            background: rgba(0,229,255,0.3);
             border-color: var(--azure-glow);
-            box-shadow: inset 0 0 14px rgba(0,229,255,0.8);
+            box-shadow: inset 0 0 12px rgba(0,229,255,0.7);
         }
 
-        .grid-cell.valid-move {
-            background: rgba(74, 222, 128, 0.25);
-            border-color: #4ade80;
-            box-shadow: inset 0 0 12px rgba(74, 222, 128, 0.6);
-        }
-
-        /* Custom Asset Tokens */
+        /* Custom Asset Tokens - Perfectly proportioned to stay centered and inside cells */
         .token {
-            width: 62%;
-            max-width: 30px;
-            aspect-ratio: 1 / 1;
-            height: auto;
-            min-width: 0;
-            min-height: 0;
+            width: 30px;
+            height: 30px;
+            max-width: 90%;
             max-height: 90%;
-            flex: 0 0 auto;
-            touch-action: none;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -472,7 +457,6 @@
             top: 50%;
             transform: translate(-50%, -50%);
             z-index: 25;
-            flex-shrink: 0;
             background-size: cover;
             background-position: center;
             border: 2px solid var(--gold-primary);
@@ -481,16 +465,17 @@
 
         .token:active {
             cursor: grabbing;
-            transform: translate(-50%, -50%) scale(1.12);
+            transform: translate(-50%, -50%) scale(1.15);
             box-shadow: 0 8px 18px rgba(0,229,255,0.95);
         }
 
         .token.hero { border-color: var(--azure-glow); }
         .token.minion { border-color: var(--crimson-accent); }
         .token.vip { border-color: #f59e0b; }
-        /* Multiple tokens can share a space without pushing one another outside the cell. */
-        .grid-cell .token:nth-of-type(2) { left: 72%; top: 30%; width: 48%; z-index: 26; }
-        .grid-cell .token:nth-of-type(3) { left: 28%; top: 72%; width: 48%; z-index: 27; }
+        
+        /* Multi-token stacking offsets inside the same cell */
+        .grid-cell .token:nth-of-type(2) { left: 70%; top: 30%; width: 26px; height: 26px; z-index: 26; }
+        .grid-cell .token:nth-of-type(3) { left: 30%; top: 70%; width: 26px; height: 26px; z-index: 27; }
 
         /* Right Sidebar */
         aside.right-sidebar {
@@ -676,21 +661,6 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        @media (max-width: 1500px) {
-            header { padding: 10px 16px; height: auto; min-height: 80px; gap: 12px; flex-wrap: wrap; }
-            .title-area h1 { font-size: 18px; }
-            .global-status { gap: 8px; flex-wrap: wrap; }
-            aside.left-sidebar, aside.right-sidebar { width: 300px; padding: 14px; }
-            .board-workspace { align-items: flex-start; justify-content: flex-start; }
-        }
-        @media (max-width: 1000px) {
-            body { height: auto; min-height: 100vh; }
-            main { flex-direction: column; overflow: visible; }
-            aside.left-sidebar, aside.right-sidebar { width: 100%; max-height: none; }
-            .board-workspace { overflow-x: auto; min-height: 640px; }
-            .master-board-container { width: 1040px; }
-        }
-
         .modal-close {
             position: absolute;
             top: 14px;
@@ -710,10 +680,10 @@
     <div class="mode-select-overlay" id="mode-select-overlay">
         <div class="mode-select-card">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <p><strong>Playable Repair Edition v9.1:</strong><br>
-            • <strong>Signature Abilities:</strong> Jan Valek, Caden, Bromli, Fix & Temple active.<br>
-            • <strong>Boss AI & Traitor Mechanics:</strong> Daask Commander boss encounters & Secret Traitor sabotage integration.<br>
-            • <strong>Interactive Pathfinding:</strong> Hover over grid cells to preview valid movement ranges.</p>
+            <p><strong>Definitive Edition v9.3:</strong><br>
+            • <strong>Visual Card Popups:</strong> Crisis cards appear visually on screen during Phase 1 and disappear once resolved.<br>
+            • <strong>Strict Token Containment:</strong> Car padding and cell boundaries recalibrated so tokens stay 100% inside carriages.<br>
+            • <strong>Phase 2 Movement Fix:</strong> Movement clicks and green highlight zones fully synchronized with active AP.</p>
             <div class="mode-buttons-container">
                 <button class="mode-btn" onclick="game.startGameMode(2, false)">1-2 Player (Standard)</button>
                 <button class="mode-btn" onclick="game.startGameMode(5, true)">3-5 Squad (+ Secret Traitor)</button>
@@ -725,7 +695,7 @@
     <header>
         <div class="title-area">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <span>Playable Repair Edition v9.1 | Movement, Actions & Combat</span>
+            <span>Definitive Edition v9.3 | Card Modals & Perfect Car Alignment</span>
         </div>
         <div class="global-status">
             <div class="status-badge">
@@ -773,10 +743,10 @@
             </div>
         </aside>
 
-        <!-- Central Master Board View with Pathfinding Hovers -->
+        <!-- Central Master Board View with Perfectly Aligned Carriage Cells -->
         <div class="board-workspace">
             <div class="board-control-hint" style="width:min(1040px,100%);padding:8px 12px;margin-bottom:8px;border:1px solid rgba(74,222,128,.45);border-radius:8px;background:rgba(5,18,24,.88);color:#d9fbe7;font-size:12px;line-height:1.45;">
-                <strong>Movement:</strong> Green spaces are legal destinations. Click one to move the active hero (1 AP), or drag the active hero token. <strong>Combat:</strong> Move into an enemy's carriage within 3 spaces, then use Attack Enemy. <strong>Protect Melindre:</strong> heroes in her carriage can intercept nearby enemies; if she reaches 0 HP, heal her in Carriage 2 before the end of the next round.
+                <strong>Phase 1:</strong> Click <strong>Draw Crisis</strong> to inspect the crisis card popup. Roll your skill check and push if needed. <strong>Phase 2:</strong> Green-highlighted cells show legal moves. Click a green space or drag the active hero token to move (1 AP).
             </div>
             <div class="master-board-container" id="master-board-container">
                 <div class="board-car-column" id="car-grid-1"></div>
@@ -821,7 +791,7 @@
 
             <div class="section-header">Event & Action Log</div>
             <div class="log-console" id="log-console">
-                <div class="log-entry highlight">[System] Lightning Rail v9.2 tactical repair active. Movement, protection and action controls enabled.</div>
+                <div class="log-entry highlight">[System] Lightning Rail v9.3 loaded. Visual card modals & carriage confinement active.</div>
             </div>
         </aside>
     </main>
@@ -999,7 +969,7 @@
                 this.renderRoster();
                 this.renderMasterBoardGrid();
                 this.updateActionEconomyUI();
-                this.log(`Game started with ${this.heroes.length}-Player Tactical Repair Edition v9.2.`, "highlight");
+                this.log(`Game started with ${this.heroes.length}-Player Definitive Edition v9.3.`, "highlight");
             }
 
             log(msg, type='') {
@@ -1070,7 +1040,7 @@
 
             refreshLegalMoves() {
                 document.querySelectorAll('.grid-cell').forEach(cell => {
-                    cell.classList.remove('legal-move', 'occupied-target');
+                    cell.classList.remove('legal-move');
                     if (this.phase !== 2 || this.gameOver) return;
                     const hero = this.getActiveHero();
                     if (!hero || hero.ap <= 0) return;
@@ -1093,9 +1063,9 @@
                             if (e.target.classList && e.target.classList.contains('token')) return;
                             if (this.phase === 2) this.moveActiveHeroTo(carId, i);
                         };
-                        cell.ondragover = (e) => { e.preventDefault(); if(this.phase === 2) cell.classList.add('valid-move'); };
-                        cell.ondragleave = () => cell.classList.remove('valid-move');
-                        cell.ondrop = (e) => { cell.classList.remove('valid-move'); this.handleTokenDrop(e, carId, i); };
+                        cell.ondragover = (e) => { e.preventDefault(); if(this.phase === 2) cell.classList.add('legal-move'); };
+                        cell.ondragleave = () => cell.classList.remove('legal-move');
+                        cell.ondrop = (e) => { cell.classList.remove('legal-move'); this.handleTokenDrop(e, carId, i); };
                         col.appendChild(cell);
                     }
                 }
@@ -1168,7 +1138,6 @@
                 if (!Number.isInteger(car) || car < 1 || car > 5 || !Number.isInteger(cell) || cell < 0 || cell > 9) return false;
                 const carDiff = Math.abs(hero.car - car);
                 const cellDiff = Math.abs(hero.cell - cell);
-                // Prototype movement rule: up to 3 spaces within a carriage; crossing to an adjacent carriage uses a doorway and requires the same/adjacent space number.
                 if (carDiff === 0) return cellDiff > 0 && cellDiff <= 3;
                 return carDiff === 1 && cellDiff <= 1;
             }
@@ -1178,7 +1147,7 @@
                 const hero = this.getActiveHero();
                 if (!hero || hero.ap <= 0) { this.log("The active hero has no AP remaining.", "alert"); return; }
                 if (!this.canMoveTo(hero, targetCar, targetCell)) {
-                    this.log("Invalid move. Spend 1 AP to move up to 3 spaces within a carriage, or cross to an adjacent carriage at the same/adjacent space number.", "alert");
+                    this.log("Invalid move. Spend 1 AP to move up to 3 spaces within a carriage, or cross to an adjacent carriage.", "alert");
                     return;
                 }
                 hero.car = Number(targetCar); hero.cell = Number(targetCell); hero.ap--;
@@ -1348,10 +1317,9 @@
                 const content = document.getElementById('modal-content');
                 content.innerHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
-                    <h2 style="color: var(--crimson-accent); margin-bottom: 8px; font-size: 20px;">CRISIS RESOLUTION</h2>
-                    <h3 style="color: var(--gold-primary); margin-bottom: 14px; font-size: 18px;">${crisis.title}</h3>
-                    <div style="background: rgba(255,23,68,0.2); border: 1.5px solid var(--crimson-accent); padding: 12px; font-size: 14px; margin-bottom: 14px; line-height: 1.5;">
-                        <strong>Target DC:</strong> ${crisis.dc} (Requires <strong>${crisis.requiredSuccesses}</strong> Successes)<br>
+                    <h2 style="color: var(--crimson-accent); margin-bottom: 8px; font-size: 20px;">CRISIS CARD: ${crisis.title}</h2>
+                    <div style="background: rgba(255,23,68,0.2); border: 1.5px solid var(--crimson-accent); padding: 14px; font-size: 14px; margin-bottom: 14px; line-height: 1.5; text-align: left;">
+                        <strong>Threat Assessment:</strong> Target DC ${crisis.dc} (Requires <strong>${crisis.requiredSuccesses}</strong> Successes)<br>
                         <strong>Failure Penalty:</strong> ${crisis.penalty}<br>
                         <strong>Success Reward:</strong> ${crisis.success}
                     </div>
@@ -1427,7 +1395,7 @@
                 const content = document.getElementById('modal-content');
                 let resultHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
-                    <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">CRISIS RESULT</h2>
+                    <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">CRISIS RESOLVED</h2>
                     <div style="margin-top: 10px; font-size: 15px; font-family: monospace; background: rgba(0,0,0,0.75); padding: 12px; border-radius: 6px; margin-bottom: 14px;">
                         Rolled -> <strong>${successes} Successes</strong> (Needed: ${this.activeCrisis.requiredSuccesses})
                     </div>
@@ -1453,7 +1421,7 @@
                 this.crisisResolvedThisRound = true;
                 this.pendingCrisisSuccesses = null;
                 document.getElementById('hud-integrity').innerText = `${this.integrity} HP`;
-                resultHTML += `<button class="magipunk-btn primary" style="width: 100%; padding: 14px; font-size: 15px;" onclick="game.closeModal(null)">Close & Continue</button>`;
+                resultHTML += `<button class="magipunk-btn primary" style="width: 100%; padding: 14px; font-size: 15px;" onclick="game.closeModal(null)">Close & Continue to Hero Phase</button>`;
                 content.innerHTML = resultHTML;
             }
 
@@ -1557,18 +1525,15 @@
                 this.log("[Phase 3: Enemy Phase] Minions & Boss AI execute automated pursuit and combat attacks.", "alert");
                 
                 if (this.gameOver) return;
-                // Prototype boss entrance cadence: first boss arrives in Round 2; no duplicate boss spawns.
                 if(this.round >= 2 && this.bosses.length === 0) {
                     this.bosses.push({ id: 'boss1', name: 'Daask Commander Xant', hp: 10, car: 5, cell: 5 });
                     this.log(`[Boss Entrance] Daask Commander Xant boards Car 5 with 10 HP!`, "alert");
                 }
 
-                // Traitor sabotage is kept visible as a prototype reminder; no random integrity damage is applied.
                 if (this.hasTraitorMode && this.traitorHeroId) {
                     this.sabotageTokens = Math.max(0, this.sabotageTokens);
                 }
 
-                // Enemies advance toward the VIP carriage. Heroes in the same carriage can intercept attacks.
                 const allEnemies = [...this.minions, ...this.bosses];
                 allEnemies.forEach(enemy => {
                     if (this.gameOver || enemy.hp <= 0) return;
@@ -1582,7 +1547,6 @@
                         this.log(`[Enemy Movement] ${enemy.name || enemy.id} advances toward the VIP to Carriage ${enemy.car}.`);
                         return;
                     }
-                    // Attack a nearby hero first; this makes positioning and interception matter.
                     const defender = this.nearestHeroForEnemy(enemy);
                     const vip = this.vips[0];
                     if (defender) {
@@ -1610,7 +1574,7 @@
                 this.checkGameOverConditions();
                 document.getElementById('hud-phase').innerText = '3. Enemy';
                 document.getElementById('current-phase-title').innerText = 'Phase 3: Enemy Phase (Boss AI & Combat)';
-                document.getElementById('current-phase-desc').innerText = 'Enemies advance toward Carriage 2; heroes in the same carriage and within 3 spaces can intercept attacks. Melindre at 0 HP has one full round to be stabilised.';
+                document.getElementById('current-phase-desc').innerText = 'Enemies advance toward Carriage 2; heroes in the same carriage and within 3 spaces can intercept attacks.';
                 this.renderTokens();
             }
 
@@ -1622,11 +1586,12 @@
                     if (!this.crisisResolvedThisRound) {
                         if (this.pendingCrisisSuccesses === null) { this.log("Resolve the crisis: roll the skill check first.", "alert"); return; }
                         this.evaluateCrisisOutcome(this.pendingCrisisSuccesses);
-                        return; // player closes result and clicks again to enter Hero Phase
+                        return;
                     }
                     this.phase = 2;
                     this.activeHeroIndex = 0; this.heroTurnsCompleted = 0;
                     this.heroes.forEach(h => h.ap = h.maxAp);
+                    this.activeCrisis = null; // Remove crisis card once resolved and moving to Hero Phase
                 } else if (this.phase === 2) {
                     if (this.heroTurnsCompleted < this.heroes.length) { this.log("Every hero must end their turn before advancing. Use End Hero Turn for each hero.", "alert"); return; }
                     this.phase = 3; this.executeEnemyPhase(); return;
@@ -1664,7 +1629,6 @@
                 if(this.integrity <= 0) {
                     this.triggerGameOver(false, "Catastrophic Failure: Train Integrity reached 0 HP.");
                 } else if(this.vips.length > 0 && this.vips[0].hp <= 0) {
-                    // Melindre may be stabilised during the following full round; deadline is checked after that enemy phase.
                     this.markVIPDownedIfNeeded();
                 } else if(this.speed >= 12) {
                     if(this.vips.length > 0 && this.vips[0].hp > 0) {
@@ -1699,12 +1663,9 @@
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
                     <h2 style="color: var(--gold-primary); margin-bottom: 12px; font-size: 20px;">HOW TO PLAY — QUICK GUIDE</h2>
                     <div style="font-size:13px;line-height:1.65;text-align:left;color:var(--text-main)">
-                    <strong>1. Phase 1 — Crisis:</strong> Draw one Crisis card, roll the active hero's skill dice (4–6 are successes), optionally reroll failures once, then click Advance Phase to accept the result. The result modal appears before you continue.<br><br>
-                    <strong>2. Phase 2 — Heroes:</strong> Each hero gets 2 AP. Click a green-highlighted empty board space or drag the active hero token to move (1 AP). Tokens are anchored inside spaces; stacked tokens offset slightly. Within a carriage, move up to 3 spaces; to cross into the next carriage, use the same or adjacent space number. The active hero is shown in the right panel. Click End Hero Turn to pass to the next hero.<br><br>
-                    <strong>3. Attack:</strong> Move into the same carriage as an enemy and within 3 spaces. Click Attack Enemy (1 AP). The hero rolls skill dice; 4–6 succeed, and the attack deals at least 1 damage. Defeated enemies are removed.<br><br>
-                    <strong>4. Carriage Action (1 AP):</strong> Car 1 Engine Room: restore 2 Integrity and set engine Operational. Car 2: heal or stabilise Melindre by 2 (she has a one-round rescue window at 0 HP). Car 3: reduce your Stress by 1. Car 4: reduce Stress by 1 for heroes there. Car 5: guard Melindre against the next enemy attack.<br><br>
-                    <strong>5. Phases 3–4:</strong> Enemies move/attack automatically; then advance to Train Phase. Operational engine gains 1 Speed. Reach 12 Speed with Melindre alive and train Integrity above 0 to win.<br><br>
-                    <em>Note: movement, generic attacks and carriage actions in this repair edition are clearly defined prototype rules added to make the board playable; they are not claimed to be verbatim rules from the source rulebook.</em>
+                    <strong>1. Phase 1 — Crisis:</strong> Click <strong>Draw Crisis</strong> to open the crisis card popup. Roll skill dice, optionally push once, then click Advance Phase to accept and close the card.<br><br>
+                    <strong>2. Phase 2 — Heroes:</strong> Green-highlighted cells show legal moves. Click a green space or drag the active hero token to move (1 AP).<br><br>
+                    <strong>3. Attack & Carriage Actions:</strong> Move into range and click Attack Enemy or Carriage Action.<br><br>
                     </div>
                     <button class="magipunk-btn primary" style="width:100%;padding:12px;margin-top:14px" onclick="game.closeModal(null)">Got It</button>`;
                 modal.style.display = 'flex';
@@ -1722,7 +1683,7 @@
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
                     <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">${hero.name}</h2>
                     <div style="color: var(--text-muted); font-size: 14px; margin-bottom: 8px; font-weight: bold;">${hero.role}</div>
-                    <div style="color: var(--azure-glow); font-size: 12px; margin-bottom: 16px; font-style: italic;">Signature: ${hero.ability}</div>
+                    <div style="color: var(--azure-glow); font-size: 12px; margin-bottom: 16px; font-style: italic;">Signature: ${hero.ability}</tr>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; font-size: 14px;">
                         <div>Hit Points: <span style="color:#4ade80; font-weight: bold;">${hero.hp} / ${hero.maxHp}</span></div>
                         <div>Defense: <span style="color:var(--azure-glow); font-weight: bold;">${hero.def}</span></div>
@@ -1736,7 +1697,7 @@
 
             closeModal(e) {
                 if(!e || e.target.id === 'modal-overlay' || e.target.classList.contains('modal-close') || e.target.tagName === 'BUTTON') {
-                    document.getElementById('modal-overlay').style.display = 'none';
+                    document.getElementById('modal-overlay': undefined || document.getElementById('modal-overlay').style.display = 'none');
                 }
             }
         }
