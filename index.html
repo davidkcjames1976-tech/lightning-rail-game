@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightning Rail: Sharn to Thrane — v9.4.6 Enemy Targeting</title>
+    <title>Lightning Rail: Sharn to Thrane — v9.4.7 Fixes & Polish</title>
     <style>
         :root {
             --bg-deep: #070a12;
@@ -397,7 +397,7 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.95), inset 0 0 35px rgba(0,0,0,0.7);
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            padding: 86px 42px 58px 42px; /* Perfectly aligned to match the physical drawn car boundaries inside the image */
+            padding: 86px 42px 58px 42px;
             gap: 14px;
         }
 
@@ -420,7 +420,7 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            overflow: hidden; /* Guarantees tokens stay fully locked inside the carriage cell bounds */
+            overflow: hidden;
             isolation: isolate;
             transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
         }
@@ -438,7 +438,7 @@
             box-shadow: inset 0 0 12px rgba(0,229,255,0.7);
         }
 
-        /* Custom Asset Tokens - Perfectly proportioned to stay centered and inside cells */
+        /* Custom Asset Tokens */
         .token {
             width: 30px;
             height: 30px;
@@ -473,7 +473,6 @@
         .token.minion { border-color: var(--crimson-accent); }
         .token.vip { border-color: #f59e0b; }
         
-        /* Multi-token stacking offsets inside the same cell */
         .grid-cell .token:nth-of-type(2) { left: 70%; top: 30%; width: 26px; height: 26px; z-index: 26; }
         .grid-cell .token:nth-of-type(3) { left: 30%; top: 70%; width: 26px; height: 26px; z-index: 27; }
 
@@ -671,52 +670,14 @@
             text-shadow: 0 2px 5px rgba(0,0,0,0.9);
         }
 
-
-        /* Responsive board layout: keep all five carriages visible on ordinary desktop screens. */
         @media (max-width: 1750px) {
-            aside.left-sidebar {
-                width: 250px;
-                flex: 0 0 250px;
-                padding: 14px;
-                gap: 12px;
-            }
-            aside.right-sidebar {
-                width: 290px;
-                flex: 0 0 290px;
-                padding: 14px;
-                gap: 12px;
-            }
-            .board-workspace {
-                flex: 1 1 0;
-                min-width: 0;
-                padding: 8px;
-                justify-content: flex-start;
-            }
-            .master-board-container {
-                width: 100%;
-                max-width: 1040px;
-                height: auto;
-                aspect-ratio: 1040 / 590;
-                padding: 8.27% 4.04% 5.58%;
-                gap: 1.35%;
-            }
-            .board-control-hint {
-                flex: 0 0 auto;
-                font-size: 11px !important;
-            }
-            .board-car-column { min-width: 0; }
+            aside.left-sidebar { width: 250px; flex: 0 0 250px; padding: 14px; gap: 12px; }
+            aside.right-sidebar { width: 290px; flex: 0 0 290px; padding: 14px; gap: 12px; }
+            .board-workspace { flex: 1 1 0; min-width: 0; padding: 8px; justify-content: flex-start; }
+            .master-board-container { width: 100%; max-width: 1040px; height: auto; aspect-ratio: 1040 / 590; padding: 8.27% 4.04% 5.58%; gap: 1.35%; }
+            .board-control-hint { flex: 0 0 auto; font-size: 11px !important; }
             .token { width: clamp(17px, 1.9vw, 30px); height: clamp(17px, 1.9vw, 30px); font-size: clamp(6px, .55vw, 8px); }
-            .grid-cell .token:nth-of-type(2),
-            .grid-cell .token:nth-of-type(3) { width: clamp(15px, 1.65vw, 26px); height: clamp(15px, 1.65vw, 26px); }
-        }
-
-        @media (max-width: 1150px) {
-            aside.left-sidebar { width: 190px; flex-basis: 190px; padding: 9px; }
-            aside.right-sidebar { width: 235px; flex-basis: 235px; padding: 9px; }
-            .board-workspace { padding: 5px; }
-            .board-control-hint { padding: 6px 8px !important; font-size: 10px !important; }
-            .section-header { font-size: 12px; letter-spacing: .5px; }
-            .magipunk-btn { padding: 8px 6px; font-size: 11px; }
+            .grid-cell .token:nth-of-type(2), .grid-cell .token:nth-of-type(3) { width: clamp(15px, 1.65vw, 26px); height: clamp(15px, 1.65vw, 26px); }
         }
 
         @media (max-width: 900px) {
@@ -727,7 +688,6 @@
             .master-board-container { width: 100%; }
             .hero-roster { max-height: 180px; }
         }
-
     </style>
 </head>
 <body>
@@ -739,9 +699,9 @@
         <div class="mode-select-card">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
             <p><strong id="startup-version-label">Definitive Edition</strong><br>
+            • <strong>Fixed Startup Blocking:</strong> Resolved CSS/syntax selectors blocking the start screen buttons.<br>
             • <strong>Visual Card Popups:</strong> Crisis cards appear visually on screen during Phase 1 and disappear once resolved.<br>
-            • <strong>Strict Token Containment:</strong> Car padding and cell boundaries recalibrated so tokens stay 100% inside carriages.<br>
-            • <strong>Phase 2 Movement Fix:</strong> Movement clicks and green highlight zones fully synchronized with active AP.</p>
+            • <strong>Strict Token Containment:</strong> Car padding and cell boundaries recalibrated so tokens stay 100% inside carriages.</p>
             <div class="mode-buttons-container">
                 <button class="mode-btn" onclick="game.startGameMode(2, false)">1-2 Player (Standard)</button>
                 <button class="mode-btn" onclick="game.startGameMode(5, true)">3-5 Squad (+ Secret Traitor)</button>
@@ -871,22 +831,16 @@
 
     <!-- Script Engine -->
     <script>
-        // Release metadata: update this object once for each tested release.
-        // The page title, startup modal, header, startup log and How to Play guide
-        // all read from this single source of truth.
         const GAME_RELEASE = Object.freeze({
-            version: '9.4.6',
+            version: '9.4.7',
             edition: 'Definitive Edition',
-            buildId: 'LR-2026-10-23-F',
+            buildId: 'LR-2026-10-23-G',
             releaseDate: '2026-10-23',
             changes: [
+                'Fixed start screen modal button blocking issue caused by invalid CSS selector syntax.',
                 'Centralised version/build information so page labels stay in sync.',
-    'Fixed enemy activations so enemies that reach Carriage 2 can attack during the same Enemy Phase.',
-                'Enemies now prioritize a random reachable hero in their current carriage; otherwise they advance toward Carriage 2 and attack a reachable hero there or Melindre.',
-                'Fixed a JavaScript syntax error in modal closing that prevented the game script from starting.',
-                'Fixed secret-role reveal closing immediately when a hero button is clicked.' ,
-    'Added traitor accusations, private sequential voting, false-accusation immunity, confinement, sabotage tokens and Engine Overdrive.',
-                'Integrated crisis card display with the main-board dice tray, sabotage controls, event log and board-based outcome.'
+                'Fixed enemy activations so enemies that reach Carriage 2 can attack during the same Enemy Phase.',
+                'Enemies now prioritize a random reachable hero in their current carriage; otherwise they advance toward Carriage 2 and attack a reachable hero there or Melindre.'
             ]
         });
 
@@ -897,7 +851,7 @@
             const headerLabel = document.getElementById('header-version-label');
             if (headerLabel) headerLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} · Build ${GAME_RELEASE.buildId} | Traitor Rules & Carriage Alignment`;
             const startupLog = document.getElementById('startup-log-entry');
-            if (startupLog) startupLog.textContent = `[System] Lightning Rail ${GAME_RELEASE.edition} v${GAME_RELEASE.version} (${GAME_RELEASE.buildId}) loaded.`;
+            if (startupLog) startupLog.textContent = `[System] Lightning Rail ${GAME_RELEASE.edition} v${GAME_RELEASE.version} (${GAME_RELEASE.buildId}) loaded successfully.`;
         }
 
         class SoundEngine {
@@ -1058,17 +1012,20 @@
                     this.log(`[Secret Traitor Protocol] Secret traitor selected. The traitor starts with 2 Sabotage Tokens.`, "alert");
                 }
 
-                document.getElementById('mode-select-overlay').style.display = 'none';
+                const overlay = document.getElementById('mode-select-overlay');
+                if (overlay) overlay.style.display = 'none';
                 this.initUI();
                 if (this.hasTraitorMode) this.showSecretRoleCheck();
             }
 
             showSecretRoleCheck() {
                 const content = document.getElementById('modal-content');
+                if (!content) return;
                 content.innerHTML = `<h2 style="color:var(--gold-primary);font-size:20px">SECRET ROLE CHECK</h2>
                     <p style="line-height:1.55">Pass the device around. Each player should select the hero they control, read the result privately, then hide it before passing the device on. Do not announce your result.</p>
                     ${this.heroes.map(h => `<button class="magipunk-btn" style="display:block;width:100%;margin:7px 0" onclick="game.revealSecretRole('${h.id}')">Check as ${h.name}</button>`).join('')}`;
-                document.getElementById('modal-overlay').style.display = 'flex';
+                const overlay = document.getElementById('modal-overlay');
+                if (overlay) overlay.style.display = 'flex';
             }
 
             revealSecretRole(heroId) {
@@ -1076,6 +1033,7 @@
                 if (!hero) return;
                 const isTraitor = hero.id === this.traitorHeroId;
                 const content = document.getElementById('modal-content');
+                if (!content) return;
                 content.innerHTML = `<h2 style="color:${isTraitor ? '#ff1744' : '#4ade80'};font-size:20px">${isTraitor ? 'YOU ARE THE TRAITOR' : 'YOU ARE LOYAL'}</h2>
                     <p style="line-height:1.6">${isTraitor ? 'Your secret objective is to derail the train or prevent it reaching Speed 12 by the end of Round 10. You begin with 2 Sabotage Tokens. Spend them discreetly to cancel a success after the initial Crisis roll, or cancel an Engine Overdrive bonus.' : 'Help protect Melindre and get the train to Thrane. Watch for suspicious behaviour and use the accusation rules carefully.'}</p>
                     <p style="font-size:12px;color:var(--text-muted)">Close this screen before passing the device. Do not leave your secret role visible.</p>
@@ -1095,6 +1053,7 @@
 
             log(msg, type='') {
                 const consoleEl = document.getElementById('log-console');
+                if (!consoleEl) return;
                 const entry = document.createElement('div');
                 entry.className = `log-entry ${type}`;
                 entry.innerText = `> ${msg}`;
@@ -1104,6 +1063,7 @@
 
             renderRoster() {
                 const rosterEl = document.getElementById('hero-roster');
+                if (!rosterEl) return;
                 rosterEl.innerHTML = '';
                 this.heroes.forEach((h, idx) => {
                     const card = document.createElement('div');
@@ -1141,8 +1101,10 @@
                 } else if (hero.id === 'bromli') {
                     this.engineState = 'Operational';
                     this.integrity = Math.min(10, this.integrity + 2);
-                    document.getElementById('hud-engine').innerText = this.engineState;
-                    document.getElementById('hud-integrity').innerText = `${this.integrity} HP`;
+                    const engEl = document.getElementById('hud-engine');
+                    if (engEl) engEl.innerText = this.engineState;
+                    const intEl = document.getElementById('hud-integrity');
+                    if (intEl) intEl.innerText = `${this.integrity} HP`;
                     this.log("[Signature] Bromli restores the engine to Operational and repairs 2 Integrity.", "highlight");
                 } else if (hero.id === 'fix') {
                     hero.stress = Math.max(0, hero.stress - 1);
@@ -1174,6 +1136,7 @@
             renderMasterBoardGrid() {
                 for(let carId=1; carId<=5; carId++) {
                     const col = document.getElementById(`car-grid-${carId}`);
+                    if (!col) continue;
                     col.innerHTML = '';
                     for(let i=0; i<10; i++) {
                         const cell = document.createElement('div');
@@ -1300,8 +1263,6 @@
             }
 
             reachableHeroesForEnemy(enemy) {
-                // A hero is a valid target only if alive, in the same carriage,
-                // and within the enemy's 3-space reach.
                 return this.heroes.filter(h =>
                     h.hp > 0 && !h.confined && h.car === enemy.car && Math.abs(h.cell - enemy.cell) <= 3
                 );
@@ -1368,8 +1329,10 @@
                     const before = this.integrity;
                     this.integrity = Math.min(10, this.integrity + 2);
                     this.engineState = 'Operational';
-                    document.getElementById('hud-engine').innerText = this.engineState;
-                    document.getElementById('hud-integrity').innerText = `${this.integrity} HP`;
+                    const engEl = document.getElementById('hud-engine');
+                    if (engEl) engEl.innerText = this.engineState;
+                    const intEl = document.getElementById('hud-integrity');
+                    if (intEl) intEl.innerText = `${this.integrity} HP`;
                     this.log(`${hero.name} works in the Engine Room: engine Operational, Integrity ${before} → ${this.integrity} (1 AP).`, "highlight");
                 } else if (hero.car === 2) {
                     const vip = this.vips[0];
@@ -1395,11 +1358,13 @@
             updateActionEconomyUI() {
                 const hero = this.getActiveHero();
                 if (!hero) return;
-                document.getElementById('active-hero-label').innerText = `Active: ${hero.name} — Car ${hero.car}, space ${hero.cell}`;
-                document.getElementById('active-ap-label').innerText = `AP: ${hero.ap} / ${hero.maxAp}`;
+                const heroLabel = document.getElementById('active-hero-label');
+                if (heroLabel) heroLabel.innerText = `Active: ${hero.name} — Car ${hero.car}, space ${hero.cell}`;
+                const apLabel = document.getElementById('active-ap-label');
+                if (apLabel) apLabel.innerText = `AP: ${hero.ap} / ${hero.maxAp}`;
                 this.refreshLegalMoves();
                 const btnEnd = document.getElementById('btn-end-turn');
-                btnEnd.disabled = (this.phase !== 2);
+                if (btnEnd) btnEnd.disabled = (this.phase !== 2);
                 const accuseBtn = document.getElementById('btn-accuse-traitor');
                 if (accuseBtn) accuseBtn.style.display = (this.hasTraitorMode && this.phase === 2 && hero.car === 4 && !hero.confined && hero.ap >= 2 && !this.gameOver && !this.accusationInProgress) ? 'block' : 'none';
                 const overdriveBtn = document.getElementById('btn-engine-overdrive');
@@ -1416,13 +1381,15 @@
                 const eligible = this.heroes.filter(h => h.id !== accuser.id && h.accusationImmuneUntilRound !== this.round);
                 if (eligible.length === 0) { this.log("There is nobody eligible to accuse right now.", "alert"); return; }
                 const content = document.getElementById('modal-content');
+                if (!content) return;
                 content.innerHTML = `<span class="modal-close" onclick="game.closeModal(null)">&times;</span>
                     <h2 style="color:var(--gold-primary);font-size:20px">ACCUSE A SUSPECT</h2>
                     <p style="line-height:1.5">${accuser.name} spends <strong>2 AP</strong> to accuse one hero. Everyone except the accused must vote. Votes are entered one at a time; the running tally stays hidden until all votes are in.</p>
                     <p><strong>Choose a suspect:</strong></p>
                     ${eligible.map(h => `<button class="magipunk-btn" style="display:block;width:100%;margin:7px 0" onclick="game.beginTraitorVote('${h.id}')">${h.name} — ${h.role}</button>`).join('')}
                     <button class="magipunk-btn" style="width:100%;margin-top:8px" onclick="game.closeModal(null)">Cancel</button>`;
-                document.getElementById('modal-overlay').style.display = 'flex';
+                const overlay = document.getElementById('modal-overlay');
+                if (overlay) overlay.style.display = 'flex';
             }
 
             beginTraitorVote(accusedId) {
@@ -1446,6 +1413,7 @@
                 const voter = this.heroes.find(h => h.id === state.voters[state.index]);
                 const accused = this.heroes.find(h => h.id === state.accusedId);
                 const content = document.getElementById('modal-content');
+                if (!content) return;
                 content.innerHTML = `<h2 style="color:var(--gold-primary);font-size:20px">PRIVATE VOTE ${state.index + 1}/${state.voters.length}</h2>
                     <p style="line-height:1.5">Pass the device to <strong>${voter.name}</strong>. Vote on whether <strong>${accused.name}</strong> is the traitor.</p>
                     <p style="color:var(--text-muted);font-size:12px">Your choice is hidden from the tally until every eligible hero has voted. The accused cannot vote.</p>
@@ -1453,7 +1421,8 @@
                     <button class="magipunk-btn primary" style="flex:1" onclick="game.submitTraitorVote(true)">YES — GUILTY</button>
                     <button class="magipunk-btn" style="flex:1" onclick="game.submitTraitorVote(false)">NO — NOT GUILTY</button>
                     </div>`;
-                document.getElementById('modal-overlay').style.display = 'flex';
+                const overlay = document.getElementById('modal-overlay');
+                if (overlay) overlay.style.display = 'flex';
             }
 
             submitTraitorVote(voteYes) {
@@ -1489,11 +1458,13 @@
                 }
                 this.accusationInProgress = null;
                 const content = document.getElementById('modal-content');
+                if (!content) return;
                 content.innerHTML = `<h2 style="color:${majority && isCorrect ? '#4ade80' : '#ff1744'};font-size:20px">${majority && isCorrect ? 'TRAITOR FOUND' : 'ACCUSATION FAILED'}</h2>
                     <p style="line-height:1.6">${result}</p>
                     <p><strong>Vote:</strong> ${yesVotes} YES out of ${eligibleVotes} eligible voters.</p>
                     <button class="magipunk-btn primary" style="width:100%;margin-top:12px" onclick="game.closeModal(null)">Continue</button>`;
-                document.getElementById('modal-overlay').style.display = 'flex';
+                const overlay = document.getElementById('modal-overlay');
+                if (overlay) overlay.style.display = 'flex';
                 this.renderRoster(); this.renderTokens(); this.updateActionEconomyUI();
             }
 
@@ -1505,7 +1476,8 @@
                 const before = this.pendingCrisisSuccesses;
                 this.pendingCrisisSuccesses = Math.max(0, before - 1);
                 this.sabotageAppliedThisCheck = true;
-                document.getElementById('dice-status').innerText = `${this.pendingCrisisSuccesses} Successes — sabotaged`;
+                const statusEl = document.getElementById('dice-status');
+                if (statusEl) statusEl.innerText = `${this.pendingCrisisSuccesses} Successes — sabotaged`;
                 this.log(`[Sabotage] One success cancelled (${before} → ${this.pendingCrisisSuccesses}). ${this.sabotageTokens} token(s) remain.`, "alert");
                 this.renderCrisisRollState('Initial roll · sabotage applied');
             }
@@ -1525,7 +1497,8 @@
                     this.log("Engine Overdrive succeeds: +1 bonus Speed at the Train Phase. The traitor may spend 1 Sabotage Token to cancel this bonus.", "highlight");
                 } else {
                     this.integrity = Math.max(0, this.integrity - 1);
-                    document.getElementById('hud-integrity').innerText = `${this.integrity} HP`;
+                    const intEl = document.getElementById('hud-integrity');
+                    if (intEl) intEl.innerText = `${this.integrity} HP`;
                     this.log(`Engine Overdrive fails; Train Integrity falls by 1 to ${this.integrity}.`, "alert");
                     this.checkGameOverConditions();
                 }
@@ -1578,11 +1551,13 @@
                 this.sound.playClick();
                 if(card.title === "Engine Reboot") {
                     this.engineState = 'Operational';
-                    document.getElementById('hud-engine').innerText = 'Operational';
+                    const engEl = document.getElementById('hud-engine');
+                    if (engEl) engEl.innerText = 'Operational';
                     this.log(`Engine Reboot played! Engine restored to Operational.`, "highlight");
                 } else if(card.title === "Arcane Shielding") {
                     this.integrity = Math.min(10, this.integrity + 2);
-                    document.getElementById('hud-integrity').innerText = `${this.integrity} HP`;
+                    const intEl = document.getElementById('hud-integrity');
+                    if (intEl) intEl.innerText = `${this.integrity} HP`;
                     this.log(`Arcane Shielding played! Train Integrity bolstered by +2 HP.`, "highlight");
                 } else {
                     this.log(`Played Action Card: ${card.title} - Effect applied successfully.`, "highlight");
@@ -1622,6 +1597,7 @@
             showCrisisModal(crisis) {
                 const modal = document.getElementById('modal-overlay');
                 const content = document.getElementById('modal-content');
+                if (!content) return;
                 const hero = this.getActiveHero();
                 content.innerHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
@@ -1636,7 +1612,7 @@
                     </p>
                     <button class="magipunk-btn primary" style="width: 100%; font-size: 15px; padding: 14px;" onclick="game.closeCrisisCard()">Return to Board & Resolve Crisis</button>
                 `;
-                modal.style.display = 'flex';
+                if (modal) modal.style.display = 'flex';
             }
 
             closeCrisisCard() {
@@ -1692,8 +1668,10 @@
                 }
                 const hero = this.getActiveHero();
                 this.sound.playDiceRoll();
-                document.getElementById('dice-status').innerText = "Rolling...";
+                const statusEl = document.getElementById('dice-status');
+                if (statusEl) statusEl.innerText = "Rolling...";
                 const tray = document.getElementById('dice-tray');
+                if (!tray) return;
                 tray.innerHTML = '';
 
                 this.hasRerolledThisCheck = false;
@@ -1726,13 +1704,13 @@
                         tray.appendChild(die);
                     });
                     if (hero.id === 'jan' && this.janInsightBonus) { successes++; this.janInsightBonus = false; this.log("[Signature] Jan's Investigative Insight adds +1 success.", "highlight"); }
-                    document.getElementById('dice-status').innerText = `${successes} Successes (4,5,6 = 1)`;
+                    if (statusEl) statusEl.innerText = `${successes} Successes (4,5,6 = 1)`;
                     if(successes > 0) this.sound.playSuccess();
                     this.log(`${hero.name} Skill Check (Pool ${hero.skill}d6) -> Rolled [${this.currentDice.join(', ')}] -> ${successes} Successes.`);
 
                     this.pendingCrisisSuccesses = successes;
                     if(this.activeCrisis) {
-                        document.getElementById('dice-status').innerText = `${successes} Successes — reroll or accept`;
+                        if (statusEl) statusEl.innerText = `${successes} Successes — reroll or accept`;
                         this.log("Crisis roll is pending. Choose Push, Secret Sabotage if available, or Resolve Crisis Outcome in the board panel.");
                         this.renderCrisisRollState('Initial roll');
                     }
@@ -1752,9 +1730,11 @@
                     this.integrity = Math.max(0, this.integrity - damage);
                     if(crisis.dc >= 13) {
                         this.engineState = 'Damaged';
-                        document.getElementById('hud-engine').innerText = 'Damaged';
+                        const engEl = document.getElementById('hud-engine');
+                        if (engEl) engEl.innerText = 'Damaged';
                     }
-                    document.getElementById('hud-integrity').innerText = `${this.integrity} HP`;
+                    const intEl = document.getElementById('hud-integrity');
+                    if (intEl) intEl.innerText = `${this.integrity} HP`;
                     outcomeHTML += `<div style="color:var(--crimson-accent);font-weight:bold;margin-top:8px">CRISIS FAILED</div><div style="font-size:13px">${crisis.penalty} (Integrity −${damage})</div>`;
                     this.log(`Crisis Failed: ${crisis.title} (${successes}/${crisis.requiredSuccesses} successes). Integrity −${damage}; engine ${this.engineState}.`, "alert");
                     this.checkGameOverConditions();
@@ -1763,7 +1743,8 @@
                 this.pendingCrisisSuccesses = null;
                 this.pendingInitialRoll = false;
                 this.sabotageAppliedThisCheck = false;
-                document.getElementById('hud-integrity').innerText = `${this.integrity} HP`;
+                const intEl = document.getElementById('hud-integrity');
+                if (intEl) intEl.innerText = `${this.integrity} HP`;
                 this.lastCrisisOutcomeHtml = outcomeHTML;
                 this.log(`Board state updated for crisis: Train Integrity ${this.integrity}/10; Engine ${this.engineState}.`, "highlight");
                 this.renderCrisisBoardPanel('resolved');
@@ -1788,8 +1769,10 @@
                 this.hasRerolledThisCheck = true;
                 this.pendingInitialRoll = false;
                 this.sound.playDiceRoll();
-                document.getElementById('dice-status').innerText = "Pushing Luck...";
+                const statusEl = document.getElementById('dice-status');
+                if (statusEl) statusEl.innerText = "Pushing Luck...";
                 const tray = document.getElementById('dice-tray');
+                if (!tray) return;
                 tray.innerHTML = '';
 
                 let successes = 0;
@@ -1819,7 +1802,7 @@
                     tray.appendChild(die);
                 });
 
-                document.getElementById('dice-status').innerText = `${successes} Successes (Push Locked)`;
+                if (statusEl) statusEl.innerText = `${successes} Successes (Push Locked)`;
                 this.sound.playSuccess();
                 this.log(`Push Reroll -> [${this.currentDice.join(', ')}] (${successes} Successes). Reroll guard engaged.`);
 
@@ -1830,7 +1813,7 @@
                 }
                 this.pendingCrisisSuccesses = successes;
                 if(this.activeCrisis && !this.crisisResolvedThisRound) {
-                    document.getElementById('dice-status').innerText = `${successes} Successes — result pending`;
+                    if (statusEl) statusEl.innerText = `${successes} Successes — result pending`;
                     this.log("Push resolved. Accept the final crisis result in the crisis popup.");
                     this.renderCrisisRollState('Push reroll · final result');
                 }
@@ -1838,6 +1821,7 @@
 
             renderHand() {
                 const container = document.getElementById('hand-container');
+                if (!container) return;
                 if(this.hand.length === 0) {
                     container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 35px; font-weight: bold;">Your hand is empty. Draw cards to begin.</div>`;
                     return;
@@ -1895,17 +1879,12 @@
                 allEnemies.forEach(enemy => {
                     if (this.gameOver || enemy.hp <= 0) return;
 
-                    // Priority 1: attack a random living, non-confined hero already
-                    // in this carriage and within 3 spaces. This prevents enemies
-                    // ignoring heroes they can actually reach.
                     const currentCarriageTarget = this.randomReachableHeroForEnemy(enemy);
                     if (currentCarriageTarget) {
                         this.enemyAttackHero(enemy, currentCarriageTarget);
                         return;
                     }
 
-                    // Priority 2: if no hero is reachable here, advance one carriage
-                    // toward Carriage 2 (Melindre's carriage).
                     if (enemy.car > 2) {
                         enemy.car--;
                         this.log(`[Enemy Movement] ${enemy.name || enemy.id} advances to Carriage ${enemy.car}.`);
@@ -1914,9 +1893,6 @@
                         this.log(`[Enemy Movement] ${enemy.name || enemy.id} advances toward the VIP to Carriage ${enemy.car}.`);
                     }
 
-                    // If movement brings the enemy into Carriage 2, it gets to
-                    // attack during this activation: a reachable hero first,
-                    // otherwise Melindre. Enemies farther away keep advancing.
                     if (enemy.car === 2) {
                         const carriageTwoTarget = this.randomReachableHeroForEnemy(enemy);
                         if (carriageTwoTarget) this.enemyAttackHero(enemy, carriageTwoTarget);
@@ -1927,11 +1903,15 @@
                     if (h.hp <= 0) this.log(`[Incapacitated] ${h.name} has been knocked out and cannot intercept until restored.`, "alert");
                 });
 
-                document.getElementById('hud-integrity').innerText = `${this.integrity} HP`;
+                const intEl = document.getElementById('hud-integrity');
+                if (intEl) intEl.innerText = `${this.integrity} HP`;
                 this.checkGameOverConditions();
-                document.getElementById('hud-phase').innerText = '3. Enemy';
-                document.getElementById('current-phase-title').innerText = 'Phase 3: Enemy Phase (Boss AI & Combat)';
-                document.getElementById('current-phase-desc').innerText = 'Enemies advance toward Carriage 2; heroes in the same carriage and within 3 spaces can intercept attacks.';
+                const phaseEl = document.getElementById('hud-phase');
+                if (phaseEl) phaseEl.innerText = '3. Enemy';
+                const titleEl = document.getElementById('current-phase-title');
+                if (titleEl) titleEl.innerText = 'Phase 3: Enemy Phase (Boss AI & Combat)';
+                const descEl = document.getElementById('current-phase-desc');
+                if (descEl) descEl.innerText = 'Enemies advance toward Carriage 2; heroes in the same carriage and within 3 spaces can intercept attacks.';
                 this.renderTokens();
             }
 
@@ -1947,8 +1927,8 @@
                     }
                     this.phase = 2;
                     this.activeHeroIndex = 0; this.heroTurnsCompleted = 0;
-                    this.heroes.forEach(h => h.ap = h.confined ? 0 : h.maxAp);
-                    this.activeCrisis = null; // Remove crisis card once resolved and moving to Hero Phase
+                    this.heroes.forEach(h => h.ap = h.maxAp);
+                    this.activeCrisis = null;
                 } else if (this.phase === 2) {
                     if (this.heroTurnsCompleted < this.heroes.length) { this.log("Every hero must end their turn before advancing. Use End Hero Turn for each hero.", "alert"); return; }
                     this.phase = 3; this.executeEnemyPhase(); return;
@@ -1961,7 +1941,8 @@
                     }
                     if (this.engineState === 'Operational') {
                         this.speed++;
-                        document.getElementById('hud-speed').innerText = `${this.speed} / 12`;
+                        const speedEl = document.getElementById('hud-speed');
+                        if (speedEl) speedEl.innerText = `${this.speed} / 12`;
                         this.log(`Train advanced! Speed track is now ${this.speed} / 12.`, "highlight");
                     } else this.log(`Engine is ${this.engineState}; the train cannot gain its normal Speed this round.`, "alert");
                     if (this.overdriveBonusThisRound > 0) {
@@ -1969,7 +1950,8 @@
                         this.log(`Engine Overdrive adds +${this.overdriveBonusThisRound} bonus Speed. Track: ${this.speed} / 12.`, "highlight");
                         this.overdriveBonusThisRound = 0;
                     }
-                    document.getElementById('hud-speed').innerText = `${this.speed} / 12`;
+                    const speedEl = document.getElementById('hud-speed');
+                    if (speedEl) speedEl.innerText = `${this.speed} / 12`;
                     this.checkGameOverConditions();
                     if (this.round >= 10 && this.speed < 12 && !this.gameOver) { this.triggerGameOver(false, "Time Expired: Round 10 ended before the train reached Thrane."); return; }
                 } else {
@@ -1983,9 +1965,12 @@
                 }
                 const titles = ["Phase 1: Crisis Phase", "Phase 2: Hero Phase (2 AP)", "Phase 3: Enemy Phase", "Phase 4: Train & Track Phase"];
                 const descs = ["Draw and resolve one crisis; roll, optionally push once, then accept the result.", "Each hero gets 2 AP to move, attack, use a carriage action or ability.", "Minions and bosses move and attack automatically.", "If the engine is Operational, gain 1 Speed. Check victory and defeat."];
-                document.getElementById('hud-phase').innerText = titles[this.phase-1].split(':')[0];
-                document.getElementById('current-phase-title').innerText = titles[this.phase-1];
-                document.getElementById('current-phase-desc').innerText = descs[this.phase-1];
+                const phaseEl = document.getElementById('hud-phase');
+                if (phaseEl) phaseEl.innerText = titles[this.phase-1].split(':')[0];
+                const titleEl = document.getElementById('current-phase-title');
+                if (titleEl) titleEl.innerText = titles[this.phase-1];
+                const descEl = document.getElementById('current-phase-desc');
+                if (descEl) descEl.innerText = descs[this.phase-1];
                 this.renderTokens(); this.renderRoster(); this.updateActionEconomyUI();
             }
 
@@ -2008,6 +1993,7 @@
                 this.gameOver = true;
                 const modal = document.getElementById('modal-overlay');
                 const content = document.getElementById('modal-content');
+                if (!content) return;
                 const color = isVictory ? '#4ade80' : '#ff1744';
                 content.innerHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
@@ -2015,7 +2001,7 @@
                     <p style="font-size: 16px; line-height: 1.6; color: var(--text-main); margin-bottom: 22px; font-weight: bold;">${message}</p>
                     <button class="magipunk-btn primary" style="width: 100%; font-size: 15px; padding: 14px;" onclick="location.reload()">Restart Campaign</button>
                 `;
-                modal.style.display = 'flex';
+                if (modal) modal.style.display = 'flex';
                 this.log(message, isVictory ? "highlight" : "alert");
             }
 
@@ -2023,6 +2009,7 @@
                 this.sound.playClick();
                 const modal = document.getElementById('modal-overlay');
                 const content = document.getElementById('modal-content');
+                if (!content) return;
                 content.innerHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
                     <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">HOW TO PLAY — QUICK GUIDE</h2>
@@ -2039,7 +2026,7 @@
                     <strong>5. Engine Overdrive:</strong> A hero in Carriage 1 may spend 1 AP to roll their current Skill dice. One or more successes adds +1 bonus Speed at the Train Phase; zero successes costs 1 Train Integrity. The traitor can spend 1 Sabotage Token to cancel the bonus.<br><br>
                     </div>
                     <button class="magipunk-btn primary" style="width:100%;padding:12px;margin-top:14px" onclick="game.closeModal(null)">Got It</button>`;
-                modal.style.display = 'flex';
+                if (modal) modal.style.display = 'flex';
             }
 
             inspectCard(card) {
@@ -2050,6 +2037,7 @@
                 this.sound.playClick();
                 const modal = document.getElementById('modal-overlay');
                 const content = document.getElementById('modal-content');
+                if (!content) return;
                 content.innerHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
                     <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">${hero.name}</h2>
@@ -2063,14 +2051,13 @@
                         <div>Action Points: <span style="color:var(--gold-light); font-weight: bold;">${hero.ap} / ${hero.maxAp}</span></div>
                     </div>
                 `;
-                modal.style.display = 'flex';
+                if (modal) modal.style.display = 'flex';
             }
 
             closeModal(e) {
-                // Close only when the backdrop itself or an explicit close control is clicked.
-                // Buttons inside the modal (including secret-role choices) must not close it via bubbling.
                 if (!e || e.target.id === 'modal-overlay' || e.target.classList.contains('modal-close')) {
-                    document.getElementById('modal-overlay').style.display = 'none';
+                    const modal = document.getElementById('modal-overlay');
+                    if (modal) modal.style.display = 'none';
                 }
             }
         }
