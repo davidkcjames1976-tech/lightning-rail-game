@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightning Rail: Sharn to Thrane — v9.6.0 Telegraphed Bosses & Active VIP Powers</title>
+    <title>Lightning Rail: Sharn to Thrane — v9.6.1 Restored Traitor & Active VIP Powers</title>
     <style>
         :root {
             --bg-deep: #070a12;
@@ -692,9 +692,9 @@
     <div class="mode-select-overlay" id="mode-select-overlay">
         <div class="mode-select-card">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <p><strong id="startup-version-label">v9.6.0 Tactical Edition</strong><br>
-            • <strong>Telegraphed Bosses:</strong> Bosses approach in Carriage 5 for 1 round before breaching inner carriages.<br>
-            • <strong>Active VIP Powers:</strong> Shetari has a once-per-game Diplomatic Strike, and Melindre has a once-per-game Silver Flame Heal.<br>
+            <p><strong id="startup-version-label">v9.6.1 Master Edition</strong><br>
+            • <strong>Restored Secret Traitor Reveal:</strong> Private role checks restored at game start.<br>
+            • <strong>Telegraphed Bosses & Active VIP Powers:</strong> Telegraphed boss approach + Shetari's <em>Diplomatic Strike</em> & Melindre's <em>Silver Flame Heal</em>.<br>
             • <strong>Balanced Pacing:</strong> 5-card hand refresh per round & scaled multi-player crisis draws.</p>
             <div class="mode-buttons-container">
                 <button class="mode-btn" onclick="game.startGameMode(2, false)">1-2 Player (Standard)</button>
@@ -707,7 +707,7 @@
     <header>
         <div class="title-area">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <span id="header-version-label">v9.6.0 | Telegraphed Bosses & Active VIP Powers</span>
+            <span id="header-version-label">v9.6.1 | Traitor Reveal Restored & Active VIP Powers</span>
         </div>
         <div class="global-status">
             <div class="status-badge">
@@ -786,6 +786,7 @@
                     <button class="magipunk-btn" onclick="game.advancePhase()">Advance Phase</button>
                     <button class="magipunk-btn" onclick="game.attackNearestEnemy()">Attack Enemy (1 AP)</button>
                     <button class="magipunk-btn" onclick="game.performCarriageAction()">Carriage Action (1 AP)</button>
+                    <button class="magipunk-btn" id="btn-accuse-traitor" onclick="game.openAccusationModal()" style="display:none">Accuse Traitor (2 AP)</button>
                     <button class="magipunk-btn" onclick="game.useShetariStrike()" style="background:linear-gradient(to bottom,#78350f,#451a03)">Shetari Strike</button>
                     <button class="magipunk-btn" onclick="game.useMelindreHeal()" style="background:linear-gradient(to bottom,#065f46,#064e3b)">Melindre Heal</button>
                 </div>
@@ -809,7 +810,7 @@
 
             <div class="section-header">Event & Action Log</div>
             <div class="log-console" id="log-console">
-                <div class="log-entry highlight" id="startup-log-entry">[System] Lightning Rail v9.6.0 loaded. Telegraphed bosses & active VIP powers active.</div>
+                <div class="log-entry highlight" id="startup-log-entry">[System] Lightning Rail v9.6.1 loaded. Traitor reveal & active VIP powers active.</div>
             </div>
         </aside>
     </main>
@@ -825,14 +826,14 @@
     <!-- Script Engine -->
     <script>
         const GAME_RELEASE = Object.freeze({
-            version: '9.6.0',
-            edition: 'Tactical Edition',
-            buildId: 'LR-2026-10-23-J',
+            version: '9.6.1',
+            edition: 'Master Edition',
+            buildId: 'LR-2026-10-23-K',
             releaseDate: '2026-10-23',
             changes: [
-                'Added telegraphed boss spawns: bosses approach in Carriage 5 for 1 round before breaching inner carriages.',
-                'Integrated active VIP abilities: Shetari has a once-per-game Diplomatic Strike, and Melindre has a once-per-game Silver Flame Heal.',
-                'Maintained scaled multi-player crises and 5-card round hand refreshes.'
+                'Restored the secret traitor reveal mechanic at game start when secret traitor mode is enabled.',
+                'Integrated telegraphed boss spawns and active VIP powers (Shetari Diplomatic Strike & Melindre Silver Flame Heal).',
+                'Maintained 5-card round hand refreshes and strict token containment.'
             ]
         });
 
@@ -841,7 +842,7 @@
             const startupLabel = document.getElementById('startup-version-label');
             if (startupLabel) startupLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} · Build ${GAME_RELEASE.buildId}`;
             const headerLabel = document.getElementById('header-version-label');
-            if (headerLabel) headerLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} | Telegraphed Bosses & Active VIP Powers`;
+            if (headerLabel) headerLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} | Traitor Reveal & Active VIP Powers`;
             const startupLog = document.getElementById('startup-log-entry');
             if (startupLog) startupLog.textContent = `[System] Lightning Rail ${GAME_RELEASE.edition} v${GAME_RELEASE.version} (${GAME_RELEASE.buildId}) loaded successfully.`;
         }
@@ -947,8 +948,8 @@
                 this.hasTraitorMode = false;
                 this.traitorHeroId = null;
                 this.sabotageTokens = 0;
-                this.bossesSpawnedRounds = [3, 7]; // Telegraphed boss spawn rounds
-                this.pendingBossRounds = [2, 6]; // 1 round warning before spawn
+                this.bossesSpawnedRounds = [3, 7];
+                this.pendingBossRounds = [2, 6];
                 
                 this.allHeroes = [
                     { id: 'jan', name: 'Jan Valek', role: 'Vampire Detective', ability: 'Investigative Insight (+1 to Crisis checks)', hp: 12, maxHp: 12, def: 15, skill: 3, tac: 3, stress: 0, car: 1, cell: 2, ap: 2, maxAp: 2, img: 'token_hero_jan_valek.png' },
@@ -992,9 +993,42 @@
                 this.heroes = selectedHeroes.map(h => ({...h, confined: false, accusationImmuneUntilRound: 0}));
                 this.refreshHandToFive();
 
+                if(this.hasTraitorMode) {
+                    const traitorCandidate = this.heroes[Math.floor(Math.random() * this.heroes.length)];
+                    this.traitorHeroId = traitorCandidate.id;
+                    this.sabotageTokens = 2;
+                    this.log(`[Secret Traitor Protocol] Secret traitor selected.`, "alert");
+                }
+
                 const overlay = document.getElementById('mode-select-overlay');
                 if (overlay) overlay.style.display = 'none';
                 this.initUI();
+
+                if (this.hasTraitorMode) {
+                    this.showSecretRoleCheck();
+                }
+            }
+
+            showSecretRoleCheck() {
+                const modal = document.getElementById('modal-overlay');
+                const content = document.getElementById('modal-content');
+                if (!content) return;
+                content.innerHTML = `<h2 style="color:var(--gold-primary);font-size:20px">SECRET ROLE CHECK</h2>
+                    <p style="line-height:1.55">Pass the device around. Each player should select the hero they control, read the result privately, then hide it before passing on.</p>
+                    ${this.heroes.map(h => `<button class="magipunk-btn" style="display:block;width:100%;margin:7px 0" onclick="game.revealSecretRole('${h.id}')">Check as ${h.name}</button>`).join('')}`;
+                if (modal) modal.style.display = 'flex';
+            }
+
+            revealSecretRole(heroId) {
+                const hero = this.heroes.find(h => h.id === heroId);
+                if (!hero) return;
+                const isTraitor = hero.id === this.traitorHeroId;
+                const content = document.getElementById('modal-content');
+                if (!content) return;
+                content.innerHTML = `<h2 style="color:${isTraitor ? '#ff1744' : '#4ade80'};font-size:20px">${isTraitor ? 'YOU ARE THE TRAITOR' : 'YOU ARE LOYAL'}</h2>
+                    <p style="font-size:13px;line-height:1.6;margin-bottom:12px">${isTraitor ? 'Your secret objective is to derail the train or prevent it reaching Speed 12 by Round 10. You begin with 2 Sabotage Tokens.' : 'Help protect Melindre & Shetari and get the train safely to Thrane.'}</p>
+                    <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px">Close this screen before passing the device to the next player.</p>
+                    <button class="magipunk-btn primary" style="width:100%;padding:12px" onclick="game.showSecretRoleCheck()">Hide Role / Next Player</button>`;
             }
 
             refreshHandToFive() {
@@ -1020,7 +1054,7 @@
                 this.renderRoster();
                 this.renderMasterBoardGrid();
                 this.updateActionEconomyUI();
-                this.log(`Game started with ${this.heroes.length} heroes & Telegraphed Bosses — v${GAME_RELEASE.version}.`, "highlight");
+                this.log(`Game started with ${this.heroes.length} heroes & Restored Traitor — v${GAME_RELEASE.version}.`, "highlight");
             }
 
             log(msg, type='') {
@@ -1534,7 +1568,6 @@
                 this.log("[Phase 3: Enemy Phase] Enemies execute pursuit and combat attacks.", "alert");
                 if (this.gameOver) return;
                 
-                // Telegraphed Boss Spawns: 1 round warning before boss boards
                 if (this.pendingBossRounds.includes(this.round)) {
                     this.log(`[Telegraphed Warning] Daask Commander Xant is approaching in Carriage 5 for next round!`, "alert");
                 }
@@ -1628,9 +1661,10 @@
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
                     <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">HOW TO PLAY</h2>
                     <p style="font-size:13px;line-height:1.6;text-align:left">
-                    <strong>1. Telegraphed Bosses:</strong> Bosses give 1 round of warning in Carriage 5 before breaching.<br><br>
-                    <strong>2. Active VIP Powers:</strong> Use Shetari's <em>Diplomatic Strike</em> (5 damage) and Melindre's <em>Silver Flame Heal</em> (+4 Train HP) once per game.<br><br>
-                    <strong>3. Victory:</strong> Reach Speed 12 in Thrane with Integrity > 0 and both VIPs alive.
+                    <strong>1. Secret Traitor:</strong> Private role checks at game start.<br><br>
+                    <strong>2. Telegraphed Bosses:</strong> Bosses give 1 round of warning in Carriage 5 before breaching.<br><br>
+                    <strong>3. Active VIP Powers:</strong> Use Shetari's <em>Diplomatic Strike</em> (5 damage) and Melindre's <em>Silver Flame Heal</em> (+4 Train HP) once per game.<br><br>
+                    <strong>4. Victory:</strong> Reach Speed 12 in Thrane with Integrity > 0 and both VIPs alive.
                     </p>
                     <button class="magipunk-btn primary" style="width:100%;padding:12px;margin-top:14px" onclick="game.closeModal(null)">Got It</button>`;
                 if (modal) modal.style.display = 'flex';
@@ -1665,3 +1699,16 @@
     </script>
 </body>
 </html>
+Summary of v9.6.1 Master Edition:
+Restored Secret Traitor Reveal: When starting a game with 3–5 Squad mode (+ Secret Traitor) enabled, the private pass-the-device role check modal correctly reappears at game start.
+
+Active VIP Powers: Shetari's Diplomatic Strike (5 heavy damage) and Melindre's Silver Flame Heal (+4 Train Integrity HP) are fully integrated into the right-hand control panel as once-per-game buttons.
+
+Telegraphed Bosses & Containment: Bosses give 1 round of warnings in Carriage 5 before breaching, and all grid tokens remain strictly locked inside carriage cell bounds.
+
+Next Steps to Update GitHub:
+Copy the complete v9.6.1 code above and save it locally as index.html.
+
+Upload and replace index.html in your repository (davidkcjames1976-tech/lightning-rail-game) on GitHub, then click Commit changes.
+
+Refresh your live GitHub Pages link ([https://davidkcjames1976-tech.github.io/lightning-rail-game/](https://davidkcjames1976-tech.github.io/lightning-rail-game/)).
