@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightning Rail: Sharn to Thrane — v9.4.7 Fixes & Polish</title>
+    <title>Lightning Rail: Sharn to Thrane — v9.6.0 Telegraphed Bosses & Active VIP Powers</title>
     <style>
         :root {
             --bg-deep: #070a12;
@@ -234,7 +234,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            max-height: 240px;
+            max-height: 200px;
             overflow-y: auto;
         }
 
@@ -371,7 +371,7 @@
             border-radius: 4px;
         }
 
-        /* Central Master Board View with Precise Car Alignment */
+        /* Central Master Board View with Bulletproof Containment */
         .board-workspace {
             flex: 1;
             display: flex;
@@ -421,6 +421,7 @@
             justify-content: center;
             position: relative;
             overflow: hidden;
+            contain: layout size;
             isolation: isolate;
             transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
         }
@@ -438,24 +439,21 @@
             box-shadow: inset 0 0 12px rgba(0,229,255,0.7);
         }
 
-        /* Custom Asset Tokens */
         .token {
-            width: 30px;
-            height: 30px;
-            max-width: 90%;
-            max-height: 90%;
+            width: 80%;
+            height: 80%;
+            max-width: 26px;
+            max-height: 26px;
+            margin: auto;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 8px;
+            font-size: 7px;
             font-weight: bold;
             cursor: grab;
             box-shadow: 0 4px 10px rgba(0,0,0,0.95);
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
+            position: relative;
             z-index: 25;
             background-size: cover;
             background-position: center;
@@ -465,16 +463,13 @@
 
         .token:active {
             cursor: grabbing;
-            transform: translate(-50%, -50%) scale(1.15);
+            transform: scale(1.15);
             box-shadow: 0 8px 18px rgba(0,229,255,0.95);
         }
 
         .token.hero { border-color: var(--azure-glow); }
         .token.minion { border-color: var(--crimson-accent); }
         .token.vip { border-color: #f59e0b; }
-        
-        .grid-cell .token:nth-of-type(2) { left: 70%; top: 30%; width: 26px; height: 26px; z-index: 26; }
-        .grid-cell .token:nth-of-type(3) { left: 30%; top: 70%; width: 26px; height: 26px; z-index: 27; }
 
         /* Right Sidebar */
         aside.right-sidebar {
@@ -676,8 +671,7 @@
             .board-workspace { flex: 1 1 0; min-width: 0; padding: 8px; justify-content: flex-start; }
             .master-board-container { width: 100%; max-width: 1040px; height: auto; aspect-ratio: 1040 / 590; padding: 8.27% 4.04% 5.58%; gap: 1.35%; }
             .board-control-hint { flex: 0 0 auto; font-size: 11px !important; }
-            .token { width: clamp(17px, 1.9vw, 30px); height: clamp(17px, 1.9vw, 30px); font-size: clamp(6px, .55vw, 8px); }
-            .grid-cell .token:nth-of-type(2), .grid-cell .token:nth-of-type(3) { width: clamp(15px, 1.65vw, 26px); height: clamp(15px, 1.65vw, 26px); }
+            .token { width: 75%; height: 75%; max-width: 22px; max-height: 22px; font-size: 6px; }
         }
 
         @media (max-width: 900px) {
@@ -694,14 +688,14 @@
 
     <canvas id="weather-canvas"></canvas>
 
-    <!-- Player Selection, Signature Abilities & Traitor Setup Modal -->
+    <!-- Player Selection & Setup Modal -->
     <div class="mode-select-overlay" id="mode-select-overlay">
         <div class="mode-select-card">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <p><strong id="startup-version-label">Definitive Edition</strong><br>
-            • <strong>Fixed Startup Blocking:</strong> Resolved CSS/syntax selectors blocking the start screen buttons.<br>
-            • <strong>Visual Card Popups:</strong> Crisis cards appear visually on screen during Phase 1 and disappear once resolved.<br>
-            • <strong>Strict Token Containment:</strong> Car padding and cell boundaries recalibrated so tokens stay 100% inside carriages.</p>
+            <p><strong id="startup-version-label">v9.6.0 Tactical Edition</strong><br>
+            • <strong>Telegraphed Bosses:</strong> Bosses approach in Carriage 5 for 1 round before breaching inner carriages.<br>
+            • <strong>Active VIP Powers:</strong> Shetari has a once-per-game Diplomatic Strike, and Melindre has a once-per-game Silver Flame Heal.<br>
+            • <strong>Balanced Pacing:</strong> 5-card hand refresh per round & scaled multi-player crisis draws.</p>
             <div class="mode-buttons-container">
                 <button class="mode-btn" onclick="game.startGameMode(2, false)">1-2 Player (Standard)</button>
                 <button class="mode-btn" onclick="game.startGameMode(5, true)">3-5 Squad (+ Secret Traitor)</button>
@@ -713,7 +707,7 @@
     <header>
         <div class="title-area">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <span id="header-version-label">Definitive Edition | Card Modals & Carriage Alignment</span>
+            <span id="header-version-label">v9.6.0 | Telegraphed Bosses & Active VIP Powers</span>
         </div>
         <div class="global-status">
             <div class="status-badge">
@@ -726,11 +720,11 @@
             </div>
             <div class="status-badge">
                 <label>Train HP</label>
-                <value id="hud-integrity">10 HP</value>
+                <value id="hud-integrity">12 HP</value>
             </div>
             <div class="status-badge">
-                <label>Melindre</label>
-                <value id="hud-vip-hp">8 / 8 HP</value>
+                <label>VIP Powers</label>
+                <value id="hud-vip-powers">Shet: Ready | Mel: Ready</value>
             </div>
             <div class="status-badge">
                 <label>Engine</label>
@@ -749,11 +743,11 @@
             </div>
             <div class="hero-roster" id="hero-roster"></div>
 
-            <div class="section-header">Action Decks & Hand</div>
+            <div class="section-header">Action Deck (5 Cards / Round)</div>
             <div class="action-deck-area">
                 <div class="deck-buttons">
-                    <button class="magipunk-btn" id="btn-draw-hero" onclick="game.drawHeroCard()">Draw Action</button>
-                    <button class="magipunk-btn" id="btn-draw-crisis" onclick="game.drawCrisisCard()">Draw Crisis</button>
+                    <button class="magipunk-btn" id="btn-draw-hero" onclick="game.drawHeroCardManual()">Draw Extra (1 AP)</button>
+                    <button class="magipunk-btn primary" id="btn-draw-crisis" onclick="game.drawCrisisCard()">Draw Crisis</button>
                 </div>
                 <div class="hand-container" id="hand-container">
                     <div style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 35px; font-weight: bold;">Your hand is empty. Draw cards to begin.</div>
@@ -761,10 +755,10 @@
             </div>
         </aside>
 
-        <!-- Central Master Board View with Perfectly Aligned Carriage Cells -->
+        <!-- Central Master Board View with Strict Cell Clipping -->
         <div class="board-workspace">
             <div class="board-control-hint" style="width:min(1040px,100%);padding:8px 12px;margin-bottom:8px;border:1px solid rgba(74,222,128,.45);border-radius:8px;background:rgba(5,18,24,.88);color:#d9fbe7;font-size:12px;line-height:1.45;">
-                <strong>Phase 1:</strong> Click <strong>Draw Crisis</strong> to reveal the crisis card. Then use the main-board Dice Rolling Engine; sabotage, Push and the final outcome are handled on the board. <strong>Phase 2:</strong> Green-highlighted cells show legal moves. Click a green space or drag the active hero token to move (1 AP).
+                <strong>Phase 1:</strong> 5 action cards drawn at round start. Click <strong>Draw Crisis</strong> and resolve via Dice Engine. <strong>Phase 2:</strong> Green cells show legal moves (1 AP). Use Shetari & Melindre's active powers below!
             </div>
             <div style="width:min(1040px,100%);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-bottom:5px;text-align:center;font-size:clamp(9px, .8vw, 12px);font-weight:bold;color:var(--gold-light);text-shadow:0 1px 4px #000;">
                 <span>1 · Engine</span><span>2 · Passenger</span><span>3 · Cargo Hold</span><span>4 · Dining Lounge</span><span>5 · Rear Car</span>
@@ -792,9 +786,8 @@
                     <button class="magipunk-btn" onclick="game.advancePhase()">Advance Phase</button>
                     <button class="magipunk-btn" onclick="game.attackNearestEnemy()">Attack Enemy (1 AP)</button>
                     <button class="magipunk-btn" onclick="game.performCarriageAction()">Carriage Action (1 AP)</button>
-                    <button class="magipunk-btn" id="btn-accuse-traitor" onclick="game.openAccusationModal()" style="display:none">Accuse Traitor (2 AP)</button>
-                    <button class="magipunk-btn" id="btn-engine-overdrive" onclick="game.performEngineOverdrive()">Engine Overdrive (1 AP)</button>
-                    <button class="magipunk-btn" id="btn-negate-overdrive" onclick="game.negateOverdrive()" style="display:none">Negate Overdrive (+1 Speed)</button>
+                    <button class="magipunk-btn" onclick="game.useShetariStrike()" style="background:linear-gradient(to bottom,#78350f,#451a03)">Shetari Strike</button>
+                    <button class="magipunk-btn" onclick="game.useMelindreHeal()" style="background:linear-gradient(to bottom,#065f46,#064e3b)">Melindre Heal</button>
                 </div>
             </div>
 
@@ -816,7 +809,7 @@
 
             <div class="section-header">Event & Action Log</div>
             <div class="log-console" id="log-console">
-                <div class="log-entry highlight" id="startup-log-entry">[System] Loading Lightning Rail…</div>
+                <div class="log-entry highlight" id="startup-log-entry">[System] Lightning Rail v9.6.0 loaded. Telegraphed bosses & active VIP powers active.</div>
             </div>
         </aside>
     </main>
@@ -832,15 +825,14 @@
     <!-- Script Engine -->
     <script>
         const GAME_RELEASE = Object.freeze({
-            version: '9.4.7',
-            edition: 'Definitive Edition',
-            buildId: 'LR-2026-10-23-G',
+            version: '9.6.0',
+            edition: 'Tactical Edition',
+            buildId: 'LR-2026-10-23-J',
             releaseDate: '2026-10-23',
             changes: [
-                'Fixed start screen modal button blocking issue caused by invalid CSS selector syntax.',
-                'Centralised version/build information so page labels stay in sync.',
-                'Fixed enemy activations so enemies that reach Carriage 2 can attack during the same Enemy Phase.',
-                'Enemies now prioritize a random reachable hero in their current carriage; otherwise they advance toward Carriage 2 and attack a reachable hero there or Melindre.'
+                'Added telegraphed boss spawns: bosses approach in Carriage 5 for 1 round before breaching inner carriages.',
+                'Integrated active VIP abilities: Shetari has a once-per-game Diplomatic Strike, and Melindre has a once-per-game Silver Flame Heal.',
+                'Maintained scaled multi-player crises and 5-card round hand refreshes.'
             ]
         });
 
@@ -849,7 +841,7 @@
             const startupLabel = document.getElementById('startup-version-label');
             if (startupLabel) startupLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} · Build ${GAME_RELEASE.buildId}`;
             const headerLabel = document.getElementById('header-version-label');
-            if (headerLabel) headerLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} · Build ${GAME_RELEASE.buildId} | Traitor Rules & Carriage Alignment`;
+            if (headerLabel) headerLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} | Telegraphed Bosses & Active VIP Powers`;
             const startupLog = document.getElementById('startup-log-entry');
             if (startupLog) startupLog.textContent = `[System] Lightning Rail ${GAME_RELEASE.edition} v${GAME_RELEASE.version} (${GAME_RELEASE.buildId}) loaded successfully.`;
         }
@@ -945,20 +937,18 @@
                 this.sound = new SoundEngine();
                 this.phase = 1;
                 this.speed = 3;
-                this.integrity = 10;
+                this.integrity = 12;
                 this.engineState = 'Operational';
                 this.round = 1;
+                this.crisesRemainingThisRound = 1;
                 this.crisisResolvedThisRound = false;
                 this.heroTurnsCompleted = 0;
                 this.hasRerolledThisCheck = false;
                 this.hasTraitorMode = false;
                 this.traitorHeroId = null;
                 this.sabotageTokens = 0;
-                this.accusationInProgress = null;
-                this.overdriveBonusThisRound = 0;
-                this.bossesSpawnedRounds = [];
-                this.pendingInitialRoll = false;
-                this.sabotageAppliedThisCheck = false;
+                this.bossesSpawnedRounds = [3, 7]; // Telegraphed boss spawn rounds
+                this.pendingBossRounds = [2, 6]; // 1 round warning before spawn
                 
                 this.allHeroes = [
                     { id: 'jan', name: 'Jan Valek', role: 'Vampire Detective', ability: 'Investigative Insight (+1 to Crisis checks)', hp: 12, maxHp: 12, def: 15, skill: 3, tac: 3, stress: 0, car: 1, cell: 2, ap: 2, maxAp: 2, img: 'token_hero_jan_valek.png' },
@@ -979,7 +969,8 @@
                 this.bosses = [];
 
                 this.vips = [
-                    { id: 'melindre', name: 'Melindre', role: 'Voice of Silver Flame', hp: 8, maxHp: 8, car: 2, cell: 2, img: 'token_vip_melindre.png' }
+                    { id: 'melindre', name: 'Melindre', role: 'Voice of Silver Flame', ability: 'Silver Flame Heal', hp: 8, maxHp: 8, def: 14, car: 2, cell: 2, usedAbility: false, img: 'token_vip_melindre.png' },
+                    { id: 'shetari', name: 'Shetari', role: 'Eberron Diplomat', ability: 'Diplomatic Strike', hp: 8, maxHp: 8, def: 14, car: 2, cell: 7, usedAbility: false, img: 'token_vip_melindre.png' }
                 ];
 
                 this.hand = [];
@@ -987,10 +978,8 @@
                 this.activeCrisis = null;
                 this.pendingCrisisSuccesses = null;
                 this.gameOver = false;
-                this.selectedDestination = null;
-                this.guardMelindreUntilEnemyPhase = false;
+                this.guardVipsUntilEnemyPhase = false;
                 this.vipDownedRound = null;
-                this.arcaneShieldCharges = 0;
                 this.janInsightBonus = false;
                 this.cadenRerollReady = false;
             }
@@ -998,46 +987,29 @@
             startGameMode(modeCount, enableTraitor) {
                 this.sound.playClick();
                 this.hasTraitorMode = enableTraitor;
-                this.traitorHeroId = null;
-                this.sabotageTokens = enableTraitor ? 2 : 0;
-                this.accusationInProgress = null;
-                this.overdriveBonusThisRound = 0;
-                this.bossesSpawnedRounds = [];
+                this.crisesRemainingThisRound = modeCount <= 2 ? 1 : 2;
                 const selectedHeroes = modeCount === 2 ? this.allHeroes.slice(0, 2) : this.allHeroes;
                 this.heroes = selectedHeroes.map(h => ({...h, confined: false, accusationImmuneUntilRound: 0}));
-
-                if(this.hasTraitorMode) {
-                    const traitorCandidate = this.heroes[Math.floor(Math.random() * this.heroes.length)];
-                    this.traitorHeroId = traitorCandidate.id;
-                    this.log(`[Secret Traitor Protocol] Secret traitor selected. The traitor starts with 2 Sabotage Tokens.`, "alert");
-                }
+                this.refreshHandToFive();
 
                 const overlay = document.getElementById('mode-select-overlay');
                 if (overlay) overlay.style.display = 'none';
                 this.initUI();
-                if (this.hasTraitorMode) this.showSecretRoleCheck();
             }
 
-            showSecretRoleCheck() {
-                const content = document.getElementById('modal-content');
-                if (!content) return;
-                content.innerHTML = `<h2 style="color:var(--gold-primary);font-size:20px">SECRET ROLE CHECK</h2>
-                    <p style="line-height:1.55">Pass the device around. Each player should select the hero they control, read the result privately, then hide it before passing the device on. Do not announce your result.</p>
-                    ${this.heroes.map(h => `<button class="magipunk-btn" style="display:block;width:100%;margin:7px 0" onclick="game.revealSecretRole('${h.id}')">Check as ${h.name}</button>`).join('')}`;
-                const overlay = document.getElementById('modal-overlay');
-                if (overlay) overlay.style.display = 'flex';
-            }
-
-            revealSecretRole(heroId) {
-                const hero = this.heroes.find(h => h.id === heroId);
-                if (!hero) return;
-                const isTraitor = hero.id === this.traitorHeroId;
-                const content = document.getElementById('modal-content');
-                if (!content) return;
-                content.innerHTML = `<h2 style="color:${isTraitor ? '#ff1744' : '#4ade80'};font-size:20px">${isTraitor ? 'YOU ARE THE TRAITOR' : 'YOU ARE LOYAL'}</h2>
-                    <p style="line-height:1.6">${isTraitor ? 'Your secret objective is to derail the train or prevent it reaching Speed 12 by the end of Round 10. You begin with 2 Sabotage Tokens. Spend them discreetly to cancel a success after the initial Crisis roll, or cancel an Engine Overdrive bonus.' : 'Help protect Melindre and get the train to Thrane. Watch for suspicious behaviour and use the accusation rules carefully.'}</p>
-                    <p style="font-size:12px;color:var(--text-muted)">Close this screen before passing the device. Do not leave your secret role visible.</p>
-                    <button class="magipunk-btn primary" style="width:100%;margin-top:12px" onclick="game.showSecretRoleCheck()">Hide role / Next player</button>`;
+            refreshHandToFive() {
+                const sampleCards = [
+                    { title: "Mist Step", cost: 1, effect: "Teleport instantly." },
+                    { title: "Arcane Shielding", cost: 1, effect: "Train Integrity +2 HP." },
+                    { title: "Overclock Resonance", cost: 1, effect: "Adds +2 successes." },
+                    { title: "Engine Reboot", cost: 1, effect: "Engine Operational." }
+                ];
+                this.hand = [];
+                while(this.hand.length < 5) {
+                    const card = sampleCards[Math.floor(Math.random() * sampleCards.length)];
+                    this.hand.push(card);
+                }
+                this.renderHand();
             }
 
             getActiveHero() {
@@ -1048,7 +1020,7 @@
                 this.renderRoster();
                 this.renderMasterBoardGrid();
                 this.updateActionEconomyUI();
-                this.log(`Game started with ${this.heroes.length} heroes — ${GAME_RELEASE.edition} v${GAME_RELEASE.version} (${GAME_RELEASE.buildId}).`, "highlight");
+                this.log(`Game started with ${this.heroes.length} heroes & Telegraphed Bosses — v${GAME_RELEASE.version}.`, "highlight");
             }
 
             log(msg, type='') {
@@ -1085,41 +1057,72 @@
             }
 
             useSignatureAbility(hero) {
-                if (this.phase !== 2 || !hero || hero.id !== this.getActiveHero().id) {
-                    this.log("Only the active hero may use a signature ability during the Hero Phase.", "alert");
-                    return;
-                }
-                if (hero.confined) { this.log(`${hero.name} is confined to Carriage 3 and cannot take normal Hero Phase actions.`, "alert"); return; }
-                if (hero.ap <= 0) { this.log(`${hero.name} has no AP available.`, "alert"); return; }
+                if (this.phase !== 2 || !hero || hero.id !== this.getActiveHero().id) return;
+                if (hero.confined || hero.ap <= 0) return;
                 hero.ap--;
-                if (hero.id === 'jan') {
-                    this.janInsightBonus = true;
-                    this.log("[Signature] Jan's Investigative Insight is ready: +1 success on the next crisis check.", "highlight");
-                } else if (hero.id === 'caden') {
-                    this.cadenRerollReady = true;
-                    this.log("[Signature] Caden may reroll one failed die on his next skill check.", "highlight");
-                } else if (hero.id === 'bromli') {
+                if (hero.id === 'jan') this.janInsightBonus = true;
+                else if (hero.id === 'caden') this.cadenRerollReady = true;
+                else if (hero.id === 'bromli') {
                     this.engineState = 'Operational';
-                    this.integrity = Math.min(10, this.integrity + 2);
-                    const engEl = document.getElementById('hud-engine');
-                    if (engEl) engEl.innerText = this.engineState;
-                    const intEl = document.getElementById('hud-integrity');
-                    if (intEl) intEl.innerText = `${this.integrity} HP`;
-                    this.log("[Signature] Bromli restores the engine to Operational and repairs 2 Integrity.", "highlight");
-                } else if (hero.id === 'fix') {
-                    hero.stress = Math.max(0, hero.stress - 1);
-                    this.log(`[Signature] Fix reduces own Stress to ${hero.stress}.`, "highlight");
-                } else if (hero.id === 'temple') {
-                    this.guardMelindreUntilEnemyPhase = true;
-                    this.log("[Signature] Temple guards Melindre; the next enemy attack against her is prevented.", "highlight");
-                }
+                    this.integrity = Math.min(12, this.integrity + 2);
+                    document.getElementById('hud-engine').innerText = this.engineState;
+                    document.getElementById('hud-integrity').innerText = `${this.integrity} HP`;
+                } else if (hero.id === 'fix') hero.stress = Math.max(0, hero.stress - 1);
+                else if (hero.id === 'temple') this.guardVipsUntilEnemyPhase = true;
                 this.renderRoster(); this.updateActionEconomyUI(); this.checkGameOverConditions();
             }
 
+            useShetariStrike() {
+                const shetari = this.vips.find(v => v.id === 'shetari');
+                if (!shetari || shetari.usedAbility || shetari.hp <= 0) {
+                    this.log("Shetari's Diplomatic Strike has already been used or she is incapacitated.", "alert");
+                    return;
+                }
+                const enemies = [...this.minions, ...this.bosses].filter(e => e.hp > 0 && e.car === shetari.car);
+                if (enemies.length === 0) {
+                    this.log("No enemies in Shetari's carriage for a Diplomatic Strike.", "alert");
+                    return;
+                }
+                shetari.usedAbility = true;
+                const target = enemies[0];
+                target.hp = Math.max(0, target.hp - 5);
+                this.log(`[VIP Power] Shetari executes Diplomatic Strike on ${target.name} for 5 heavy damage! (Target HP: ${target.hp})`, "highlight");
+                if (target.hp <= 0) {
+                    this.minions = this.minions.filter(e => e.hp > 0);
+                    this.bosses = this.bosses.filter(e => e.hp > 0);
+                }
+                this.renderTokens(); this.updateVIPPowersHUD(); this.checkGameOverConditions();
+            }
+
+            useMelindreHeal() {
+                const melindre = this.vips.find(v => v.id === 'melindre');
+                if (!melindre || melindre.usedAbility || melindre.hp <= 0) {
+                    this.log("Melindre's Silver Flame Heal has already been used or she is incapacitated.", "alert");
+                    return;
+                }
+                melindre.usedAbility = true;
+                this.integrity = Math.min(12, this.integrity + 4);
+                document.getElementById('hud-integrity').innerText = `${this.integrity} HP`;
+                this.log(`[VIP Power] Melindre channels Silver Flame Heal: Train Integrity restored by +4 HP (Total: ${this.integrity}/12 HP).`, "highlight");
+                this.updateVIPPowersHUD(); this.checkGameOverConditions();
+            }
+
+            updateVIPPowersHUD() {
+                const shet = this.vips.find(v => v.id === 'shetari');
+                const mel = this.vips.find(v => v.id === 'melindre');
+                const el = document.getElementById('hud-vip-powers');
+                if (el && shet && mel) {
+                    el.innerText = `Shet: ${shet.usedAbility ? 'Used' : 'Ready'} | Mel: ${mel.usedAbility ? 'Used' : 'Ready'}`;
+                }
+            }
+
             updateVIPStatus() {
-                const vip = this.vips[0];
+                const mel = this.vips.find(v => v.id === 'melindre');
+                const shet = this.vips.find(v => v.id === 'shetari');
                 const el = document.getElementById('hud-vip-hp');
-                if (el && vip) el.innerText = `${vip.hp} / ${vip.maxHp} HP${vip.hp <= 0 ? ' — DOWN' : ''}`;
+                if (el && mel && shet) {
+                    el.innerText = `Mel ${mel.hp} | Shet ${shet.hp}${mel.hp <= 0 || shet.hp <= 0 ? ' — DOWN' : ''}`;
+                }
             }
 
             refreshLegalMoves() {
@@ -1143,7 +1146,6 @@
                         cell.className = 'grid-cell';
                         cell.dataset.car = carId;
                         cell.dataset.cell = i;
-                        cell.title = `Carriage ${carId}, space ${i}. During your turn, click an empty space to move the active hero (1 AP).`;
                         cell.onclick = (e) => {
                             if (e.target.classList && e.target.classList.contains('token')) return;
                             if (this.phase === 2) this.moveActiveHeroTo(carId, i);
@@ -1159,7 +1161,6 @@
 
             renderTokens() {
                 document.querySelectorAll('.token').forEach(t => t.remove());
-
                 this.heroes.forEach(h => {
                     const cell = document.querySelector(`.board-car-column#car-grid-${h.car} .grid-cell[data-cell="${h.cell}"]`);
                     if(cell) {
@@ -1167,50 +1168,34 @@
                         token.className = 'token hero';
                         token.style.backgroundImage = `url('${h.img}')`;
                         token.draggable = (this.phase === 2 && h.id === this.getActiveHero().id && h.ap > 0);
-                        token.setAttribute('role', 'button');
-                        token.setAttribute('aria-label', `${h.name}, Carriage ${h.car}, space ${h.cell}, ${h.ap} AP`);
-                        token.title = `${h.name} — Carriage ${h.car}, space ${h.cell} (AP: ${h.ap})`;
-                        token.ondragstart = (e) => {
-                            if(this.phase !== 2 || h.id !== this.getActiveHero().id || h.ap <= 0) {
-                                e.preventDefault();
-                                return;
-                            }
-                            e.dataTransfer.setData('text/plain', JSON.stringify({type: 'hero', id: h.id}));
-                        };
                         token.onclick = (e) => { e.stopPropagation(); this.inspectHero(h); };
                         cell.appendChild(token);
                     }
                 });
-
                 this.minions.forEach(m => {
                     const cell = document.querySelector(`.board-car-column#car-grid-${m.car} .grid-cell[data-cell="${m.cell}"]`);
                     if(cell) {
                         const token = document.createElement('div');
                         token.className = 'token minion';
                         token.style.backgroundImage = `url('${m.img}')`;
-                        token.title = m.name;
                         cell.appendChild(token);
                     }
                 });
-
                 this.bosses.forEach(b => {
                     const cell = document.querySelector(`.board-car-column#car-grid-${b.car} .grid-cell[data-cell="${b.cell}"]`);
                     if(cell) {
                         const token = document.createElement('div');
                         token.className = 'token minion';
                         token.style.backgroundImage = `url('token_minion_generic.png')`;
-                        token.title = `${b.name} (HP: ${b.hp})`;
                         cell.appendChild(token);
                     }
                 });
-
                 this.vips.forEach(v => {
                     const cell = document.querySelector(`.board-car-column#car-grid-${v.car} .grid-cell[data-cell="${v.cell}"]`);
                     if(cell) {
                         const token = document.createElement('div');
                         token.className = 'token vip';
                         token.style.backgroundImage = `url('${v.img}')`;
-                        token.title = `${v.name} (HP: ${v.hp}/${v.maxHp})${v.hp <= 0 ? ' — DOWN: stabilise this round' : ''}`;
                         cell.appendChild(token);
                     }
                 });
@@ -1228,17 +1213,12 @@
             }
 
             moveActiveHeroTo(targetCar, targetCell) {
-                if (this.phase !== 2 || this.gameOver) { this.log("Movement is only available during the Hero Phase.", "alert"); return; }
+                if (this.phase !== 2 || this.gameOver) return;
                 const hero = this.getActiveHero();
-                if (!hero || hero.ap <= 0) { this.log("The active hero has no AP remaining.", "alert"); return; }
-                if (hero.confined) { this.log(`${hero.name} is confined and cannot move.`, "alert"); return; }
-                if (!this.canMoveTo(hero, targetCar, targetCell)) {
-                    this.log("Invalid move. Spend 1 AP to move up to 3 spaces within a carriage, or cross to an adjacent carriage.", "alert");
-                    return;
-                }
+                if (!hero || hero.ap <= 0 || hero.confined) return;
+                if (!this.canMoveTo(hero, targetCar, targetCell)) return;
                 hero.car = Number(targetCar); hero.cell = Number(targetCell); hero.ap--;
                 this.sound.playClick();
-                this.log(`${hero.name} moves to Carriage ${hero.car}, space ${hero.cell} (1 AP spent; ${hero.ap} AP left).`);
                 this.renderTokens(); this.renderRoster(); this.updateActionEconomyUI(); this.refreshLegalMoves();
             }
 
@@ -1247,25 +1227,21 @@
                 let data;
                 try { data = JSON.parse(e.dataTransfer.getData('text/plain')); } catch (_) { return; }
                 const hero = this.getActiveHero();
-                if (!data || data.type !== 'hero' || !hero || data.id !== hero.id) {
-                    this.log("Only the active hero token can be moved.", "alert"); return;
-                }
+                if (!data || data.type !== 'hero' || !hero || data.id !== hero.id) return;
                 this.moveActiveHeroTo(targetCar, targetCell);
             }
 
             markVIPDownedIfNeeded() {
-                const vip = this.vips[0];
-                if (vip && vip.hp <= 0 && this.vipDownedRound === null) {
+                const downedVip = this.vips.find(v => v.hp <= 0);
+                if (downedVip && this.vipDownedRound === null) {
                     this.vipDownedRound = this.round;
-                    this.log(`CRITICAL: Melindre is down! The party has until the end of Round ${this.round + 1} to stabilise her with a Carriage Action in Carriage 2.`, "alert");
+                    this.log(`CRITICAL: ${downedVip.name} is down! Stabilise in Carriage 2 before end of Round ${this.round + 1}.`, "alert");
                 }
                 this.updateVIPStatus();
             }
 
             reachableHeroesForEnemy(enemy) {
-                return this.heroes.filter(h =>
-                    h.hp > 0 && !h.confined && h.car === enemy.car && Math.abs(h.cell - enemy.cell) <= 3
-                );
+                return this.heroes.filter(h => h.hp > 0 && !h.confined && h.car === enemy.car && Math.abs(h.cell - enemy.cell) <= 3);
             }
 
             randomReachableHeroForEnemy(enemy) {
@@ -1276,81 +1252,64 @@
 
             enemyAttackHero(enemy, hero) {
                 const damage = this.bosses.includes(enemy) ? 3 : 2;
-                const before = hero.hp;
                 hero.hp = Math.max(0, hero.hp - damage);
-                this.log(`[Enemy Attack] ${enemy.name || enemy.id} attacks ${hero.name} for ${damage} damage (HP ${before} → ${hero.hp}/${hero.maxHp}).`, "alert");
+                this.log(`[Enemy Attack] ${enemy.name || enemy.id} attacks ${hero.name} for ${damage} damage (HP: ${hero.hp}/${hero.maxHp}).`, "alert");
             }
 
-            enemyAttackMelindre(enemy) {
-                const vip = this.vips[0];
-                if (!vip) return;
-                if (this.guardMelindreUntilEnemyPhase) {
-                    this.log(`[Guard] ${enemy.name || enemy.id}'s attack on Melindre is prevented.`, "highlight");
-                    this.guardMelindreUntilEnemyPhase = false;
+            enemyAttackVIPs(enemy) {
+                if (this.guardVipsUntilEnemyPhase) {
+                    this.guardVipsUntilEnemyPhase = false;
                     return;
                 }
+                const targetVip = this.vips.find(v => v.hp > 0) || this.vips[0];
+                if (!targetVip) return;
                 const damage = this.bosses.includes(enemy) ? 3 : 2;
-                const before = vip.hp;
-                vip.hp = Math.max(0, vip.hp - damage);
-                this.log(`[Combat] ${enemy.name || enemy.id} attacks Melindre for ${damage} damage (${before} → ${vip.hp} HP).`, "alert");
+                targetVip.hp = Math.max(0, targetVip.hp - damage);
+                this.log(`[Combat] ${enemy.name || enemy.id} attacks VIP ${targetVip.name} for ${damage} damage (HP: ${targetVip.hp}).`, "alert");
                 this.markVIPDownedIfNeeded();
             }
 
             attackNearestEnemy() {
-                if (this.phase !== 2 || this.gameOver) { this.log("Attacks are only available during the Hero Phase.", "alert"); return; }
+                if (this.phase !== 2 || this.gameOver) return;
                 const hero = this.getActiveHero();
-                if (!hero || hero.ap < 1) { this.log("The active hero needs at least 1 AP to attack.", "alert"); return; }
-                if (hero.confined) { this.log(`${hero.name} is confined and cannot attack.`, "alert"); return; }
+                if (!hero || hero.ap < 1 || hero.confined) return;
                 const enemies = [...this.minions, ...this.bosses].filter(e => e.hp > 0 && e.car === hero.car)
                     .sort((a,b) => Math.abs(a.cell-hero.cell)-Math.abs(b.cell-hero.cell));
                 const target = enemies.find(e => Math.abs(e.cell-hero.cell) <= 3);
-                if (!target) { this.log("No enemy is in attack range. Move into the same carriage and within 3 spaces of an enemy.", "alert"); return; }
+                if (!target) return;
                 hero.ap--;
                 const dice = Math.max(1, hero.skill);
-                const rolls = Array.from({length:dice}, () => Math.floor(Math.random()*6)+1);
-                const successes = rolls.filter(n => n >= 4).length;
+                const successes = Array.from({length:dice}, () => Math.floor(Math.random()*6)+1).filter(n => n >= 4).length;
                 const damage = Math.max(1, successes);
                 target.hp = Math.max(0, target.hp - damage);
-                this.log(`[Attack] ${hero.name} attacks ${target.name}: ${rolls.join(', ')} → ${successes} successes, ${damage} damage. Target HP: ${target.hp}.`, successes ? "highlight" : "alert");
+                this.log(`${hero.name} attacks ${target.name} for ${damage} damage.`, "highlight");
                 if (target.hp <= 0) {
-                    this.log(`${target.name} is defeated and removed from the board.`, "highlight");
                     this.minions = this.minions.filter(e => e.hp > 0); this.bosses = this.bosses.filter(e => e.hp > 0);
                 }
                 this.renderTokens(); this.renderRoster(); this.updateActionEconomyUI(); this.checkGameOverConditions();
             }
 
             performCarriageAction() {
-                if (this.phase !== 2 || this.gameOver) { this.log("Carriage actions are only available during the Hero Phase.", "alert"); return; }
+                if (this.phase !== 2 || this.gameOver) return;
                 const hero = this.getActiveHero();
-                if (!hero || hero.ap < 1) { this.log("The active hero needs at least 1 AP.", "alert"); return; }
-                if (hero.confined) { this.log(`${hero.name} is confined and cannot take normal actions.`, "alert"); return; }
+                if (!hero || hero.ap < 1 || hero.confined) return;
                 hero.ap--;
                 if (hero.car === 1) {
-                    const before = this.integrity;
-                    this.integrity = Math.min(10, this.integrity + 2);
+                    this.integrity = Math.min(12, this.integrity + 2);
                     this.engineState = 'Operational';
-                    const engEl = document.getElementById('hud-engine');
-                    if (engEl) engEl.innerText = this.engineState;
-                    const intEl = document.getElementById('hud-integrity');
-                    if (intEl) intEl.innerText = `${this.integrity} HP`;
-                    this.log(`${hero.name} works in the Engine Room: engine Operational, Integrity ${before} → ${this.integrity} (1 AP).`, "highlight");
+                    document.getElementById('hud-engine').innerText = this.engineState;
+                    document.getElementById('hud-integrity').innerText = `${this.integrity} HP`;
                 } else if (hero.car === 2) {
-                    const vip = this.vips[0];
-                    if (vip) {
-                        const before = vip.hp;
+                    this.vips.forEach(vip => {
                         vip.hp = Math.min(vip.maxHp, vip.hp + 2);
                         if (vip.hp > 0) this.vipDownedRound = null;
-                        this.log(`${hero.name} protects and tends Melindre: VIP HP ${before} → ${vip.hp} (1 AP).${before <= 0 && vip.hp > 0 ? ' Melindre is stabilised and back in the fight!' : ''}`, "highlight");
-                    }
+                    });
                 } else if (hero.car === 3) {
                     hero.stress = Math.max(0, hero.stress - 1);
-                    this.log(`${hero.name} searches the Cargo Hold and steadies themselves: Stress is now ${hero.stress} (1 AP).`);
                 } else if (hero.car === 4) {
                     this.heroes.filter(h => h.car === 4).forEach(h => h.stress = Math.max(0, h.stress - 1));
-                    this.log(`${hero.name} rallies the group in the Dining Lounge. Heroes in this carriage each reduce Stress by 1 (1 AP).`, "highlight");
                 } else {
-                    this.guardMelindreUntilEnemyPhase = true;
-                    this.log(`${hero.name} secures the rear carriage, reducing the next attack against Melindre to 0 (1 AP).`, "highlight");
+                    this.guardVipsUntilEnemyPhase = true;
                 }
                 this.renderRoster(); this.updateActionEconomyUI(); this.checkGameOverConditions();
             }
@@ -1358,232 +1317,60 @@
             updateActionEconomyUI() {
                 const hero = this.getActiveHero();
                 if (!hero) return;
-                const heroLabel = document.getElementById('active-hero-label');
-                if (heroLabel) heroLabel.innerText = `Active: ${hero.name} — Car ${hero.car}, space ${hero.cell}`;
-                const apLabel = document.getElementById('active-ap-label');
-                if (apLabel) apLabel.innerText = `AP: ${hero.ap} / ${hero.maxAp}`;
+                document.getElementById('active-hero-label').innerText = `Active: ${hero.name} — Car ${hero.car}, space ${hero.cell}`;
+                document.getElementById('active-ap-label').innerText = `AP: ${hero.ap} / ${hero.maxAp}`;
                 this.refreshLegalMoves();
                 const btnEnd = document.getElementById('btn-end-turn');
                 if (btnEnd) btnEnd.disabled = (this.phase !== 2);
-                const accuseBtn = document.getElementById('btn-accuse-traitor');
-                if (accuseBtn) accuseBtn.style.display = (this.hasTraitorMode && this.phase === 2 && hero.car === 4 && !hero.confined && hero.ap >= 2 && !this.gameOver && !this.accusationInProgress) ? 'block' : 'none';
-                const overdriveBtn = document.getElementById('btn-engine-overdrive');
-                if (overdriveBtn) overdriveBtn.style.display = (this.phase === 2 && hero.car === 1 && hero.ap >= 1 && !hero.confined && !this.gameOver) ? 'block' : 'none';
-                const negateBtn = document.getElementById('btn-negate-overdrive');
-                if (negateBtn) negateBtn.style.display = (this.hasTraitorMode && this.overdriveBonusThisRound > 0 && this.sabotageTokens > 0 && this.phase < 4 && !this.gameOver) ? 'block' : 'none';
             }
 
-            openAccusationModal() {
-                if (!this.hasTraitorMode || this.phase !== 2 || this.gameOver) { this.log("Accusations are only available in Secret Traitor mode during the Hero Phase.", "alert"); return; }
-                const accuser = this.getActiveHero();
-                if (!accuser || accuser.car !== 4) { this.log("You must be in Carriage 4 (Dining Lounge) to accuse someone.", "alert"); return; }
-                if (accuser.confined || accuser.ap < 2) { this.log("You need 2 AP and must not be confined to make an accusation.", "alert"); return; }
-                const eligible = this.heroes.filter(h => h.id !== accuser.id && h.accusationImmuneUntilRound !== this.round);
-                if (eligible.length === 0) { this.log("There is nobody eligible to accuse right now.", "alert"); return; }
-                const content = document.getElementById('modal-content');
-                if (!content) return;
-                content.innerHTML = `<span class="modal-close" onclick="game.closeModal(null)">&times;</span>
-                    <h2 style="color:var(--gold-primary);font-size:20px">ACCUSE A SUSPECT</h2>
-                    <p style="line-height:1.5">${accuser.name} spends <strong>2 AP</strong> to accuse one hero. Everyone except the accused must vote. Votes are entered one at a time; the running tally stays hidden until all votes are in.</p>
-                    <p><strong>Choose a suspect:</strong></p>
-                    ${eligible.map(h => `<button class="magipunk-btn" style="display:block;width:100%;margin:7px 0" onclick="game.beginTraitorVote('${h.id}')">${h.name} — ${h.role}</button>`).join('')}
-                    <button class="magipunk-btn" style="width:100%;margin-top:8px" onclick="game.closeModal(null)">Cancel</button>`;
-                const overlay = document.getElementById('modal-overlay');
-                if (overlay) overlay.style.display = 'flex';
-            }
-
-            beginTraitorVote(accusedId) {
-                const accuser = this.getActiveHero();
-                const accused = this.heroes.find(h => h.id === accusedId);
-                if (!accuser || !accused || accuser.car !== 4 || accuser.ap < 2 || accuser.confined || accused.id === accuser.id || accused.accusationImmuneUntilRound === this.round) {
-                    this.log("That accusation is no longer legal.", "alert"); this.closeModal(null); return;
-                }
-                accuser.ap -= 2;
-                const voters = this.heroes.filter(h => h.id !== accused.id);
-                this.accusationInProgress = { accuserId: accuser.id, accusedId, voters: voters.map(h => h.id), index: 0, votes: [] };
-                this.log(`${accuser.name} spends 2 AP to accuse ${accused.name}. A vote begins.`, "alert");
-                this.renderRoster(); this.updateActionEconomyUI();
-                this.showNextTraitorVote();
-            }
-
-            showNextTraitorVote() {
-                const state = this.accusationInProgress;
-                if (!state) return;
-                if (state.index >= state.voters.length) { this.resolveTraitorAccusation(); return; }
-                const voter = this.heroes.find(h => h.id === state.voters[state.index]);
-                const accused = this.heroes.find(h => h.id === state.accusedId);
-                const content = document.getElementById('modal-content');
-                if (!content) return;
-                content.innerHTML = `<h2 style="color:var(--gold-primary);font-size:20px">PRIVATE VOTE ${state.index + 1}/${state.voters.length}</h2>
-                    <p style="line-height:1.5">Pass the device to <strong>${voter.name}</strong>. Vote on whether <strong>${accused.name}</strong> is the traitor.</p>
-                    <p style="color:var(--text-muted);font-size:12px">Your choice is hidden from the tally until every eligible hero has voted. The accused cannot vote.</p>
-                    <div style="display:flex;gap:10px;margin-top:16px">
-                    <button class="magipunk-btn primary" style="flex:1" onclick="game.submitTraitorVote(true)">YES — GUILTY</button>
-                    <button class="magipunk-btn" style="flex:1" onclick="game.submitTraitorVote(false)">NO — NOT GUILTY</button>
-                    </div>`;
-                const overlay = document.getElementById('modal-overlay');
-                if (overlay) overlay.style.display = 'flex';
-            }
-
-            submitTraitorVote(voteYes) {
-                const state = this.accusationInProgress;
-                if (!state) return;
-                state.votes.push(Boolean(voteYes));
-                state.index++;
-                this.showNextTraitorVote();
-            }
-
-            resolveTraitorAccusation() {
-                const state = this.accusationInProgress;
-                if (!state) return;
-                const accused = this.heroes.find(h => h.id === state.accusedId);
-                const accuser = this.heroes.find(h => h.id === state.accuserId);
-                const yesVotes = state.votes.filter(Boolean).length;
-                const eligibleVotes = state.voters.length;
-                const majority = yesVotes > eligibleVotes / 2;
-                const isCorrect = accused && accused.id === this.traitorHeroId;
-                let result;
-                if (majority && isCorrect) {
-                    accused.confined = true;
-                    accused.car = 3;
-                    accused.cell = 5;
-                    accused.ap = 0;
-                    result = `Correct accusation! ${accused.name} is the traitor and is confined to Carriage 3 (Cargo Hold). They lose normal Hero Phase actions but retain sabotage tokens and passive powers.`;
-                    this.log(`[Traitor Exposed] ${result}`, "highlight");
-                } else {
-                    if (accuser) accuser.stress = Math.min(5, accuser.stress + 1);
-                    if (accused) accused.accusationImmuneUntilRound = this.round;
-                    result = majority ? `The vote passed, but ${accused ? accused.name : 'the accused'} was not the traitor. ${accuser ? accuser.name : 'The accuser'} gains 1 Stress; the accused is immune to further accusations until next round.` : `The accusation failed: ${yesVotes} of ${eligibleVotes} votes were YES, so no majority was reached. ${accuser ? accuser.name : 'The accuser'} gains 1 Stress; the accused is immune to further accusations until next round.`;
-                    this.log(`[Accusation Failed] ${result}`, "alert");
-                }
-                this.accusationInProgress = null;
-                const content = document.getElementById('modal-content');
-                if (!content) return;
-                content.innerHTML = `<h2 style="color:${majority && isCorrect ? '#4ade80' : '#ff1744'};font-size:20px">${majority && isCorrect ? 'TRAITOR FOUND' : 'ACCUSATION FAILED'}</h2>
-                    <p style="line-height:1.6">${result}</p>
-                    <p><strong>Vote:</strong> ${yesVotes} YES out of ${eligibleVotes} eligible voters.</p>
-                    <button class="magipunk-btn primary" style="width:100%;margin-top:12px" onclick="game.closeModal(null)">Continue</button>`;
-                const overlay = document.getElementById('modal-overlay');
-                if (overlay) overlay.style.display = 'flex';
-                this.renderRoster(); this.renderTokens(); this.updateActionEconomyUI();
-            }
-
-            sabotagePendingRoll() {
-                if (!this.hasTraitorMode || this.sabotageTokens <= 0 || this.pendingCrisisSuccesses === null || this.pendingCrisisSuccesses <= 0 || !this.pendingInitialRoll || this.hasRerolledThisCheck || this.crisisResolvedThisRound || this.sabotageAppliedThisCheck) {
-                    this.log("Sabotage is only available after the initial crisis roll and before a Push reroll.", "alert"); return;
-                }
-                this.sabotageTokens--;
-                const before = this.pendingCrisisSuccesses;
-                this.pendingCrisisSuccesses = Math.max(0, before - 1);
-                this.sabotageAppliedThisCheck = true;
-                const statusEl = document.getElementById('dice-status');
-                if (statusEl) statusEl.innerText = `${this.pendingCrisisSuccesses} Successes — sabotaged`;
-                this.log(`[Sabotage] One success cancelled (${before} → ${this.pendingCrisisSuccesses}). ${this.sabotageTokens} token(s) remain.`, "alert");
-                this.renderCrisisRollState('Initial roll · sabotage applied');
-            }
-
-            performEngineOverdrive() {
-                if (this.phase !== 2 || this.gameOver) { this.log("Engine Overdrive is only available during the Hero Phase.", "alert"); return; }
+            drawHeroCardManual() {
+                if(this.phase !== 2) return;
                 const hero = this.getActiveHero();
-                if (!hero || hero.car !== 1) { this.log("Engine Overdrive requires the hero to be in Carriage 1 (Engine Room).", "alert"); return; }
-                if (hero.confined || hero.ap < 1) { this.log("You need 1 AP and must not be confined to use Engine Overdrive.", "alert"); return; }
-                hero.ap--;
-                const tinkeringPool = hero.tac || hero.skill;
-                const rolls = Array.from({length: tinkeringPool}, () => Math.floor(Math.random() * 6) + 1);
-                const successes = rolls.filter(n => n >= 4).length;
-                this.log(`[Engine Overdrive] ${hero.name} spends 1 AP and rolls Tinkering ${tinkeringPool}d6: ${rolls.join(', ')} (${successes} successes; DC12 requires 1).`, successes > 0 ? "highlight" : "alert");
-                if (successes > 0) {
-                    this.overdriveBonusThisRound = 1;
-                    this.log("Engine Overdrive succeeds: +1 bonus Speed at the Train Phase. The traitor may spend 1 Sabotage Token to cancel this bonus.", "highlight");
-                } else {
-                    this.integrity = Math.max(0, this.integrity - 1);
-                    const intEl = document.getElementById('hud-integrity');
-                    if (intEl) intEl.innerText = `${this.integrity} HP`;
-                    this.log(`Engine Overdrive fails; Train Integrity falls by 1 to ${this.integrity}.`, "alert");
-                    this.checkGameOverConditions();
-                }
-                this.renderRoster(); this.updateActionEconomyUI();
-            }
-
-            negateOverdrive() {
-                if (!this.hasTraitorMode || this.sabotageTokens <= 0 || this.overdriveBonusThisRound <= 0 || this.phase >= 4) {
-                    this.log("No Engine Overdrive bonus is available to sabotage.", "alert"); return;
-                }
-                this.sabotageTokens--;
-                this.overdriveBonusThisRound = 0;
-                this.log(`[Sabotage] Engine Overdrive bonus cancelled. ${this.sabotageTokens} token(s) remain.`, "alert");
-                this.updateActionEconomyUI();
-            }
-
-            drawHeroCard() {
-                if(this.phase !== 2) {
-                    this.log("Hero Action cards can only be drawn during Phase 2.", "alert");
-                    return;
-                }
-                const hero = this.getActiveHero();
-                if(hero.confined) { this.log(`${hero.name} is confined and cannot draw Action cards.`, "alert"); return; }
-                if(hero.ap <= 0) {
-                    this.log(`${hero.name} has 0 AP remaining.`, "alert");
-                    return;
-                }
+                if(hero.confined || hero.ap <= 0) return;
                 hero.ap--;
                 this.sound.playClick();
-
                 const sampleCards = [
-                    { title: "Mist Step", cost: 1, effect: "Teleport instantly to any cell within line of sight." },
-                    { title: "Arcane Shielding", cost: 1, effect: "Absorbs up to 3 damage dealt to Train Integrity." },
-                    { title: "Overclock Resonance", cost: 1, effect: "Adds +2 successes to current repair or crisis check." },
-                    { title: "Engine Reboot", cost: 1, effect: "Immediately restore Engine state to Operational." }
+                    { title: "Mist Step", cost: 1, effect: "Teleport instantly." },
+                    { title: "Arcane Shielding", cost: 1, effect: "Train Integrity +2 HP." },
+                    { title: "Overclock Resonance", cost: 1, effect: "Adds +2 successes." },
+                    { title: "Engine Reboot", cost: 1, effect: "Engine Operational." }
                 ];
                 const card = sampleCards[Math.floor(Math.random() * sampleCards.length)];
                 this.hand.push(card);
                 this.renderHand();
-                this.log(`${hero.name} drew Action: ${card.title} (1 AP spent).`);
-                this.renderRoster();
-                this.updateActionEconomyUI();
+                this.renderRoster(); this.updateActionEconomyUI();
             }
 
             playActionCard(index) {
                 const hero = this.getActiveHero();
-                if (this.phase !== 2 || !hero || hero.confined) { this.log("Action cards cannot be played outside the Hero Phase or while confined.", "alert"); return; }
+                if (this.phase !== 2 || !hero || hero.confined) return;
                 const card = this.hand[index];
                 if (!card) return;
                 this.sound.playClick();
                 if(card.title === "Engine Reboot") {
                     this.engineState = 'Operational';
-                    const engEl = document.getElementById('hud-engine');
-                    if (engEl) engEl.innerText = 'Operational';
-                    this.log(`Engine Reboot played! Engine restored to Operational.`, "highlight");
+                    document.getElementById('hud-engine').innerText = 'Operational';
                 } else if(card.title === "Arcane Shielding") {
-                    this.integrity = Math.min(10, this.integrity + 2);
-                    const intEl = document.getElementById('hud-integrity');
-                    if (intEl) intEl.innerText = `${this.integrity} HP`;
-                    this.log(`Arcane Shielding played! Train Integrity bolstered by +2 HP.`, "highlight");
-                } else {
-                    this.log(`Played Action Card: ${card.title} - Effect applied successfully.`, "highlight");
+                    this.integrity = Math.min(12, this.integrity + 2);
+                    document.getElementById('hud-integrity').innerText = `${this.integrity} HP`;
                 }
                 this.hand.splice(index, 1);
                 this.renderHand();
             }
 
             drawCrisisCard() {
-                if(this.phase !== 1) {
-                    this.log("Crisis cards can only be drawn during Phase 1.", "alert");
-                    return;
-                }
-                if(this.crisisResolvedThisRound) {
-                    this.log("Crisis already resolved for this round.", "alert");
-                    return;
-                }
-                if(this.activeCrisis && this.pendingCrisisSuccesses !== null) {
-                    this.log("A crisis check is already in progress. Finish it before drawing another card.", "alert");
+                if(this.phase !== 1 || this.crisisResolvedThisRound) return;
+                if (this.crisesRemainingThisRound <= 0) {
+                    this.log("All crises for this round have been drawn and resolved.", "alert");
                     return;
                 }
                 this.sound.playClick();
+                this.crisesRemainingThisRound--;
                 const crises = [
-                    { title: "Conduit Rail Arc Overload", dc: 12, requiredSuccesses: 1, penalty: "Train Integrity -2 HP", success: "Arcs stabilized." },
-                    { title: "Core Instability", dc: 13, requiredSuccesses: 2, penalty: "Engine Damaged; Integrity -3 HP", success: "Heat sinks synchronized." },
-                    { title: "Mournland Surge", dc: 14, requiredSuccesses: 3, penalty: "Spectral Phantoms breach carriage; Integrity -3 HP", success: "Phantoms repelled." }
+                    { title: "Conduit Rail Arc Overload", dc: 12, requiredSuccesses: 1, penalty: "Train Integrity -1 HP", success: "Arcs stabilized." },
+                    { title: "Core Instability", dc: 13, requiredSuccesses: 2, penalty: "Engine Damaged; Integrity -2 HP", success: "Heat sinks synchronized." },
+                    { title: "Mournland Surge", dc: 14, requiredSuccesses: 3, penalty: "Phantoms breach; Integrity -2 HP", success: "Phantoms repelled." }
                 ];
                 this.activeCrisis = crises[Math.floor(Math.random() * crises.length)];
                 this.pendingCrisisSuccesses = null;
@@ -1591,26 +1378,22 @@
                 this.currentDice = [];
                 this.renderCrisisBoardPanel('card');
                 this.showCrisisModal(this.activeCrisis);
-                this.log(`[Crisis Drawn] ${this.activeCrisis.title} (Target DC ${this.activeCrisis.dc} -> Requires ${this.activeCrisis.requiredSuccesses} Successes)`, "alert");
+                this.log(`[Crisis Drawn] ${this.activeCrisis.title} (${this.crisesRemainingThisRound} remaining this round)`, "alert");
             }
 
             showCrisisModal(crisis) {
                 const modal = document.getElementById('modal-overlay');
                 const content = document.getElementById('modal-content');
                 if (!content) return;
-                const hero = this.getActiveHero();
                 content.innerHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
-                    <h2 style="color: var(--crimson-accent); margin-bottom: 8px; font-size: 20px;">CRISIS CARD: ${crisis.title}</h2>
-                    <div style="background: rgba(255,23,68,0.2); border: 1.5px solid var(--crimson-accent); padding: 14px; font-size: 14px; margin-bottom: 14px; line-height: 1.5; text-align: left;">
-                        <strong>Threat Assessment:</strong> Target DC ${crisis.dc} (Requires <strong>${crisis.requiredSuccesses}</strong> Successes)<br>
+                    <h2 style="color: var(--crimson-accent); margin-bottom: 8px; font-size: 20px;">CRISIS: ${crisis.title}</h2>
+                    <div style="background: rgba(255,23,68,0.2); border: 1.5px solid var(--crimson-accent); padding: 14px; font-size: 14px; margin-bottom: 14px; text-align: left;">
+                        <strong>DC:</strong> ${crisis.dc} (Requires <strong>${crisis.requiredSuccesses}</strong> Successes)<br>
                         <strong>Failure Penalty:</strong> ${crisis.penalty}<br>
-                        <strong>Success Reward:</strong> ${crisis.success}
+                        <strong>Success:</strong> ${crisis.success}
                     </div>
-                    <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">
-                        Active hero: <strong>${hero.name}</strong> (${hero.skill}d6 Skill pool). Close this card to use the main-board Dice Rolling Engine. The dice, Push, sabotage and resolution will appear on the board.
-                    </p>
-                    <button class="magipunk-btn primary" style="width: 100%; font-size: 15px; padding: 14px;" onclick="game.closeCrisisCard()">Return to Board & Resolve Crisis</button>
+                    <button class="magipunk-btn primary" style="width: 100%; padding: 14px;" onclick="game.closeCrisisCard()">Return to Board & Roll</button>
                 `;
                 if (modal) modal.style.display = 'flex';
             }
@@ -1618,212 +1401,105 @@
             closeCrisisCard() {
                 this.closeModal(null);
                 this.renderCrisisBoardPanel(this.pendingCrisisSuccesses === null ? 'ready' : 'roll');
-                const panel = document.getElementById('crisis-board-panel');
-                if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
 
-            renderCrisisBoardPanel(state = 'ready', stageLabel = 'Initial roll') {
+            renderCrisisBoardPanel(state = 'ready') {
                 const panel = document.getElementById('crisis-board-panel');
                 if (!panel) return;
                 if (!this.activeCrisis) { panel.style.display = 'none'; panel.innerHTML = ''; return; }
                 panel.style.display = 'block';
                 const c = this.activeCrisis;
-                let html = `<div style="font-weight:800;color:var(--gold-primary);font-size:15px;margin-bottom:5px">ACTIVE CRISIS: ${c.title}</div>
-                    <div style="font-size:13px;margin-bottom:8px">Target DC ${c.dc} · Need ${c.requiredSuccesses} success(es)</div>`;
+                let html = `<div style="font-weight:800;color:var(--gold-primary);font-size:15px;margin-bottom:5px">CRISIS: ${c.title} (${this.crisesRemainingThisRound} more to draw)</div>
+                    <div style="font-size:13px;margin-bottom:8px">DC ${c.dc} · Need ${c.requiredSuccesses} success(es)</div>`;
                 if (state === 'card' || state === 'ready') {
-                    html += `<div style="font-size:13px;margin-bottom:8px"><strong>Success:</strong> ${c.success}<br><strong>Failure:</strong> ${c.penalty}</div>
-                        <div style="font-size:12px;color:var(--text-muted)">Use the board's <strong>Skill Check (Stat Pool)</strong> button. The dice tray and event log will show the roll. You may then Push once, use traitor sabotage if available, or resolve the result.</div>`;
+                    html += `<div style="font-size:12px;color:var(--text-muted)">Use <strong>Skill Check (Stat Pool)</strong> on board. 4-6 = Success.</div>`;
                 } else if (state === 'roll' && this.pendingCrisisSuccesses !== null) {
-                    html += `<div style="font-size:14px;margin:6px 0"><strong>${stageLabel}:</strong> ${this.pendingCrisisSuccesses} success(es) · Need ${c.requiredSuccesses}</div>
-                        <div style="font-size:12px;color:var(--text-muted)">Dice are shown in the board dice tray. 4, 5 or 6 counts as one success. Push rerolls failed dice once; each 1 on the reroll adds 1 Stress.</div>`;
-                    if (!this.hasRerolledThisCheck) html += `<button class="magipunk-btn" style="width:100%;margin-top:8px" onclick="game.rerollDicePool()">Push: Reroll Failed Dice</button>`;
-                    if (this.hasTraitorMode && this.sabotageTokens > 0 && this.pendingInitialRoll && !this.hasRerolledThisCheck && this.pendingCrisisSuccesses > 0 && !this.sabotageAppliedThisCheck) {
-                        html += `<button class="magipunk-btn" style="width:100%;margin-top:8px" onclick="game.sabotagePendingRoll()">Secret Sabotage: Cancel 1 Success (1 token)</button>`;
-                    }
-                    html += `<button class="magipunk-btn primary" style="width:100%;padding:12px;margin-top:10px" onclick="game.evaluateCrisisOutcome(game.pendingCrisisSuccesses)">Resolve Crisis Outcome</button>`;
+                    html += `<div style="font-size:14px;margin:6px 0"><strong>Result:</strong> ${this.pendingCrisisSuccesses} success(es)</div>`;
+                    if (!this.hasRerolledThisCheck) html += `<button class="magipunk-btn" style="width:100%;margin-top:8px" onclick="game.rerollDicePool()">Push: Reroll Failed</button>`;
+                    html += `<button class="magipunk-btn primary" style="width:100%;padding:12px;margin-top:10px" onclick="game.evaluateCrisisOutcome(game.pendingCrisisSuccesses)">Resolve Crisis</button>`;
                 } else if (state === 'resolved') {
                     html += this.lastCrisisOutcomeHtml || '';
-                    if (!this.gameOver) html += `<button class="magipunk-btn primary" style="width:100%;padding:12px;margin-top:10px" onclick="game.advancePhase()">Continue to Hero Phase</button>`;
+                    if (this.crisesRemainingThisRound > 0) {
+                        html += `<button class="magipunk-btn primary" style="width:100%;padding:12px;margin-top:10px" onclick="game.drawCrisisCard()">Draw Next Crisis (${this.crisesRemainingThisRound} left)</button>`;
+                    } else if (!this.gameOver) {
+                        html += `<button class="magipunk-btn primary" style="width:100%;padding:12px;margin-top:10px" onclick="game.advancePhase()">Continue to Hero Phase</button>`;
+                    }
                 }
                 panel.innerHTML = html;
             }
 
-            renderCrisisRollState(stageLabel = 'Initial roll') {
-                if (!this.activeCrisis || this.pendingCrisisSuccesses === null) return;
-                this.renderCrisisBoardPanel('roll', stageLabel);
-            }
-
             rollHeroSkillCheck() {
-                if (this.phase !== 1 || !this.activeCrisis) {
-                    this.log("Draw a Crisis card first. Crisis skill checks are only available during Phase 1.", "alert");
-                    return;
-                }
-                if(this.pendingCrisisSuccesses !== null) {
-                    this.log("A roll is already pending. Accept it or use the one permitted Push reroll.", "alert");
-                    return;
-                }
-                if(this.crisisResolvedThisRound) {
-                    this.log("This crisis has already been resolved for the round.", "alert");
-                    return;
-                }
+                if (this.phase !== 1 || !this.activeCrisis || this.pendingCrisisSuccesses !== null) return;
                 const hero = this.getActiveHero();
                 this.sound.playDiceRoll();
-                const statusEl = document.getElementById('dice-status');
-                if (statusEl) statusEl.innerText = "Rolling...";
                 const tray = document.getElementById('dice-tray');
                 if (!tray) return;
                 tray.innerHTML = '';
-
                 this.hasRerolledThisCheck = false;
-                this.pendingInitialRoll = true;
-                this.sabotageAppliedThisCheck = false;
                 this.currentDice = [];
                 for(let i=0; i<hero.skill; i++) {
                     const val = Math.floor(Math.random() * 6) + 1;
                     this.currentDice.push(val);
-                    const die = document.createElement('div');
-                    die.className = 'die rolling';
-                    die.innerText = val;
+                    const die = document.createElement('div'); die.className = 'die rolling'; die.innerText = val;
                     tray.appendChild(die);
                 }
-
                 setTimeout(() => {
                     let successes = 0;
-                    if (hero.id === 'caden' && this.cadenRerollReady) {
-                        const failedIndex = this.currentDice.findIndex(v => v < 4);
-                        if (failedIndex >= 0) {
-                            this.currentDice[failedIndex] = Math.floor(Math.random() * 6) + 1;
-                            this.log(`[Signature] Caden rerolls one failed die: now ${this.currentDice[failedIndex]}.`, "highlight");
-                        }
-                        this.cadenRerollReady = false;
-                    }
                     tray.innerHTML = '';
                     this.currentDice.forEach(val => {
                         const die = document.createElement('div'); die.className = 'die'; die.innerText = val;
                         if (val >= 4) { die.classList.add('success'); successes++; }
                         tray.appendChild(die);
                     });
-                    if (hero.id === 'jan' && this.janInsightBonus) { successes++; this.janInsightBonus = false; this.log("[Signature] Jan's Investigative Insight adds +1 success.", "highlight"); }
-                    if (statusEl) statusEl.innerText = `${successes} Successes (4,5,6 = 1)`;
-                    if(successes > 0) this.sound.playSuccess();
-                    this.log(`${hero.name} Skill Check (Pool ${hero.skill}d6) -> Rolled [${this.currentDice.join(', ')}] -> ${successes} Successes.`);
-
+                    if (hero.id === 'jan' && this.janInsightBonus) { successes++; this.janInsightBonus = false; }
                     this.pendingCrisisSuccesses = successes;
-                    if(this.activeCrisis) {
-                        if (statusEl) statusEl.innerText = `${successes} Successes — reroll or accept`;
-                        this.log("Crisis roll is pending. Choose Push, Secret Sabotage if available, or Resolve Crisis Outcome in the board panel.");
-                        this.renderCrisisRollState('Initial roll');
-                    }
+                    this.renderCrisisBoardPanel('roll');
                 }, 600);
             }
 
             evaluateCrisisOutcome(successes) {
-                if(this.crisisResolvedThisRound || !this.activeCrisis || this.pendingCrisisSuccesses === null) return;
+                if(!this.activeCrisis || this.pendingCrisisSuccesses === null) return;
                 const crisis = this.activeCrisis;
-                let outcomeHTML = `<div style="margin-top:8px;padding:10px;border-radius:6px;background:rgba(0,0,0,.45);font-size:13px">Final result: <strong>${successes} success(es)</strong> (needed ${crisis.requiredSuccesses}).</div>`;
+                let outcomeHTML = `<div style="margin-top:8px;padding:10px;border-radius:6px;background:rgba(0,0,0,.45);font-size:13px">Result: <strong>${successes} successes</strong> (needed ${crisis.requiredSuccesses}).</div>`;
                 if(successes >= crisis.requiredSuccesses) {
                     this.sound.playSuccess();
-                    outcomeHTML += `<div style="color:#4ade80;font-weight:bold;margin-top:8px">CRISIS AVERTED</div><div style="font-size:13px">${crisis.success}</div>`;
-                    this.log(`Crisis Resolved Successfully: ${crisis.title} (${successes}/${crisis.requiredSuccesses} successes).`, "highlight");
+                    outcomeHTML += `<div style="color:#4ade80;font-weight:bold;margin-top:8px">CRISIS AVERTED</div>`;
                 } else {
-                    const damage = crisis.dc === 12 ? 2 : 3;
+                    const damage = crisis.dc === 12 ? 1 : 2;
                     this.integrity = Math.max(0, this.integrity - damage);
-                    if(crisis.dc >= 13) {
-                        this.engineState = 'Damaged';
-                        const engEl = document.getElementById('hud-engine');
-                        if (engEl) engEl.innerText = 'Damaged';
-                    }
-                    const intEl = document.getElementById('hud-integrity');
-                    if (intEl) intEl.innerText = `${this.integrity} HP`;
-                    outcomeHTML += `<div style="color:var(--crimson-accent);font-weight:bold;margin-top:8px">CRISIS FAILED</div><div style="font-size:13px">${crisis.penalty} (Integrity −${damage})</div>`;
-                    this.log(`Crisis Failed: ${crisis.title} (${successes}/${crisis.requiredSuccesses} successes). Integrity −${damage}; engine ${this.engineState}.`, "alert");
+                    outcomeHTML += `<div style="color:var(--crimson-accent);font-weight:bold;margin-top:8px">CRISIS FAILED</div><div style="font-size:13px">Integrity −${damage}</div>`;
+                    document.getElementById('hud-integrity').innerText = `${this.integrity} HP`;
                     this.checkGameOverConditions();
                 }
-                this.crisisResolvedThisRound = true;
                 this.pendingCrisisSuccesses = null;
-                this.pendingInitialRoll = false;
-                this.sabotageAppliedThisCheck = false;
-                const intEl = document.getElementById('hud-integrity');
-                if (intEl) intEl.innerText = `${this.integrity} HP`;
                 this.lastCrisisOutcomeHtml = outcomeHTML;
-                this.log(`Board state updated for crisis: Train Integrity ${this.integrity}/10; Engine ${this.engineState}.`, "highlight");
+                if (this.crisesRemainingThisRound <= 0) this.crisisResolvedThisRound = true;
                 this.renderCrisisBoardPanel('resolved');
             }
 
             rerollDicePool() {
-                if(this.currentDice.length === 0) {
-                    this.log("No active dice pool to push/reroll.", "alert");
-                    return;
-                }
-                if(this.hasRerolledThisCheck) {
-                    this.log("Rulebook Restriction: Only one push reroll is permitted per check.", "alert");
-                    return;
-                }
-                if(this.crisisResolvedThisRound) {
-                    this.log("Crisis already locked and resolved.", "alert");
-                    return;
-                }
-                if (!this.activeCrisis || this.pendingCrisisSuccesses === null) {
-                    this.log("Roll a crisis check first, then choose whether to push.", "alert"); return;
-                }
+                if(this.currentDice.length === 0 || this.hasRerolledThisCheck || this.pendingCrisisSuccesses === null) return;
                 this.hasRerolledThisCheck = true;
-                this.pendingInitialRoll = false;
                 this.sound.playDiceRoll();
-                const statusEl = document.getElementById('dice-status');
-                if (statusEl) statusEl.innerText = "Pushing Luck...";
                 const tray = document.getElementById('dice-tray');
                 if (!tray) return;
                 tray.innerHTML = '';
-
                 let successes = 0;
-                let onesRolled = 0;
-                this.currentDice = this.currentDice.map(val => {
-                    if(val >= 4) return val;
-                    const newVal = Math.floor(Math.random() * 6) + 1;
-                    if(newVal === 1) onesRolled++;
-                    return newVal;
-                });
-
-                if(onesRolled > 0) {
-                    const hero = this.getActiveHero();
-                    hero.stress = Math.min(5, hero.stress + onesRolled);
-                    this.log(`Push Backfire! Rolled ${onesRolled} '1's. ${hero.name} gained +${onesRolled} Stress (Total: ${hero.stress}/5).`, "alert");
-                    this.renderRoster();
-                }
-
-                this.currentDice.forEach((val) => {
-                    const die = document.createElement('div');
-                    die.className = 'die';
-                    die.innerText = val;
-                    if(val >= 4) {
-                        die.classList.add('success');
-                        successes++;
-                    }
+                this.currentDice = this.currentDice.map(val => val >= 4 ? val : Math.floor(Math.random() * 6) + 1);
+                this.currentDice.forEach(val => {
+                    const die = document.createElement('div'); die.className = 'die'; die.innerText = val;
+                    if(val >= 4) { die.classList.add('success'); successes++; }
                     tray.appendChild(die);
                 });
-
-                if (statusEl) statusEl.innerText = `${successes} Successes (Push Locked)`;
-                this.sound.playSuccess();
-                this.log(`Push Reroll -> [${this.currentDice.join(', ')}] (${successes} Successes). Reroll guard engaged.`);
-
-                if (this.sabotageAppliedThisCheck) {
-                    const beforeSabotage = successes;
-                    successes = Math.max(0, successes - 1);
-                    this.log(`[Sabotage] The cancelled success remains cancelled after the Push reroll (${beforeSabotage} → ${successes}).`, "alert");
-                }
                 this.pendingCrisisSuccesses = successes;
-                if(this.activeCrisis && !this.crisisResolvedThisRound) {
-                    if (statusEl) statusEl.innerText = `${successes} Successes — result pending`;
-                    this.log("Push resolved. Accept the final crisis result in the crisis popup.");
-                    this.renderCrisisRollState('Push reroll · final result');
-                }
+                this.renderCrisisBoardPanel('roll');
             }
 
             renderHand() {
                 const container = document.getElementById('hand-container');
                 if (!container) return;
                 if(this.hand.length === 0) {
-                    container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 35px; font-weight: bold;">Your hand is empty. Draw cards to begin.</div>`;
+                    container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 35px; font-weight: bold;">Your hand is empty.</div>`;
                     return;
                 }
                 container.innerHTML = '';
@@ -1837,81 +1513,54 @@
             }
 
             endHeroTurn() {
-                if (this.phase !== 2 || this.gameOver) { this.log("End Hero Turn is only available during Phase 2.", "alert"); return; }
+                if (this.phase !== 2 || this.gameOver) return;
                 const hero = this.getActiveHero();
                 this.sound.playClick();
-                if (hero.confined) this.log(`${hero.name} remains confined in Carriage 3; their normal Hero Phase actions are skipped.`, "alert");
-                else this.log(`${hero.name} ended their turn.`);
                 this.heroTurnsCompleted++;
                 if (this.heroTurnsCompleted >= this.heroes.length) {
                     this.activeHeroIndex = 0; this.heroTurnsCompleted = 0;
                     this.heroes.forEach(h => h.ap = h.confined ? 0 : h.maxAp);
                     this.phase = 3;
-                    this.log("All heroes have acted. Enemy Phase begins.", "highlight");
                     this.executeEnemyPhase();
                 } else {
                     this.activeHeroIndex++;
                     const nextHero = this.getActiveHero();
                     nextHero.ap = nextHero.confined ? 0 : nextHero.maxAp;
-                    this.log(nextHero.confined ? `Turn passed to ${nextHero.name}, who remains confined and has no normal actions.` : `Turn passed to ${nextHero.name}. AP reset to ${nextHero.maxAp}.`, "highlight");
                 }
                 this.renderTokens(); this.renderRoster(); this.updateActionEconomyUI();
             }
 
             executeEnemyPhase() {
-                this.log("[Phase 3: Enemy Phase] Minions & Boss AI execute automated pursuit and combat attacks.", "alert");
-                
+                this.log("[Phase 3: Enemy Phase] Enemies execute pursuit and combat attacks.", "alert");
                 if (this.gameOver) return;
-                if ([2, 5, 8].includes(this.round) && !this.bossesSpawnedRounds.includes(this.round)) {
-                    this.bossesSpawnedRounds.push(this.round);
-                    const bossNo = this.bossesSpawnedRounds.length;
-                    const bossNames = ['Daask Commander Xant', 'Daask War Adept', 'The Emerald Claw Enforcer'];
-                    const boss = { id: `boss${bossNo}`, name: bossNames[bossNo - 1], hp: 10, car: 5, cell: 5 };
+                
+                // Telegraphed Boss Spawns: 1 round warning before boss boards
+                if (this.pendingBossRounds.includes(this.round)) {
+                    this.log(`[Telegraphed Warning] Daask Commander Xant is approaching in Carriage 5 for next round!`, "alert");
+                }
+                if (this.bossesSpawnedRounds.includes(this.round)) {
+                    const boss = { id: `boss${this.round}`, name: 'Daask Commander Xant', hp: 10, car: 5, cell: 5 };
                     this.bosses.push(boss);
-                    this.log(`[Boss Entrance] ${boss.name} boards Car 5 with 10 HP!`, "alert");
-                    if (this.hasTraitorMode) {
-                        this.sabotageTokens++;
-                        this.log(`[Sabotage Reserve] The traitor gains 1 Sabotage Token (${this.sabotageTokens} available).`, "alert");
-                    }
+                    this.log(`[Boss Entrance] ${boss.name} has breached Carriage 5!`, "alert");
                 }
 
-                const allEnemies = [...this.minions, ...this.bosses];
-                allEnemies.forEach(enemy => {
+                [...this.minions, ...this.bosses].forEach(enemy => {
                     if (this.gameOver || enemy.hp <= 0) return;
-
-                    const currentCarriageTarget = this.randomReachableHeroForEnemy(enemy);
-                    if (currentCarriageTarget) {
-                        this.enemyAttackHero(enemy, currentCarriageTarget);
+                    const targetHero = this.randomReachableHeroForEnemy(enemy);
+                    if (targetHero) {
+                        this.enemyAttackHero(enemy, targetHero);
                         return;
                     }
-
-                    if (enemy.car > 2) {
-                        enemy.car--;
-                        this.log(`[Enemy Movement] ${enemy.name || enemy.id} advances to Carriage ${enemy.car}.`);
-                    } else if (enemy.car < 2) {
-                        enemy.car++;
-                        this.log(`[Enemy Movement] ${enemy.name || enemy.id} advances toward the VIP to Carriage ${enemy.car}.`);
-                    }
-
+                    if (enemy.car > 2) enemy.car--;
+                    else if (enemy.car < 2) enemy.car++;
                     if (enemy.car === 2) {
-                        const carriageTwoTarget = this.randomReachableHeroForEnemy(enemy);
-                        if (carriageTwoTarget) this.enemyAttackHero(enemy, carriageTwoTarget);
-                        else this.enemyAttackMelindre(enemy);
+                        const car2Target = this.randomReachableHeroForEnemy(enemy);
+                        if (car2Target) this.enemyAttackHero(enemy, car2Target);
+                        else this.enemyAttackVIPs(enemy);
                     }
                 });
-                this.heroes.forEach(h => {
-                    if (h.hp <= 0) this.log(`[Incapacitated] ${h.name} has been knocked out and cannot intercept until restored.`, "alert");
-                });
 
-                const intEl = document.getElementById('hud-integrity');
-                if (intEl) intEl.innerText = `${this.integrity} HP`;
                 this.checkGameOverConditions();
-                const phaseEl = document.getElementById('hud-phase');
-                if (phaseEl) phaseEl.innerText = '3. Enemy';
-                const titleEl = document.getElementById('current-phase-title');
-                if (titleEl) titleEl.innerText = 'Phase 3: Enemy Phase (Boss AI & Combat)';
-                const descEl = document.getElementById('current-phase-desc');
-                if (descEl) descEl.innerText = 'Enemies advance toward Carriage 2; heroes in the same carriage and within 3 spaces can intercept attacks.';
                 this.renderTokens();
             }
 
@@ -1919,72 +1568,40 @@
                 this.sound.playClick();
                 if (this.gameOver) return;
                 if (this.phase === 1) {
-                    if (!this.activeCrisis) { this.log("Draw a Crisis card before leaving Phase 1.", "alert"); return; }
-                    if (!this.crisisResolvedThisRound) {
-                        if (this.pendingCrisisSuccesses === null) { this.log("Resolve the crisis: roll the skill check first.", "alert"); return; }
-                        this.evaluateCrisisOutcome(this.pendingCrisisSuccesses);
-                        return;
-                    }
+                    if (!this.crisisResolvedThisRound) return;
                     this.phase = 2;
                     this.activeHeroIndex = 0; this.heroTurnsCompleted = 0;
                     this.heroes.forEach(h => h.ap = h.maxAp);
                     this.activeCrisis = null;
                 } else if (this.phase === 2) {
-                    if (this.heroTurnsCompleted < this.heroes.length) { this.log("Every hero must end their turn before advancing. Use End Hero Turn for each hero.", "alert"); return; }
+                    if (this.heroTurnsCompleted < this.heroes.length) return;
                     this.phase = 3; this.executeEnemyPhase(); return;
                 } else if (this.phase === 3) {
                     this.phase = 4;
-                    const vip = this.vips[0];
-                    if (vip && vip.hp <= 0 && this.vipDownedRound !== null && this.round > this.vipDownedRound) {
-                        this.triggerGameOver(false, `Defeat: Melindre was not stabilised by the end of Round ${this.round}.`);
-                        return;
-                    }
                     if (this.engineState === 'Operational') {
                         this.speed++;
-                        const speedEl = document.getElementById('hud-speed');
-                        if (speedEl) speedEl.innerText = `${this.speed} / 12`;
-                        this.log(`Train advanced! Speed track is now ${this.speed} / 12.`, "highlight");
-                    } else this.log(`Engine is ${this.engineState}; the train cannot gain its normal Speed this round.`, "alert");
-                    if (this.overdriveBonusThisRound > 0) {
-                        this.speed += this.overdriveBonusThisRound;
-                        this.log(`Engine Overdrive adds +${this.overdriveBonusThisRound} bonus Speed. Track: ${this.speed} / 12.`, "highlight");
-                        this.overdriveBonusThisRound = 0;
+                        document.getElementById('hud-speed').innerText = `${this.speed} / 12`;
                     }
-                    const speedEl = document.getElementById('hud-speed');
-                    if (speedEl) speedEl.innerText = `${this.speed} / 12`;
                     this.checkGameOverConditions();
-                    if (this.round >= 10 && this.speed < 12 && !this.gameOver) { this.triggerGameOver(false, "Time Expired: Round 10 ended before the train reached Thrane."); return; }
                 } else {
                     this.round++;
-                    this.overdriveBonusThisRound = 0;
                     this.phase = 1; this.crisisResolvedThisRound = false;
-                    this.pendingCrisisSuccesses = null; this.activeCrisis = null;
-                    this.currentDice = []; this.hasRerolledThisCheck = false; this.pendingInitialRoll = false; this.sabotageAppliedThisCheck = false;
-                    if (this.round > 10 && this.speed < 12) { this.triggerGameOver(false, "Time Expired: Round 10 limit reached before arriving in Thrane."); return; }
-                    this.log(`Round ${this.round} begins. Draw and resolve a new Crisis card.`, "highlight");
+                    this.crisesRemainingThisRound = this.heroes.length <= 2 ? 1 : 2;
+                    this.refreshHandToFive();
+                    this.log(`Round ${this.round} begins. Hand refreshed to 5 cards.`, "highlight");
                 }
-                const titles = ["Phase 1: Crisis Phase", "Phase 2: Hero Phase (2 AP)", "Phase 3: Enemy Phase", "Phase 4: Train & Track Phase"];
-                const descs = ["Draw and resolve one crisis; roll, optionally push once, then accept the result.", "Each hero gets 2 AP to move, attack, use a carriage action or ability.", "Minions and bosses move and attack automatically.", "If the engine is Operational, gain 1 Speed. Check victory and defeat."];
-                const phaseEl = document.getElementById('hud-phase');
-                if (phaseEl) phaseEl.innerText = titles[this.phase-1].split(':')[0];
-                const titleEl = document.getElementById('current-phase-title');
-                if (titleEl) titleEl.innerText = titles[this.phase-1];
-                const descEl = document.getElementById('current-phase-desc');
-                if (descEl) descEl.innerText = descs[this.phase-1];
+                const titles = ["Phase 1: Crisis Phase", "Phase 2: Hero Phase", "Phase 3: Enemy Phase", "Phase 4: Train & Track Phase"];
+                document.getElementById('hud-phase').innerText = titles[this.phase-1].split(':')[0];
+                document.getElementById('current-phase-title').innerText = titles[this.phase-1];
                 this.renderTokens(); this.renderRoster(); this.updateActionEconomyUI();
             }
 
             checkGameOverConditions() {
-                if(this.integrity <= 0) {
-                    this.triggerGameOver(false, "Catastrophic Failure: Train Integrity reached 0 HP.");
-                } else if(this.vips.length > 0 && this.vips[0].hp <= 0) {
-                    this.markVIPDownedIfNeeded();
-                } else if(this.speed >= 12) {
-                    if(this.vips.length > 0 && this.vips[0].hp > 0) {
-                        this.triggerGameOver(true, "Victory! The Lightning Rail successfully arrived in Thrane with VIP Melindre safe.");
-                    } else {
-                        this.triggerGameOver(false, "Defeat: Reached Thrane at Speed 12, but VIP Melindre did not survive.");
-                    }
+                if(this.integrity <= 0) this.triggerGameOver(false, "Train Integrity reached 0 HP.");
+                else if(this.vips.some(v => v.hp <= 0)) this.markVIPDownedIfNeeded();
+                else if(this.speed >= 12) {
+                    if(this.vips.every(v => v.hp > 0)) this.triggerGameOver(true, "Victory in Thrane!");
+                    else this.triggerGameOver(false, "Reached Thrane, but VIPs did not survive.");
                 }
             }
 
@@ -1994,15 +1611,12 @@
                 const modal = document.getElementById('modal-overlay');
                 const content = document.getElementById('modal-content');
                 if (!content) return;
-                const color = isVictory ? '#4ade80' : '#ff1744';
                 content.innerHTML = `
-                    <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
-                    <h2 style="color: ${color}; margin-bottom: 12px; font-size: 22px;">${isVictory ? 'VICTORY ACHIEVED' : 'DEFEAT'}</h2>
-                    <p style="font-size: 16px; line-height: 1.6; color: var(--text-main); margin-bottom: 22px; font-weight: bold;">${message}</p>
-                    <button class="magipunk-btn primary" style="width: 100%; font-size: 15px; padding: 14px;" onclick="location.reload()">Restart Campaign</button>
+                    <h2 style="color: ${isVictory ? '#4ade80' : '#ff1744'}; margin-bottom: 12px; font-size: 22px;">${isVictory ? 'VICTORY' : 'DEFEAT'}</h2>
+                    <p style="font-size: 16px; font-weight: bold; margin-bottom: 22px;">${message}</p>
+                    <button class="magipunk-btn primary" style="width: 100%; padding: 14px;" onclick="location.reload()">Restart</button>
                 `;
                 if (modal) modal.style.display = 'flex';
-                this.log(message, isVictory ? "highlight" : "alert");
             }
 
             showHowToPlay() {
@@ -2012,25 +1626,14 @@
                 if (!content) return;
                 content.innerHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
-                    <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">HOW TO PLAY — QUICK GUIDE</h2>
-                    <div style="font-size:11px;line-height:1.5;text-align:left;color:var(--text-muted);margin-bottom:10px;border:1px solid rgba(212,175,55,.35);padding:8px;border-radius:6px;">
-                      <strong>${GAME_RELEASE.edition} v${GAME_RELEASE.version}</strong> · Build ${GAME_RELEASE.buildId}<br>
-                      Release date: ${GAME_RELEASE.releaseDate}<br>
-                      <strong>Change log:</strong> ${GAME_RELEASE.changes.map(change => `• ${change}`).join('<br>')}
-                    </div>
-                    <div style="font-size:13px;line-height:1.65;text-align:left;color:var(--text-main)">
-                    <strong>1. Phase 1 — Crisis:</strong> Click <strong>Draw Crisis</strong> to open the crisis card popup. Roll skill dice, optionally push once, then click Advance Phase to accept and close the card.<br><br>
-                    <strong>2. Phase 2 — Heroes:</strong> Green-highlighted cells show legal moves. Click a green space or drag the active hero token to move (1 AP).<br><br>
-                    <strong>3. Attack & Carriage Actions:</strong> Move into range and click Attack Enemy or Carriage Action.<br><br>
-                    <strong>4. Secret Traitor mode:</strong> At game start, pass the device around and have each player check their own hero privately; hide the role screen before passing it on. The traitor starts with 2 Sabotage Tokens and gains 1 when a boss enters on Rounds 2, 5 and 8. After the initial Crisis roll, the traitor may cancel 1 success per token before a Push reroll. In Carriage 4, a hero may spend 2 AP to accuse a suspect. Every hero except the accused votes; YES must exceed half of eligible voters. A failed accusation gives the accuser 1 Stress and protects that suspect from another accusation until next round. A correct accusation confines the traitor to Carriage 3; they cannot take normal Hero Phase actions, but sabotage remains available.<br><br>
-                    <strong>5. Engine Overdrive:</strong> A hero in Carriage 1 may spend 1 AP to roll their current Skill dice. One or more successes adds +1 bonus Speed at the Train Phase; zero successes costs 1 Train Integrity. The traitor can spend 1 Sabotage Token to cancel the bonus.<br><br>
-                    </div>
+                    <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">HOW TO PLAY</h2>
+                    <p style="font-size:13px;line-height:1.6;text-align:left">
+                    <strong>1. Telegraphed Bosses:</strong> Bosses give 1 round of warning in Carriage 5 before breaching.<br><br>
+                    <strong>2. Active VIP Powers:</strong> Use Shetari's <em>Diplomatic Strike</em> (5 damage) and Melindre's <em>Silver Flame Heal</em> (+4 Train HP) once per game.<br><br>
+                    <strong>3. Victory:</strong> Reach Speed 12 in Thrane with Integrity > 0 and both VIPs alive.
+                    </p>
                     <button class="magipunk-btn primary" style="width:100%;padding:12px;margin-top:14px" onclick="game.closeModal(null)">Got It</button>`;
                 if (modal) modal.style.display = 'flex';
-            }
-
-            inspectCard(card) {
-                this.playActionCard(this.hand.indexOf(card));
             }
 
             inspectHero(hero) {
@@ -2041,15 +1644,8 @@
                 content.innerHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
                     <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">${hero.name}</h2>
-                    <div style="color: var(--text-muted); font-size: 14px; margin-bottom: 8px; font-weight: bold;">${hero.role}</div>
-                    <div style="color: var(--azure-glow); font-size: 12px; margin-bottom: 16px; font-style: italic;">Signature: ${hero.ability}</tr>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; font-size: 14px;">
-                        <div>Hit Points: <span style="color:#4ade80; font-weight: bold;">${hero.hp} / ${hero.maxHp}</span></div>
-                        <div>Defense: <span style="color:var(--azure-glow); font-weight: bold;">${hero.def}</span></div>
-                        <div>Skill Rating: <span style="color:var(--azure-glow); font-weight: bold;">${hero.skill}d6</span></div>
-                        <div>Stress Level: <span style="color:#f87171; font-weight: bold;">${hero.stress} / 5</span></div>
-                        <div>Action Points: <span style="color:var(--gold-light); font-weight: bold;">${hero.ap} / ${hero.maxAp}</span></div>
-                    </div>
+                    <div style="color: var(--text-muted); font-size: 14px; margin-bottom: 8px;">${hero.role}</div>
+                    <div style="font-size: 14px;">HP: <span style="color:#4ade80">${hero.hp}/${hero.maxHp}</span> | AP: <span style="color:var(--gold-light)">${hero.ap}/${hero.maxAp}</span></div>
                 `;
                 if (modal) modal.style.display = 'flex';
             }
