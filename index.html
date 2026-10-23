@@ -1,10 +1,9 @@
-HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightning Rail: Sharn to Thrane - Master Rulebook Edition v7.5</title>
+    <title>Lightning Rail: Sharn to Thrane - Master Rulebook Edition v8.2</title>
     <style>
         :root {
             --bg-deep: #070a12;
@@ -49,15 +48,15 @@ HTML
             z-index: 1;
         }
 
-        /* Player Mode Selection Modal Overlay */
+        /* Player Mode Selection & Guide Modal Overlay */
         .mode-select-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(7, 10, 18, 0.95);
-            backdrop-filter: blur(12px);
+            background: rgba(7, 10, 18, 0.96);
+            backdrop-filter: blur(14px);
             z-index: 200;
             display: flex;
             align-items: center;
@@ -65,19 +64,21 @@ HTML
         }
 
         .mode-select-card {
-            width: 520px;
+            width: 580px;
+            max-height: 90vh;
             background: linear-gradient(135deg, #1e293b, #0f172a);
             border: 4px solid var(--gold-primary);
             border-radius: 16px;
-            padding: 35px;
+            padding: 30px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 16px;
             box-shadow: 0 0 90px rgba(212,175,55,0.85);
             text-align: center;
             background-image: url('card_template_crisis_fantasy.png');
             background-size: cover;
+            overflow-y: auto;
         }
 
         .mode-select-card h1 {
@@ -88,26 +89,27 @@ HTML
         }
 
         .mode-select-card p {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-muted);
             line-height: 1.5;
+            text-align: left;
         }
 
         .mode-buttons-container {
             display: flex;
-            flex-direction: column;
-            gap: 15px;
+            gap: 12px;
             width: 100%;
-            margin-top: 10px;
+            margin-top: 5px;
         }
 
         .mode-btn {
+            flex: 1;
             background: linear-gradient(to bottom, #9a7b0c, #634b05);
             border: 2px solid var(--gold-primary);
             color: #fff;
-            padding: 16px;
+            padding: 14px;
             font-family: 'Cinzel', serif;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
             border-radius: 8px;
             cursor: pointer;
@@ -137,14 +139,14 @@ HTML
         }
 
         .title-area h1 {
-            font-size: 26px;
+            font-size: 24px;
             color: var(--gold-primary);
             letter-spacing: 2px;
             text-shadow: 0 0 15px rgba(212,175,55,0.7);
         }
 
         .title-area span {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-muted);
             letter-spacing: 1px;
             font-weight: bold;
@@ -152,15 +154,15 @@ HTML
 
         .global-status {
             display: flex;
-            gap: 20px;
+            gap: 16px;
             align-items: center;
-            font-size: 16px;
+            font-size: 15px;
         }
 
         .status-badge {
             background: rgba(0,0,0,0.85);
             border: 1.5px solid var(--border-metal);
-            padding: 8px 18px;
+            padding: 8px 16px;
             border-radius: 6px;
             display: flex;
             flex-direction: column;
@@ -169,7 +171,7 @@ HTML
         }
 
         .status-badge label {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-muted);
             text-transform: uppercase;
             font-weight: bold;
@@ -179,7 +181,7 @@ HTML
             font-weight: bold;
             color: var(--azure-glow);
             font-family: monospace;
-            font-size: 18px;
+            font-size: 17px;
             text-shadow: 0 0 10px rgba(0,229,255,0.6);
         }
 
@@ -200,7 +202,7 @@ HTML
             display: flex;
             flex-direction: column;
             padding: 22px;
-            gap: 20px;
+            gap: 18px;
             backdrop-filter: blur(14px);
             box-shadow: 6px 0 25px rgba(0,0,0,0.8);
             z-index: 6;
@@ -213,15 +215,25 @@ HTML
             letter-spacing: 1.5px;
             border-bottom: 2px solid rgba(212,175,55,0.4);
             padding-bottom: 6px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .help-link {
+            font-size: 11px;
+            color: var(--azure-glow);
+            cursor: pointer;
+            text-decoration: underline;
         }
 
         .hero-roster {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            max-height: 280px;
+            gap: 10px;
+            max-height: 260px;
             overflow-y: auto;
         }
 
@@ -229,7 +241,7 @@ HTML
             background: rgba(18, 24, 36, 0.95);
             border: 1.5px solid var(--border-metal);
             border-radius: 8px;
-            padding: 12px 14px;
+            padding: 10px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -244,20 +256,20 @@ HTML
         }
 
         .hero-info h4 {
-            font-size: 16px;
+            font-size: 15px;
             color: var(--text-main);
             font-weight: bold;
         }
 
         .hero-info span {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-muted);
         }
 
         .hero-stats-mini {
             display: flex;
-            gap: 12px;
-            font-size: 14px;
+            gap: 10px;
+            font-size: 13px;
             font-family: monospace;
             font-weight: bold;
         }
@@ -271,23 +283,23 @@ HTML
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             overflow: hidden;
         }
 
         .deck-buttons {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 10px;
         }
 
         .magipunk-btn {
             background: linear-gradient(to bottom, #1e293b, #0f172a);
             border: 1.5px solid var(--gold-primary);
             color: var(--gold-light);
-            padding: 12px 16px;
+            padding: 10px 14px;
             font-family: 'Cinzel', serif;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             border-radius: 6px;
             cursor: pointer;
@@ -318,19 +330,19 @@ HTML
             background: rgba(0,0,0,0.6);
             border: 1.5px dashed var(--border-metal);
             border-radius: 8px;
-            padding: 12px;
+            padding: 10px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
         .card-item {
             background: #1e293b;
             border: 1.5px solid var(--gold-primary);
             border-radius: 6px;
-            padding: 12px 14px;
-            font-size: 14px;
+            padding: 10px 12px;
+            font-size: 13px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
@@ -348,17 +360,17 @@ HTML
 
         .card-item .cost {
             position: absolute;
-            top: 8px;
-            right: 12px;
+            top: 6px;
+            right: 10px;
             background: var(--azure-glow);
             color: #000;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
-            padding: 3px 8px;
+            padding: 2px 6px;
             border-radius: 4px;
         }
 
-        /* Central Master Board View - Perfect Grid-to-Cell Proportions */
+        /* Central Master Board View */
         .board-workspace {
             flex: 1;
             display: flex;
@@ -411,7 +423,7 @@ HTML
             box-shadow: inset 0 0 10px rgba(0,229,255,0.6);
         }
 
-        /* Custom Asset Tokens - Perfectly sized to fit cleanly inside grid cells */
+        /* Custom Asset Tokens */
         .token {
             width: 38px;
             height: 38px;
@@ -449,7 +461,7 @@ HTML
             display: flex;
             flex-direction: column;
             padding: 22px;
-            gap: 18px;
+            gap: 16px;
             backdrop-filter: blur(14px);
             box-shadow: -6px 0 25px rgba(0,0,0,0.8);
             z-index: 6;
@@ -459,24 +471,24 @@ HTML
             background: rgba(0,0,0,0.75);
             border: 1.5px solid var(--gold-primary);
             border-radius: 8px;
-            padding: 16px;
+            padding: 14px;
             text-align: center;
             background-image: url('dashboard_recessed_frame.png');
             background-size: cover;
         }
 
         .round-control-box h3 {
-            font-size: 17px;
+            font-size: 16px;
             color: var(--gold-primary);
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             text-shadow: 0 1px 4px rgba(0,0,0,0.95);
             font-weight: bold;
         }
 
         .round-control-box p {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-muted);
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             line-height: 1.4;
         }
 
@@ -484,9 +496,9 @@ HTML
             background: rgba(0,229,255,0.18);
             border: 1.5px solid var(--azure-glow);
             border-radius: 6px;
-            padding: 10px 14px;
-            font-size: 15px;
-            margin-bottom: 12px;
+            padding: 8px 12px;
+            font-size: 14px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -499,27 +511,27 @@ HTML
             background: rgba(15, 23, 42, 0.95);
             border: 1.5px solid var(--border-metal);
             border-radius: 8px;
-            padding: 16px;
+            padding: 14px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .dice-tray {
-            height: 120px;
+            height: 110px;
             background: rgba(0,0,0,0.85);
             border: 1.5px inset var(--border-metal);
             border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 16px;
+            gap: 14px;
             perspective: 800px;
         }
 
         .die {
-            width: 78px;
-            height: 78px;
+            width: 72px;
+            height: 72px;
             background-image: url('dice_face_blank.png');
             background-size: cover;
             color: var(--gold-light);
@@ -528,7 +540,7 @@ HTML
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 30px;
+            font-size: 28px;
             border: 2px solid var(--gold-primary);
             box-shadow: 0 8px 25px rgba(0,0,0,0.95);
             transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -566,21 +578,21 @@ HTML
             background: rgba(0,0,0,0.85);
             border: 1.5px solid var(--border-metal);
             border-radius: 8px;
-            padding: 12px;
+            padding: 10px;
             font-family: monospace;
-            font-size: 13px;
+            font-size: 12px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            max-height: 200px;
+            gap: 6px;
+            max-height: 180px;
             line-height: 1.4;
         }
 
         .log-entry {
             color: var(--text-muted);
             border-bottom: 1px solid rgba(255,255,255,0.08);
-            padding-bottom: 4px;
+            padding-bottom: 3px;
         }
 
         .log-entry.highlight { color: var(--azure-glow); font-weight: bold; }
@@ -602,19 +614,21 @@ HTML
         }
 
         .modal-card {
-            width: 480px;
+            width: 500px;
+            max-height: 85vh;
             background: linear-gradient(135deg, #1e293b, #0f172a);
             border: 4px solid var(--gold-primary);
             border-radius: 14px;
-            padding: 30px;
+            padding: 26px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 16px;
             box-shadow: 0 0 80px rgba(212,175,55,0.8);
             position: relative;
             animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             background-image: url('card_template_crisis_fantasy.png');
             background-size: cover;
+            overflow-y: auto;
         }
 
         @keyframes popIn {
@@ -637,14 +651,18 @@ HTML
 
     <canvas id="weather-canvas"></canvas>
 
-    <!-- Player Selection Start Screen Modal -->
+    <!-- Player Selection & Quick Guide Start Screen Modal -->
     <div class="mode-select-overlay" id="mode-select-overlay">
         <div class="mode-select-card">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <p>Select your group player configuration according to Rulebook v2.3:</p>
+            <p><strong>Master Rulebook v8.2 Quick Guide:</strong><br>
+            • <strong>Phase 1 (Crisis):</strong> Draw and resolve environmental hazards.<br>
+            • <strong>Phase 2 (Hero):</strong> Move, attack, repair, or play action cards using AP.<br>
+            • <strong>Phase 3 (Enemy):</strong> Automated minion pursuit toward VIP Melindre.<br>
+            • <strong>Phase 4 (Train):</strong> Advance Speed track toward Thrane (Target: Speed 12).</p>
             <div class="mode-buttons-container">
-                <button class="mode-btn" onclick="game.startGameMode(2)">1 to 2 Player Mode (Compact Roster)</button>
-                <button class="mode-btn" onclick="game.startGameMode(5)">3 to 5 Player Mode (Full Operative Squad)</button>
+                <button class="mode-btn" onclick="game.startGameMode(2)">1 to 2 Player Mode</button>
+                <button class="mode-btn" onclick="game.startGameMode(5)">3 to 5 Player Mode</button>
             </div>
         </div>
     </div>
@@ -653,7 +671,7 @@ HTML
     <header>
         <div class="title-area">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <span>Master Rulebook Edition v7.5 | Perfect-Fit Grid Sizing</span>
+            <span>Master Rulebook Edition v8.2 | Fully Enforced Core Rules</span>
         </div>
         <div class="global-status">
             <div class="status-badge">
@@ -679,7 +697,10 @@ HTML
     <main>
         <!-- Left Sidebar: Heroes & Hand Cards -->
         <aside class="left-sidebar">
-            <div class="section-header">Active Heroes</div>
+            <div class="section-header">
+                <span>Active Heroes</span>
+                <span class="help-link" onclick="game.showHowToPlay()">How to Play</span>
+            </div>
             <div class="hero-roster" id="hero-roster"></div>
 
             <div class="section-header">Action Decks & Hand</div>
@@ -694,7 +715,7 @@ HTML
             </div>
         </aside>
 
-        <!-- Central Master Board View with perfectly aligned grid cells -->
+        <!-- Central Master Board View -->
         <main class="board-workspace">
             <div class="master-board-container" id="master-board-container">
                 <div class="board-car-column" id="car-grid-1"></div>
@@ -723,7 +744,7 @@ HTML
             <div class="section-header">Dice Rolling Engine</div>
             <div class="dice-engine-box">
                 <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: bold;">
-                    <span>Target: 4+ (Success)</span>
+                    <span>Target: 4, 5, 6 (Success)</span>
                     <span id="dice-status" style="color: var(--azure-glow);">Ready</span>
                 </div>
                 <div class="dice-tray" id="dice-tray">
@@ -737,7 +758,7 @@ HTML
 
             <div class="section-header">Event & Action Log</div>
             <div class="log-console" id="log-console">
-                <div class="log-entry highlight">[System] Lightning Rail v7.5 token sizing perfectly aligned to grid cells.</div>
+                <div class="log-entry highlight">[System] Lightning Rail v8.2 core rules engine initialized.</div>
             </div>
         </aside>
     </main>
@@ -846,6 +867,7 @@ HTML
                 this.integrity = 10;
                 this.engineState = 'Operational';
                 this.round = 1;
+                this.crisisResolvedThisRound = false;
                 
                 this.allHeroes = [
                     { id: 'jan', name: 'Jan Valek', role: 'Vampire Detective', hp: 12, maxHp: 12, def: 15, stress: 0, car: 1, cell: 2, ap: 2, maxAp: 2, img: 'token_hero_jan_valek.png' },
@@ -891,7 +913,7 @@ HTML
                 this.renderRoster();
                 this.renderMasterBoardGrid();
                 this.updateActionEconomyUI();
-                this.log(`Game started with ${this.heroes.length}-Player configuration.`, "highlight");
+                this.log(`Game started with ${this.heroes.length}-Player configuration (v8.2 Rulebook Enforced).`, "highlight");
             }
 
             log(msg, type='') {
@@ -1003,7 +1025,7 @@ HTML
                 const carDiff = Math.abs(hero.car - parseInt(targetCar));
                 const cellDiff = Math.abs(hero.cell - parseInt(targetCell));
                 if(carDiff > 1 || cellDiff > 3) {
-                    this.log(`Tactical movement restriction: Target is out of range. Move to adjacent compartment or cells.`, "alert");
+                    this.log(`Tactical movement restriction: Target is out of range.`, "alert");
                     return;
                 }
 
@@ -1042,10 +1064,10 @@ HTML
                 this.sound.playClick();
 
                 const sampleCards = [
-                    { title: "Mist Step", cost: 1, effect: "Teleport instantly to any cell within line of sight.", art: "card_hero_mist_step.png" },
-                    { title: "Arcane Shielding", cost: 1, effect: "Absorbs up to 3 damage dealt to Train Integrity.", art: "card_relic_dragon_force_arm.png" },
-                    { title: "Overclock Resonance", cost: 1, effect: "Adds +2 successes to current repair or crisis check.", art: "card_hero_overclock.png" },
-                    { title: "Aether Conduit Vault", cost: 1, effect: "Bypasses locked sector gates instantly.", art: "card_hero_aether_conduit_vault.png" }
+                    { title: "Mist Step", cost: 1, effect: "Teleport instantly to any cell within line of sight." },
+                    { title: "Arcane Shielding", cost: 1, effect: "Absorbs up to 3 damage dealt to Train Integrity." },
+                    { title: "Overclock Resonance", cost: 1, effect: "Adds +2 successes to current repair or crisis check." },
+                    { title: "Engine Overdrive", cost: 1, effect: "Immediately restore Engine state to Operational." }
                 ];
                 const card = sampleCards[Math.floor(Math.random() * sampleCards.length)];
                 this.hand.push(card);
@@ -1055,16 +1077,34 @@ HTML
                 this.updateActionEconomyUI();
             }
 
+            playActionCard(index) {
+                const card = this.hand[index];
+                this.sound.playClick();
+                if(card.title === "Engine Overdrive") {
+                    this.engineState = 'Operational';
+                    document.getElementById('hud-engine').innerText = 'Operational';
+                    this.log(`Engine Overdrive played! Engine restored to Operational.`, "highlight");
+                } else {
+                    this.log(`Played Action Card: ${card.title} - Effect applied successfully.`, "highlight");
+                }
+                this.hand.splice(index, 1);
+                this.renderHand();
+            }
+
             drawCrisisCard() {
                 if(this.phase !== 1) {
-                    this.log("Crisis cards can only be drawn during Phase 1 (Crisis Phase).", "alert");
+                    this.log("Crisis cards can only be drawn during Phase 1.", "alert");
+                    return;
+                }
+                if(this.crisisResolvedThisRound) {
+                    this.log("Crisis already resolved for this round. Advance to Hero Phase.", "alert");
                     return;
                 }
                 this.sound.playClick();
                 const crises = [
-                    { title: "Conduit Rail Arc Overload", dc: 12, requiredSuccesses: 1, penalty: "Train Integrity -2 HP", success: "Arcs stabilized successfully.", art: "card_crisis_conduit_overload.png" },
-                    { title: "Core Instability", dc: 13, requiredSuccesses: 2, penalty: "Engine Damaged; Integrity -3 HP", success: "Heat sinks synchronized.", art: "card_crisis_core_instability.png" },
-                    { title: "Mournland Surge", dc: 14, requiredSuccesses: 3, penalty: "Spectral Phantoms breach carriage; Integrity -3 HP", success: "Phantoms repelled.", art: "card_crisis_mournland_surge.png" }
+                    { title: "Conduit Rail Arc Overload", dc: 12, requiredSuccesses: 1, penalty: "Train Integrity -2 HP", success: "Arcs stabilized." },
+                    { title: "Core Instability", dc: 13, requiredSuccesses: 2, penalty: "Engine Damaged; Integrity -3 HP", success: "Heat sinks synchronized." },
+                    { title: "Mournland Surge", dc: 14, requiredSuccesses: 3, penalty: "Spectral Phantoms breach carriage; Integrity -3 HP", success: "Phantoms repelled." }
                 ];
                 this.activeCrisis = crises[Math.floor(Math.random() * crises.length)];
                 this.showCrisisModal(this.activeCrisis);
@@ -1086,7 +1126,7 @@ HTML
                     <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">
                         Have active hero (${this.getActiveHero().name}) execute a skill check below!
                     </p>
-                    <button class="magipunk-btn primary" style="width: 100%; font-size: 15px; padding: 14px;" onclick="game.resolveCrisisCheck()">Execute Skill Check</button>
+                    <button class="magipunk-btn primary" style="width: 100%; font-size: 15px; padding: 14px;" onclick="game.rollHeroSkillCheck()">Roll Skill Check (3d6)</button>
                 `;
                 modal.style.display = 'flex';
             }
@@ -1112,48 +1152,50 @@ HTML
                     tray.childNodes.forEach((die, idx) => {
                         die.classList.remove('rolling');
                         const val = this.currentDice[idx];
-                        if(val >= 6) {
-                            die.classList.add('critical');
-                            successes += 2;
-                        } else if(val >= 4) {
+                        if(val >= 4) {
                             die.classList.add('success');
-                            successes++;
+                            successes++; // Rulebook v2.3: Each 4, 5, or 6 counts as 1 success
                         }
                     });
-                    document.getElementById('dice-status').innerText = `${successes} Successes (4+=1, 6=2)`;
+                    document.getElementById('dice-status').innerText = `${successes} Successes (4,5,6 = 1)`;
                     if(successes > 0) this.sound.playSuccess();
                     this.log(`Skill Check -> Rolled [${this.currentDice.join(', ')}] -> ${successes} Successes.`);
+
+                    if(this.activeCrisis) {
+                        this.evaluateCrisisOutcome(successes);
+                    }
                 }, 600);
             }
 
-            resolveCrisisCheck() {
-                if(!this.activeCrisis) return;
-                this.sound.playDiceRoll();
-                const dice = [Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1];
-                let successes = dice.filter(d => d >= 4).length + dice.filter(d => d === 6).length;
-                
+            evaluateCrisisOutcome(successes) {
                 const content = document.getElementById('modal-content');
                 let resultHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
-                    <div style="margin-top: 10px; font-size: 15px; font-family: monospace; background: rgba(0,0,0,0.75); padding: 12px; border-radius: 6px;">
-                        Crisis Roll [${dice.join(', ')}] -> <strong>${successes} Successes</strong> (Needed: ${this.activeCrisis.requiredSuccesses})
+                    <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">CRISIS RESULT</h2>
+                    <div style="margin-top: 10px; font-size: 15px; font-family: monospace; background: rgba(0,0,0,0.75); padding: 12px; border-radius: 6px; margin-bottom: 14px;">
+                        Rolled -> <strong>${successes} Successes</strong> (Needed: ${this.activeCrisis.requiredSuccesses})
                     </div>
                 `;
 
                 if(successes >= this.activeCrisis.requiredSuccesses) {
                     this.sound.playSuccess();
-                    resultHTML += `<div style="color: #4ade80; font-weight: bold; margin-top: 14px; font-size: 16px;">Crisis Averted! ${this.activeCrisis.success}</div>`;
+                    resultHTML += `<div style="color: #4ade80; font-weight: bold; font-size: 16px; margin-bottom: 15px;">Crisis Averted! ${this.activeCrisis.success}</div>`;
                     this.log(`Crisis Resolved Successfully: ${this.activeCrisis.title}`, "highlight");
                 } else {
                     const damage = this.activeCrisis.dc === 12 ? 2 : 3;
                     this.integrity = Math.max(0, this.integrity - damage);
+                    if(this.activeCrisis.dc >= 13) {
+                        this.engineState = 'Damaged';
+                        document.getElementById('hud-engine').innerText = 'Damaged';
+                    }
                     document.getElementById('hud-integrity').innerText = `${this.integrity} HP`;
-                    resultHTML += `<div style="color: var(--crimson-accent); font-weight: bold; margin-top: 14px; font-size: 16px;">Crisis Failed! Penalty: ${this.activeCrisis.penalty}</div>`;
-                    this.log(`Crisis Failed! Integrity dropped by ${damage} HP (Current: ${this.integrity} HP).`, "alert");
+                    resultHTML += `<div style="color: var(--crimson-accent); font-weight: bold; font-size: 16px; margin-bottom: 15px;">Crisis Failed! Penalty: ${this.activeCrisis.penalty}</div>`;
+                    this.log(`Crisis Failed! Integrity dropped by ${damage} HP (Current: ${this.integrity} HP). Engine status: ${this.engineState}.`, "alert");
                     this.checkGameOverConditions();
                 }
 
-                resultHTML += `<button class="magipunk-btn primary" style="width: 100%; margin-top: 20px; padding: 14px; font-size: 15px;" onclick="game.closeModal(null)">Close & Continue</button>`;
+                this.crisisResolvedThisRound = true;
+                resultHTML += `<button class="magipunk-btn primary" style="width: 100%; padding: 14px; font-size: 15px;" onclick="game.closeModal(null)">Close & Continue</button>`;
                 content.innerHTML = resultHTML;
             }
 
@@ -1170,7 +1212,7 @@ HTML
                 let successes = 0;
                 let onesRolled = 0;
                 this.currentDice = this.currentDice.map(val => {
-                    if(val >= 4) return val;
+                    if(val >= 4) return val; // Keep successes
                     const newVal = Math.floor(Math.random() * 6) + 1;
                     if(newVal === 1) onesRolled++;
                     return newVal;
@@ -1187,10 +1229,7 @@ HTML
                     const die = document.createElement('div');
                     die.className = 'die';
                     die.innerText = val;
-                    if(val >= 6) {
-                        die.classList.add('critical');
-                        successes += 2;
-                    } else if(val >= 4) {
+                    if(val >= 4) {
                         die.classList.add('success');
                         successes++;
                     }
@@ -1200,6 +1239,10 @@ HTML
                 document.getElementById('dice-status').innerText = `${successes} Successes (Push)`;
                 this.sound.playSuccess();
                 this.log(`Push Reroll -> [${this.currentDice.join(', ')}] (${successes} Successes).`);
+
+                if(this.activeCrisis) {
+                    this.evaluateCrisisOutcome(successes);
+                }
             }
 
             renderHand() {
@@ -1213,13 +1256,9 @@ HTML
                     const item = document.createElement('div');
                     item.className = 'card-item';
                     item.innerHTML = `<strong>${c.title}</strong><div class="cost">${c.cost} AP</div>`;
-                    item.onclick = () => this.inspectCard(c);
+                    item.onclick = () => this.playActionCard(idx);
                     container.appendChild(item);
                 });
-            }
-
-            rollDicePool(numDice) {
-                this.rollHeroSkillCheck();
             }
 
             endHeroTurn() {
@@ -1227,22 +1266,45 @@ HTML
                 this.sound.playClick();
                 this.log(`${hero.name} ended their turn.`);
                 
-                this.activeHeroIndex = (this.activeHeroIndex + 1) % this.heroes.length;
-                const nextHero = this.getActiveHero();
-                nextHero.ap = nextHero.maxAp;
-
-                this.log(`Turn passed to ${nextHero.name}. AP reset to ${nextHero.maxAp}.`, "highlight");
+                this.activeHeroIndex++;
+                if(this.activeHeroIndex >= this.heroes.length) {
+                    this.activeHeroIndex = 0;
+                    this.log("All heroes have acted. Transitioning to Enemy Phase (Phase 3).", "highlight");
+                    this.phase = 3;
+                    this.executeEnemyPhase();
+                } else {
+                    const nextHero = this.getActiveHero();
+                    nextHero.ap = nextHero.maxAp;
+                    this.log(`Turn passed to ${nextHero.name}. AP reset to ${nextHero.maxAp}.`, "highlight");
+                }
                 this.renderRoster();
                 this.renderTokens();
                 this.updateActionEconomyUI();
             }
 
+            executeEnemyPhase() {
+                this.log("[Phase 3: Enemy Phase] Minions execute automated AI pursuit toward VIP Melindre.", "alert");
+                this.minions.forEach(m => {
+                    if(m.car > 2) m.car--;
+                });
+                document.getElementById('hud-phase').innerText = '3. Enemy';
+                document.getElementById('current-phase-title').innerText = 'Phase 3: Enemy Phase (AI Automation)';
+                document.getElementById('current-phase-desc').innerText = 'Minions and threats advance along target ladders.';
+                this.renderTokens();
+            }
+
             advancePhase() {
                 this.sound.playClick();
+                if(this.phase === 1 && !this.crisisResolvedThisRound) {
+                    this.log("Rulebook Enforcement: You must resolve the Crisis Phase before advancing to Hero Phase.", "alert");
+                    return;
+                }
+
                 this.phase++;
                 if(this.phase > 4) {
                     this.phase = 1;
                     this.round++;
+                    this.crisisResolvedThisRound = false;
                     if(this.round > 10) {
                         this.triggerGameOver(false, "Time Expired: Round 10 limit reached before arriving in Thrane.");
                         return;
@@ -1265,14 +1327,6 @@ HTML
                 document.getElementById('hud-phase').innerText = titles[this.phase - 1].split(':')[0];
                 document.getElementById('current-phase-title').innerText = titles[this.phase - 1];
                 document.getElementById('current-phase-desc').innerText = descs[this.phase - 1];
-
-                if(this.phase === 3) {
-                    this.log("[Enemy Phase] Daask Enforcer & Vampire Spawn execute automated pursuit AI toward VIP Melindre.", "alert");
-                    this.minions.forEach(m => {
-                        if(m.car > 2) m.car--;
-                    });
-                    this.renderTokens();
-                }
 
                 if(this.phase === 4) {
                     if(this.engineState === 'Operational') {
@@ -1311,19 +1365,26 @@ HTML
                 this.log(message, isVictory ? "highlight" : "alert");
             }
 
-            inspectCard(card) {
+            showHowToPlay() {
                 this.sound.playClick();
                 const modal = document.getElementById('modal-overlay');
                 const content = document.getElementById('modal-content');
                 content.innerHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
-                    <h2 style="color: var(--gold-primary); margin-bottom: 12px; font-size: 20px;">${card.title}</h2>
-                    <div style="background: rgba(0,229,255,0.2); border: 1.5px solid var(--azure-glow); padding: 10px 14px; margin-bottom: 16px; font-size: 14px; color: var(--azure-glow); font-weight: bold;">
-                        Action Point Cost: ${card.cost} AP
-                    </div>
-                    <p style="font-size: 15px; line-height: 1.6; color: var(--text-main); margin-bottom: 22px;">${card.effect}</p>
+                    <h2 style="color: var(--gold-primary); margin-bottom: 12px; font-size: 20px;">HOW TO PLAY (RULEBOOK V2.3)</h2>
+                    <p style="font-size: 13px; line-height: 1.6; color: var(--text-main); margin-bottom: 15px; text-align: left;">
+                        <strong>1. Crisis Phase:</strong> Draw a crisis card. Roll skill checks (4, 5, 6 = success) against DC 12-14.<br><br>
+                        <strong>2. Hero Phase:</strong> Spend AP (2 per hero per round) to move between compartments or play action cards.<br><br>
+                        <strong>3. Enemy Phase:</strong> Minions advance automatically along AI pursuit paths toward VIP Melindre.<br><br>
+                        <strong>4. Train & Track:</strong> Advance Speed toward Unit 12 to win. Protect Train Integrity (10 HP).
+                    </p>
+                    <button class="magipunk-btn primary" style="width: 100%; font-size: 14px; padding: 12px;" onclick="game.closeModal(null)">Got It</button>
                 `;
                 modal.style.display = 'flex';
+            }
+
+            inspectCard(card) {
+                this.playActionCard(this.hand.indexOf(card));
             }
 
             inspectHero(hero) {
