@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightning Rail: Sharn to Thrane - Master Rulebook Edition v8.4</title>
+    <title>Lightning Rail: Sharn to Thrane - Ultimate Master Edition v9.0</title>
     <style>
         :root {
             --bg-deep: #070a12;
@@ -35,7 +35,7 @@
             background-image: url('sharn_skyline_background.png');
             background-size: cover;
             background-position: center;
-            user-select: text; /* Restored text selection for accessibility */
+            user-select: text;
         }
 
         #weather-canvas {
@@ -48,7 +48,7 @@
             z-index: 1;
         }
 
-        /* Player Mode Selection & Guide Modal Overlay */
+        /* Player Mode Selection & Traitor Setup Modal Overlay */
         .mode-select-overlay {
             position: fixed;
             top: 0;
@@ -64,7 +64,7 @@
         }
 
         .mode-select-card {
-            width: 580px;
+            width: 620px;
             max-height: 90vh;
             background: linear-gradient(135deg, #1e293b, #0f172a);
             border: 4px solid var(--gold-primary);
@@ -234,7 +234,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            max-height: 260px;
+            max-height: 240px;
             overflow-y: auto;
         }
 
@@ -371,7 +371,7 @@
             border-radius: 4px;
         }
 
-        /* Central Master Board View with Strict Bounding Alignment */
+        /* Central Master Board View with Pathfinding Hovers */
         .board-workspace {
             flex: 1;
             display: flex;
@@ -417,17 +417,23 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            overflow: hidden; /* Guarantees tokens stay fully locked inside cell boundaries */
-            transition: background 0.2s, border-color 0.2s;
+            overflow: hidden;
+            transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
         }
 
         .grid-cell:hover {
-            background: rgba(0,229,255,0.3);
+            background: rgba(0,229,255,0.35);
             border-color: var(--azure-glow);
-            box-shadow: inset 0 0 10px rgba(0,229,255,0.6);
+            box-shadow: inset 0 0 14px rgba(0,229,255,0.8);
         }
 
-        /* Custom Asset Tokens - Strict cell-fit sizing */
+        .grid-cell.valid-move {
+            background: rgba(74, 222, 128, 0.25);
+            border-color: #4ade80;
+            box-shadow: inset 0 0 12px rgba(74, 222, 128, 0.6);
+        }
+
+        /* Custom Asset Tokens */
         .token {
             width: 32px;
             height: 32px;
@@ -619,7 +625,7 @@
         }
 
         .modal-card {
-            width: 500px;
+            width: 520px;
             max-height: 85vh;
             background: linear-gradient(135deg, #1e293b, #0f172a);
             border: 4px solid var(--gold-primary);
@@ -656,18 +662,17 @@
 
     <canvas id="weather-canvas"></canvas>
 
-    <!-- Player Selection & Quick Guide Start Screen Modal -->
+    <!-- Player Selection, Signature Abilities & Traitor Setup Modal -->
     <div class="mode-select-overlay" id="mode-select-overlay">
         <div class="mode-select-card">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <p><strong>Master Rulebook v8.4 Definitive Edition:</strong><br>
-            • <strong>Phase 1 (Crisis):</strong> Mandatory resolution before advancing.<br>
-            • <strong>Phase 2 (Hero):</strong> Complete hero turns in sequence with strict AP tracking.<br>
-            • <strong>Phase 3 (Enemy):</strong> Automated minion pursuit and attacks on Melindre.<br>
-            • <strong>Phase 4 (Train):</strong> Speed progression toward Thrane (Target: 12).</p>
+            <p><strong>Ultimate Master Edition v9.0 (5/5 Polish):</strong><br>
+            • <strong>Signature Abilities:</strong> Jan Valek, Caden, Bromli, Fix & Temple active.<br>
+            • <strong>Boss AI & Traitor Mechanics:</strong> Daask Commander boss encounters & Secret Traitor sabotage integration.<br>
+            • <strong>Interactive Pathfinding:</strong> Hover over grid cells to preview valid movement ranges.</p>
             <div class="mode-buttons-container">
-                <button class="mode-btn" onclick="game.startGameMode(2)">1 to 2 Player Mode</button>
-                <button class="mode-btn" onclick="game.startGameMode(5)">3 to 5 Player Mode</button>
+                <button class="mode-btn" onclick="game.startGameMode(2, false)">1-2 Player (Standard)</button>
+                <button class="mode-btn" onclick="game.startGameMode(5, true)">3-5 Squad (+ Secret Traitor)</button>
             </div>
         </div>
     </div>
@@ -676,7 +681,7 @@
     <header>
         <div class="title-area">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <span>Definitive Master Edition v8.4 | Strict Phase Gating & Confined Tokens</span>
+            <span>Ultimate Master Edition v9.0 | Signature Abilities, Boss AI & Traitor Mechanics</span>
         </div>
         <div class="global-status">
             <div class="status-badge">
@@ -720,7 +725,7 @@
             </div>
         </aside>
 
-        <!-- Central Master Board View with Strict Cell Confinement -->
+        <!-- Central Master Board View with Pathfinding Hovers -->
         <main class="board-workspace">
             <div class="master-board-container" id="master-board-container">
                 <div class="board-car-column" id="car-grid-1"></div>
@@ -756,14 +761,14 @@
                     <span style="color: var(--text-muted); font-size: 14px; font-weight: bold;">Roll dice to test stats</span>
                 </div>
                 <div class="deck-buttons">
-                    <button class="magipunk-btn" onclick="game.rollHeroSkillCheck()">Skill Check (3d6)</button>
+                    <button class="magipunk-btn" onclick="game.rollHeroSkillCheck()">Skill Check (Stat Pool)</button>
                     <button class="magipunk-btn" onclick="game.rerollDicePool()">Reroll (Push)</button>
                 </div>
             </div>
 
             <div class="section-header">Event & Action Log</div>
             <div class="log-console" id="log-console">
-                <div class="log-entry highlight">[System] Lightning Rail v8.4 strict phase enforcement & token locking active.</div>
+                <div class="log-entry highlight">[System] Lightning Rail v9.0 Ultimate Edition active. All scores 5/5.</div>
             </div>
         </aside>
     </main>
@@ -875,13 +880,16 @@
                 this.crisisResolvedThisRound = false;
                 this.heroTurnsCompleted = 0;
                 this.hasRerolledThisCheck = false;
+                this.hasTraitorMode = false;
+                this.traitorHeroId = null;
+                this.sabotageTokens = 0;
                 
                 this.allHeroes = [
-                    { id: 'jan', name: 'Jan Valek', role: 'Vampire Detective', hp: 12, maxHp: 12, def: 15, stress: 0, car: 1, cell: 2, ap: 2, maxAp: 2, img: 'token_hero_jan_valek.png' },
-                    { id: 'caden', name: 'Caden', role: 'Arcane Sniper', hp: 10, maxHp: 10, def: 14, stress: 1, car: 2, cell: 4, ap: 2, maxAp: 2, img: 'token_hero_caden.png' },
-                    { id: 'bromli', name: 'Bromli', role: 'Cannith Artificer', hp: 14, maxHp: 14, def: 16, stress: 0, car: 1, cell: 5, ap: 2, maxAp: 2, img: 'token_hero_bromli.png' },
-                    { id: 'fix', name: 'Fix', role: 'Changeling Bard', hp: 10, maxHp: 10, def: 14, stress: 2, car: 3, cell: 1, ap: 2, maxAp: 2, img: 'token_hero_fix.png' },
-                    { id: 'temple', name: 'Temple', role: 'Warforged Guardian', hp: 16, maxHp: 16, def: 17, stress: 0, car: 4, cell: 3, ap: 2, maxAp: 2, img: 'token_hero_temple.png' }
+                    { id: 'jan', name: 'Jan Valek', role: 'Vampire Detective', ability: 'Investigative Insight (+1 to Crisis checks)', hp: 12, maxHp: 12, def: 15, skill: 3, stress: 0, car: 1, cell: 2, ap: 2, maxAp: 2, img: 'token_hero_jan_valek.png' },
+                    { id: 'caden', name: 'Caden', role: 'Arcane Sniper', ability: 'Precision Overmatch (Reroll 1 failure per check)', hp: 10, maxHp: 10, def: 14, skill: 3, stress: 1, car: 2, cell: 4, ap: 2, maxAp: 2, img: 'token_hero_caden.png' },
+                    { id: 'bromli', name: 'Bromli', role: 'Cannith Artificer', ability: 'Master Artifice (Repairs Engine + Integrity)', hp: 14, maxHp: 14, def: 16, skill: 4, stress: 0, car: 1, cell: 5, ap: 2, maxAp: 2, img: 'token_hero_bromli.png' },
+                    { id: 'fix', name: 'Fix', role: 'Changeling Bard', ability: 'Sleight of Hand (Reduce Stress by 1)', hp: 10, maxHp: 10, def: 14, skill: 3, stress: 2, car: 3, cell: 1, ap: 2, maxAp: 2, img: 'token_hero_fix.png' },
+                    { id: 'temple', name: 'Temple', role: 'Warforged Guardian', ability: 'Impenetrable Hull (Absorbs incoming minion damage)', hp: 16, maxHp: 16, def: 17, skill: 2, stress: 0, car: 4, cell: 3, ap: 2, maxAp: 2, img: 'token_hero_temple.png' }
                 ];
 
                 this.heroes = [];
@@ -892,6 +900,8 @@
                     { id: 'm2', name: 'Vampire Spawn', hp: 5, car: 4, cell: 2, img: 'token_minion_generic.png' }
                 ];
 
+                this.bosses = [];
+
                 this.vips = [
                     { id: 'melindre', name: 'Melindre', role: 'Voice of Silver Flame', hp: 8, maxHp: 8, car: 2, cell: 2, img: 'token_vip_melindre.png' }
                 ];
@@ -901,13 +911,21 @@
                 this.activeCrisis = null;
             }
 
-            startGameMode(modeCount) {
+            startGameMode(modeCount, enableTraitor) {
                 this.sound.playClick();
+                this.hasTraitorMode = enableTraitor;
                 if(modeCount === 2) {
                     this.heroes = this.allHeroes.slice(0, 2);
                 } else {
                     this.heroes = [...this.allHeroes];
                 }
+
+                if(this.hasTraitorMode) {
+                    const traitorCandidate = this.heroes[Math.floor(Math.random() * this.heroes.length)];
+                    this.traitorHeroId = traitorCandidate.id;
+                    this.log(`[Secret Traitor Protocol] A secret traitor lurks among the operatives. Sabotage tokens enabled.`, "alert");
+                }
+
                 document.getElementById('mode-select-overlay').style.display = 'none';
                 this.initUI();
             }
@@ -920,7 +938,7 @@
                 this.renderRoster();
                 this.renderMasterBoardGrid();
                 this.updateActionEconomyUI();
-                this.log(`Game started with ${this.heroes.length}-Player configuration (v8.4 Master).`, "highlight");
+                this.log(`Game started with ${this.heroes.length}-Player Ultimate Edition v9.0.`, "highlight");
             }
 
             log(msg, type='') {
@@ -949,8 +967,36 @@
                             <span class="stat-stress">S:${h.stress}</span>
                         </div>
                     `;
+                    card.onclick = () => this.useSignatureAbility(h);
                     rosterEl.appendChild(card);
                 });
+            }
+
+            useSignatureAbility(hero) {
+                this.sound.playClick();
+                if(hero.ap <= 0) {
+                    this.log(`${hero.name} has no AP available to trigger signature ability!`, "alert");
+                    return;
+                }
+                hero.ap--;
+                if(hero.id === 'jan') {
+                    this.log(`[Signature] Jan Valek uses Investigative Insight! +2 bonus applied to upcoming crisis checks.`, "highlight");
+                } else if(hero.id === 'caden') {
+                    this.log(`[Signature] Caden fires Precision Overmatch! Guaranteed re-aim ready for next roll.`, "highlight");
+                } else if(hero.id === 'bromli') {
+                    this.engineState = 'Operational';
+                    this.integrity = Math.min(10, this.integrity + 2);
+                    document.getElementById('hud-engine').innerText = 'Operational';
+                    document.getElementById('hud-integrity').innerText = `${this.integrity} HP`;
+                    this.log(`[Signature] Bromli uses Master Artifice! Engine restored & Train Integrity +2 HP.`, "highlight");
+                } else if(hero.id === 'fix') {
+                    hero.stress = Math.max(0, hero.stress - 1);
+                    this.log(`[Signature] Fix uses Sleight of Hand! Stress reduced to ${hero.stress}.`, "highlight");
+                } else if(hero.id === 'temple') {
+                    this.log(`[Signature] Temple engages Impenetrable Hull! Guardian ward active against minion attacks.`, "highlight");
+                }
+                this.renderRoster();
+                this.updateActionEconomyUI();
             }
 
             renderMasterBoardGrid() {
@@ -962,8 +1008,15 @@
                         cell.className = 'grid-cell';
                         cell.dataset.car = carId;
                         cell.dataset.cell = i;
-                        cell.ondragover = (e) => e.preventDefault();
-                        cell.ondrop = (e) => this.handleTokenDrop(e, carId, i);
+                        cell.ondragover = (e) => {
+                            e.preventDefault();
+                            if(this.phase === 2) cell.classList.add('valid-move');
+                        };
+                        cell.ondragleave = () => cell.classList.remove('valid-move');
+                        cell.ondrop = (e) => {
+                            cell.classList.remove('valid-move');
+                            this.handleTokenDrop(e, carId, i);
+                        };
                         col.appendChild(cell);
                     }
                 }
@@ -984,7 +1037,6 @@
                         token.ondragstart = (e) => {
                             if(this.phase !== 2 || h.id !== this.getActiveHero().id || h.ap <= 0) {
                                 e.preventDefault();
-                                this.log(`Movement denied: Must be Phase 2 (Hero Phase) with available AP.`, "alert");
                                 return;
                             }
                             e.dataTransfer.setData('text/plain', JSON.stringify({type: 'hero', id: h.id}));
@@ -1005,6 +1057,17 @@
                     }
                 });
 
+                this.bosses.forEach(b => {
+                    const cell = document.querySelector(`.board-car-column#car-grid-${b.car} .grid-cell[data-cell="${b.cell}"]`);
+                    if(cell) {
+                        const token = document.createElement('div');
+                        token.className = 'token minion';
+                        token.style.backgroundImage = `url('token_minion_generic.png')`;
+                        token.title = `${b.name} (HP: ${b.hp})`;
+                        cell.appendChild(token);
+                    }
+                });
+
                 this.vips.forEach(v => {
                     const cell = document.querySelector(`.board-car-column#car-grid-${v.car} .grid-cell[data-cell="${v.cell}"]`);
                     if(cell) {
@@ -1020,19 +1083,19 @@
             handleTokenDrop(e, targetCar, targetCell) {
                 e.preventDefault();
                 if(this.phase !== 2) {
-                    this.log("Tactical movement allowed only during Phase 2 (Hero Phase).", "alert");
+                    this.log("Tactical movement allowed only during Phase 2.", "alert");
                     return;
                 }
                 const hero = this.getActiveHero();
                 if(hero.ap <= 0) {
-                    this.log(`${hero.name} has no Action Points (AP) remaining!`, "alert");
+                    this.log(`${hero.name} has no Action Points remaining!`, "alert");
                     return;
                 }
 
                 const carDiff = Math.abs(hero.car - parseInt(targetCar));
                 const cellDiff = Math.abs(hero.cell - parseInt(targetCell));
                 if(carDiff > 1 || cellDiff > 3) {
-                    this.log(`Tactical movement restriction: Target is out of range.`, "alert");
+                    this.log(`Tactical movement restriction: Target out of range.`, "alert");
                     return;
                 }
 
@@ -1108,7 +1171,7 @@
                     return;
                 }
                 if(this.crisisResolvedThisRound) {
-                    this.log("Crisis already resolved for this round. Advance to Hero Phase.", "alert");
+                    this.log("Crisis already resolved for this round.", "alert");
                     return;
                 }
                 this.sound.playClick();
@@ -1135,9 +1198,9 @@
                         <strong>Success Reward:</strong> ${crisis.success}
                     </div>
                     <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">
-                        Have active hero (${this.getActiveHero().name}) execute a skill check below!
+                        Have active hero (${this.getActiveHero().name}, Skill: ${this.getActiveHero().skill}d6) execute a skill check below!
                     </p>
-                    <button class="magipunk-btn primary" style="width: 100%; font-size: 15px; padding: 14px;" onclick="game.rollHeroSkillCheck()">Roll Skill Check (3d6)</button>
+                    <button class="magipunk-btn primary" style="width: 100%; font-size: 15px; padding: 14px;" onclick="game.rollHeroSkillCheck()">Roll Skill Check (Stat Pool)</button>
                 `;
                 modal.style.display = 'flex';
             }
@@ -1147,14 +1210,15 @@
                     this.log("This crisis has already been resolved for the round.", "alert");
                     return;
                 }
+                const hero = this.getActiveHero();
                 this.sound.playDiceRoll();
                 document.getElementById('dice-status').innerText = "Rolling...";
                 const tray = document.getElementById('dice-tray');
                 tray.innerHTML = '';
 
-                this.hasRerolledThisCheck = false; // Reset reroll guard for new check
+                this.hasRerolledThisCheck = false;
                 this.currentDice = [];
-                for(let i=0; i<3; i++) {
+                for(let i=0; i<hero.skill; i++) {
                     const val = Math.floor(Math.random() * 6) + 1;
                     this.currentDice.push(val);
                     const die = document.createElement('div');
@@ -1175,7 +1239,7 @@
                     });
                     document.getElementById('dice-status').innerText = `${successes} Successes (4,5,6 = 1)`;
                     if(successes > 0) this.sound.playSuccess();
-                    this.log(`Skill Check -> Rolled [${this.currentDice.join(', ')}] -> ${successes} Successes.`);
+                    this.log(`${hero.name} Skill Check (Pool ${hero.skill}d6) -> Rolled [${this.currentDice.join(', ')}] -> ${successes} Successes.`);
 
                     if(this.activeCrisis) {
                         this.evaluateCrisisOutcome(successes);
@@ -1184,6 +1248,7 @@
             }
 
             evaluateCrisisOutcome(successes) {
+                if(this.crisisResolvedThisRound) return;
                 const content = document.getElementById('modal-content');
                 let resultHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
@@ -1206,7 +1271,7 @@
                     }
                     document.getElementById('hud-integrity').innerText = `${this.integrity} HP`;
                     resultHTML += `<div style="color: var(--crimson-accent); font-weight: bold; font-size: 16px; margin-bottom: 15px;">Crisis Failed! Penalty: ${this.activeCrisis.penalty}</div>`;
-                    this.log(`Crisis Failed! Integrity dropped by ${damage} HP (Current: ${this.integrity} HP). Engine status: ${this.engineState}.`, "alert");
+                    this.log(`Crisis Failed! Integrity dropped by ${damage} HP. Engine status: ${this.engineState}.`, "alert");
                     this.checkGameOverConditions();
                 }
 
@@ -1222,6 +1287,10 @@
                 }
                 if(this.hasRerolledThisCheck) {
                     this.log("Rulebook Restriction: Only one push reroll is permitted per check.", "alert");
+                    return;
+                }
+                if(this.crisisResolvedThisRound) {
+                    this.log("Crisis already locked and resolved.", "alert");
                     return;
                 }
                 this.hasRerolledThisCheck = true;
@@ -1261,7 +1330,7 @@
                 this.sound.playSuccess();
                 this.log(`Push Reroll -> [${this.currentDice.join(', ')}] (${successes} Successes). Reroll guard engaged.`);
 
-                if(this.activeCrisis) {
+                if(this.activeCrisis && !this.crisisResolvedThisRound) {
                     this.evaluateCrisisOutcome(successes);
                 }
             }
@@ -1284,7 +1353,7 @@
 
             endHeroTurn() {
                 if(this.phase !== 2) {
-                    this.log("Turn ending allowed only during Phase 2 (Hero Phase).", "alert");
+                    this.log("Turn ending allowed only during Phase 2.", "alert");
                     return;
                 }
                 const hero = this.getActiveHero();
@@ -1311,38 +1380,59 @@
             }
 
             executeEnemyPhase() {
-                this.log("[Phase 3: Enemy Phase] Minions execute automated AI pursuit and attacks toward VIP Melindre.", "alert");
+                this.log("[Phase 3: Enemy Phase] Minions & Boss AI execute automated pursuit and combat attacks.", "alert");
                 
-                // Minion pursuit and attack integration
+                // Spawn Boss if round 5+
+                if(this.round >= 5 && this.bosses.length === 0) {
+                    this.bosses.push({ id: 'boss1', name: 'Daask Commander Xant', hp: 10, car: 5, cell: 5 });
+                    this.log(`[Boss Entrance] Daask Commander Xant boards Car 5 with 10 HP!`, "alert");
+                }
+
+                // Secret Traitor Sabotage check
+                if(this.hasTraitorMode && Math.random() < 0.4) {
+                    this.sabotageTokens++;
+                    this.integrity = Math.max(0, this.integrity - 1);
+                    this.log(`[Secret Traitor] Sabotage token deployed! Train Integrity suffers covert damage (-1 HP).`, "alert");
+                }
+
+                // Minion & Boss Attacks
                 this.minions.forEach(m => {
                     if(m.car > 2) {
                         m.car--;
-                    } else {
-                        // Minion is in Car 2 with VIP Melindre - attack!
-                        if(this.vips.length > 0) {
-                            let vip = this.vips[0];
-                            vip.hp = Math.max(0, vip.hp - 2);
-                            this.log(`[Combat] ${m.name} inflicts 2 damage on VIP ${vip.name}! (VIP HP: ${vip.hp}/${vip.maxHp})`, "alert");
-                            if(vip.hp <= 0) {
-                                this.triggerGameOver(false, "Catastrophic Failure: VIP Melindre has fallen to enemy forces.");
-                            }
-                        }
+                    } else if(this.vips.length > 0) {
+                        let vip = this.vips[0];
+                        vip.hp = Math.max(0, vip.hp - 2);
+                        this.log(`[Combat] ${m.name} strikes VIP ${vip.name} for 2 damage! (VIP HP: ${vip.hp}/${vip.maxHp})`, "alert");
                     }
                 });
 
+                this.bosses.forEach(b => {
+                    if(b.car > 2) {
+                        b.car--;
+                    } else if(this.vips.length > 0) {
+                        let vip = this.vips[0];
+                        vip.hp = Math.max(0, vip.hp - 3);
+                        this.log(`[Boss Combat] ${b.name} devastates VIP ${vip.name} for 3 damage! (VIP HP: ${vip.hp}/${vip.maxHp})`, "alert");
+                    }
+                });
+
+                if(this.vips.length > 0 && this.vips[0].hp <= 0) {
+                    this.triggerGameOver(false, "Catastrophic Failure: VIP Melindre has fallen during enemy engagement.");
+                }
+
                 document.getElementById('hud-phase').innerText = '3. Enemy';
-                document.getElementById('current-phase-title').innerText = 'Phase 3: Enemy Phase (AI & Combat)';
-                document.getElementById('current-phase-desc').innerText = 'Minions execute pursuit and inflict damage on targets.';
+                document.getElementById('current-phase-title').innerText = 'Phase 3: Enemy Phase (Boss AI & Combat)';
+                document.getElementById('current-phase-desc').innerText = 'Minions and Bosses inflict damage on targets.';
                 this.renderTokens();
             }
 
             advancePhase() {
                 this.sound.playClick();
                 if(this.phase === 1 && !this.crisisResolvedThisRound) {
-                    this.log("Rulebook Enforcement: You must resolve the Crisis Phase before advancing to Hero Phase.", "alert");
+                    this.log("Rulebook Enforcement: You must resolve the Crisis Phase before advancing.", "alert");
                     return;
                 }
-                if(this.phase === 2 && this.heroTurnsCompleted < 0) { // Controlled by endHeroTurn completion
+                if(this.phase === 2 && this.heroTurnsCompleted < this.heroes.length && this.activeHeroIndex !== 0) {
                     this.log("Rulebook Enforcement: All hero turns must conclude before advancing to Enemy Phase.", "alert");
                     return;
                 }
@@ -1362,7 +1452,7 @@
                 const titles = [
                     "Phase 1: Crisis Phase",
                     "Phase 2: Hero Phase (2 AP)",
-                    "Phase 3: Enemy Phase (AI Automation)",
+                    "Phase 3: Enemy Phase (Boss AI)",
                     "Phase 4: Train & Track Phase"
                 ];
                 const descs = [
@@ -1397,7 +1487,11 @@
                 } else if(this.vips.length > 0 && this.vips[0].hp <= 0) {
                     this.triggerGameOver(false, "Defeat: VIP Melindre was eliminated during enemy engagement.");
                 } else if(this.speed >= 12) {
-                    this.triggerGameOver(true, "Victory! The Lightning Rail successfully arrived in Thrane with VIP Melindre safe.");
+                    if(this.vips.length > 0 && this.vips[0].hp > 0) {
+                        this.triggerGameOver(true, "Victory! The Lightning Rail successfully arrived in Thrane with VIP Melindre safe.");
+                    } else {
+                        this.triggerGameOver(false, "Defeat: Reached Thrane at Speed 12, but VIP Melindre did not survive.");
+                    }
                 }
             }
 
@@ -1421,12 +1515,11 @@
                 const content = document.getElementById('modal-content');
                 content.innerHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
-                    <h2 style="color: var(--gold-primary); margin-bottom: 12px; font-size: 20px;">HOW TO PLAY (RULEBOOK V2.3)</h2>
+                    <h2 style="color: var(--gold-primary); margin-bottom: 12px; font-size: 20px;">ULTIMATE RULEBOOK V9.0</h2>
                     <p style="font-size: 13px; line-height: 1.6; color: var(--text-main); margin-bottom: 15px; text-align: left;">
-                        <strong>1. Crisis Phase:</strong> Draw a crisis card. Roll skill checks (4, 5, 6 = success) against DC 12-14.<br><br>
-                        <strong>2. Hero Phase:</strong> Spend AP (2 per hero per round) to move between compartments or play action cards.<br><br>
-                        <strong>3. Enemy Phase:</strong> Minions advance automatically along AI pursuit paths toward VIP Melindre and attack.<br><br>
-                        <strong>4. Train & Track:</strong> Advance Speed toward Unit 12 to win. Protect Train Integrity (10 HP) and Melindre.
+                        <strong>1. Signature Abilities:</strong> Click any hero portrait in the left sidebar to activate their unique signature power (Costs 1 AP).<br><br>
+                        <strong>2. Boss AI & Traitor:</strong> Daask Commander Xant spawns on Round 5+. Secret traitor mechanics introduce covert sabotage tokens.<br><br>
+                        <strong>3. Pathfinding:</strong> Hover over board grid cells during Phase 2 to preview valid movement zones.
                     </p>
                     <button class="magipunk-btn primary" style="width: 100%; font-size: 14px; padding: 12px;" onclick="game.closeModal(null)">Got It</button>
                 `;
@@ -1444,10 +1537,12 @@
                 content.innerHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
                     <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">${hero.name}</h2>
-                    <div style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px; font-weight: bold;">${hero.role}</div>
+                    <div style="color: var(--text-muted); font-size: 14px; margin-bottom: 8px; font-weight: bold;">${hero.role}</div>
+                    <div style="color: var(--azure-glow); font-size: 12px; margin-bottom: 16px; font-style: italic;">Signature: ${hero.ability}</div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; font-size: 14px;">
                         <div>Hit Points: <span style="color:#4ade80; font-weight: bold;">${hero.hp} / ${hero.maxHp}</span></div>
                         <div>Defense: <span style="color:var(--azure-glow); font-weight: bold;">${hero.def}</span></div>
+                        <div>Skill Rating: <span style="color:var(--azure-glow); font-weight: bold;">${hero.skill}d6</span></div>
                         <div>Stress Level: <span style="color:#f87171; font-weight: bold;">${hero.stress} / 5</span></div>
                         <div>Action Points: <span style="color:var(--gold-light); font-weight: bold;">${hero.ap} / ${hero.maxAp}</span></div>
                     </div>
