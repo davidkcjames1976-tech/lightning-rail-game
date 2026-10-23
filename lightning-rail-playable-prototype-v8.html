@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lightning Rail: Sharn to Thrane - Master Tactical Edition v7.3</title>
+    <style>
+        :root {
+            --bg-deep: #070a12;
+            --panel-bg: rgba(15, 23, 42, 0.97);
+            --gold-primary: #d4af37;
+            --gold-light: #f3e5ab;
+            --azure-glow: #00e5ff;
+            --crimson-accent: #ff1744;
+            --text-main: #f5f2e9;
+            --text-muted: #e2e8f0;
+            --border-metal: #455a64;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: text;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: 'Cinzel', 'Trajan Pro', Georgia, serif;
+            overflow: auto;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: url('sharn_skyline_background.png');
+            background-size: cover;
+            background-position: center;
+        }
+
+        #weather-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Player Mode Selection Modal Overlay */
+        .mode-select-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(7, 10, 18, 0.95);
+            backdrop-filter: blur(12px);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mode-select-card {
+            width: 520px;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 4px solid var(--gold-primary);
+            border-radius: 16px;
+            padding: 35px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 0 90px rgba(212,175,55,0.85);
+            text-align: center;
+            background-image: url('card_template_crisis_fantasy.png');
+            background-size: cover;
+        }
+
+        .mode-select-card h1 {
+            font-size: 24px;
+            color: var(--gold-primary);
+            letter-spacing: 2px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.9);
+        }
+
+        .mode-select-card p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .mode-buttons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .mode-btn {
+            background: linear-gradient(to bottom, #9a7b0c, #634b05);
+            border: 2px solid var(--gold-primary);
+            color: #fff;
+            padding: 16px;
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+        }
+
+        .mode-btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 25px rgba(212,175,55,0.9);
+            background: linear-gradient(to bottom, #b8920e, #7a5c06);
+        }
+
+        /* Top HUD Header */
+        header {
+            height: 80px;
+            background: linear-gradient(to bottom, rgba(18, 24, 36, 0.96), rgba(8, 12, 20, 0.96));
+            border-bottom: 3px solid var(--gold-primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            z-index: 10;
+            box-shadow: 0 4px 35px rgba(0,0,0,0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .title-area h1 {
+            font-size: 26px;
+            color: var(--gold-primary);
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(212,175,55,0.7);
+        }
+
+        .title-area span {
+            font-size: 14px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        .global-status {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            font-size: 16px;
+        }
+
+        .status-badge {
+            background: rgba(0,0,0,0.85);
+            border: 1.5px solid var(--border-metal);
+            padding: 8px 18px;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.9);
+        }
+
+        .status-badge label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .status-badge value {
+            font-weight: bold;
+            color: var(--azure-glow);
+            font-family: monospace;
+            font-size: 18px;
+            text-shadow: 0 0 10px rgba(0,229,255,0.6);
+        }
+
+        /* Main Workspace */
+        main {
+            flex: 1;
+            display: flex;
+            position: relative;
+            z-index: 5;
+            overflow: hidden;
+        }
+
+        /* Sidebars */
+        aside.left-sidebar {
+            width: 410px;
+            background: var(--panel-bg);
+            border-right: 3px solid var(--border-metal);
+            display: flex;
+            flex-direction: column;
+            padding: 22px;
+            gap: 20px;
+            backdrop-filter: blur(14px);
+            box-shadow: 6px 0 25px rgba(0,0,0,0.8);
+            z-index: 6;
+        }
+
+        .section-header {
+            font-size: 15px;
+            color: var(--gold-primary);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            border-bottom: 2px solid rgba(212,175,55,0.4);
+            padding-bottom: 6px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .hero-roster {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        .hero-card-mini {
+            background: rgba(18, 24, 36, 0.95);
+            border: 1.5px solid var(--border-metal);
+            border-radius: 8px;
+            padding: 12px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .hero-card-mini:hover, .hero-card-mini.active {
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 15px rgba(212,175,55,0.6);
+            transform: translateY(-2px);
+        }
+
+        .hero-info h4 {
+            font-size: 16px;
+            color: var(--text-main);
+            font-weight: bold;
+        }
+
+        .hero-info span {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .hero-stats-mini {
+            display: flex;
+            gap: 12px;
+            font-size: 14px;
+            font-family: monospace;
+            font-weight: bold;
+        }
+
+        .stat-hp { color: #4ade80; }
+        .stat-def { color: var(--azure-glow); }
+        .stat-stress { color: #f87171; }
+
+        /* Action Decks & Hand */
+        .action-deck-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow: hidden;
+        }
+
+        .deck-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .magipunk-btn {
+            background: linear-gradient(to bottom, #1e293b, #0f172a);
+            border: 1.5px solid var(--gold-primary);
+            color: var(--gold-light);
+            padding: 12px 16px;
+            font-family: 'Cinzel', serif;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.7);
+        }
+
+        .magipunk-btn:hover {
+            background: linear-gradient(to bottom, #334155, #1e293b);
+            box-shadow: 0 0 15px rgba(212,175,55,0.8);
+            color: #fff;
+        }
+
+        .magipunk-btn.primary {
+            background: linear-gradient(to bottom, #9a7b0c, #634b05);
+            color: #fff;
+        }
+
+        .magipunk-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: var(--border-metal);
+        }
+
+        .hand-container {
+            flex: 1;
+            background: rgba(0,0,0,0.6);
+            border: 1.5px dashed var(--border-metal);
+            border-radius: 8px;
+            padding: 12px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .card-item {
+            background: #1e293b;
+            border: 1.5px solid var(--gold-primary);
+            border-radius: 6px;
+            padding: 12px 14px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            background-image: url('card_template_hero_brass.png');
+            background-size: cover;
+            color: #fff;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.95);
+        }
+
+        .card-item:hover {
+            transform: translateX(6px);
+            box-shadow: 0 0 18px rgba(0,229,255,0.8);
+        }
+
+        .card-item .cost {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            background: var(--azure-glow);
+            color: #000;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        /* Central Master Board View - Expanded to fit tokens perfectly */
+        .board-workspace {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(circle at center, rgba(7,10,18,0.5) 0%, rgba(7,10,18,0.92) 100%);
+        }
+
+        .master-board-container {
+            width: 1080px;
+            height: 600px;
+            background-image: url('board_layout_tactical_grid.png');
+            background-size: cover;
+            background-position: center;
+            border: 4px solid var(--gold-primary);
+            border-radius: 16px;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.95), inset 0 0 35px rgba(0,0,0,0.7);
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            padding: 75px 55px 70px 55px;
+            gap: 20px;
+        }
+
+        .board-car-column {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            gap: 8px;
+            position: relative;
+        }
+
+        .grid-cell {
+            background: rgba(255,255,255,0.01);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .grid-cell:hover {
+            background: rgba(0,229,255,0.25);
+            border-color: var(--azure-glow);
+            box-shadow: inset 0 0 12px rgba(0,229,255,0.6);
+        }
+
+        /* Custom Asset Tokens */
+        .token {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: grab;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.95);
+            position: absolute;
+            z-index: 25;
+            background-size: cover;
+            background-position: center;
+            border: 3px solid var(--gold-primary);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s;
+        }
+
+        .token:active {
+            cursor: grabbing;
+            transform: scale(1.35) translateY(-6px);
+            box-shadow: 0 18px 40px rgba(0,229,255,0.95);
+        }
+
+        .token.hero { border-color: var(--azure-glow); }
+        .token.minion { border-color: var(--crimson-accent); }
+        .token.vip { border-color: #f59e0b; }
+
+        /* Right Sidebar */
+        aside.right-sidebar {
+            width: 410px;
+            background: var(--panel-bg);
+            border-left: 3px solid var(--border-metal);
+            display: flex;
+            flex-direction: column;
+            padding: 22px;
+            gap: 18px;
+            backdrop-filter: blur(14px);
+            box-shadow: -6px 0 25px rgba(0,0,0,0.8);
+            z-index: 6;
+        }
+
+        .round-control-box {
+            background: rgba(0,0,0,0.75);
+            border: 1.5px solid var(--gold-primary);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            background-image: url('dashboard_recessed_frame.png');
+            background-size: cover;
+        }
+
+        .round-control-box h3 {
+            font-size: 17px;
+            color: var(--gold-primary);
+            margin-bottom: 6px;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.95);
+            font-weight: bold;
+        }
+
+        .round-control-box p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .ap-tracker {
+            background: rgba(0,229,255,0.18);
+            border: 1.5px solid var(--azure-glow);
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-size: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--azure-glow);
+            font-weight: bold;
+        }
+
+        /* Dice Rolling Engine Box */
+        .dice-engine-box {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1.5px solid var(--border-metal);
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .dice-tray {
+            height: 120px;
+            background: rgba(0,0,0,0.85);
+            border: 1.5px inset var(--border-metal);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            perspective: 800px;
+        }
+
+        .die {
+            width: 78px;
+            height: 78px;
+            background-image: url('dice_face_blank.png');
+            background-size: cover;
+            color: var(--gold-light);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 30px;
+            border: 2px solid var(--gold-primary);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.95);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-shadow: 0 2px 6px rgba(0,0,0,0.95);
+        }
+
+        .die.success {
+            background-image: url('dice_face_success.png');
+            color: #000;
+            border-color: var(--azure-glow);
+            box-shadow: 0 0 30px var(--azure-glow);
+            text-shadow: none;
+        }
+
+        .die.critical {
+            background-image: url('dice_face_critical.png');
+            color: #fff;
+            border-color: #f59e0b;
+            box-shadow: 0 0 35px #f59e0b;
+        }
+
+        .die.rolling {
+            animation: rollDice 0.6s infinite linear;
+        }
+
+        @keyframes rollDice {
+            0% { transform: rotateX(0deg) rotateY(0deg) translateY(0); }
+            50% { transform: rotateX(180deg) rotateY(180deg) translateY(-20px); }
+            100% { transform: rotateX(360deg) rotateY(360deg) translateY(0); }
+        }
+
+        /* Log Console */
+        .log-console {
+            flex: 1;
+            background: rgba(0,0,0,0.85);
+            border: 1.5px solid var(--border-metal);
+            border-radius: 8px;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 13px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 200px;
+            line-height: 1.4;
+        }
+
+        .log-entry {
+            color: var(--text-muted);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding-bottom: 4px;
+        }
+
+        .log-entry.highlight { color: var(--azure-glow); font-weight: bold; }
+        .log-entry.alert { color: var(--crimson-accent); font-weight: bold; }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.92);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-card {
+            width: 480px;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 4px solid var(--gold-primary);
+            border-radius: 14px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-shadow: 0 0 80px rgba(212,175,55,0.8);
+            position: relative;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background-image: url('card_template_crisis_fantasy.png');
+            background-size: cover;
+        }
+
+        @media (max-width: 1100px) {
+            body { height: auto; min-height: 100vh; }
+            main { flex-wrap: wrap; height: auto !important; overflow: visible !important; }
+            .left-sidebar, .right-sidebar { width: 100% !important; max-width: none !important; }
+            .board-workspace { min-width: 100% !important; overflow-x: auto; }
+            .master-board-container { min-width: 760px; }
+            .modal-card, .mode-select-card { width: min(92vw, 520px); max-height: 90vh; overflow-y: auto; }
+        }
+        button:focus-visible, .grid-cell:focus-visible { outline: 3px solid var(--azure-glow); outline-offset: 2px; }
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 14px;
+            right: 20px;
+            font-size: 26px;
+            color: var(--gold-primary);
+            cursor: pointer;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.9);
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="weather-canvas"></canvas>
+
+    <!-- Player Selection Start Screen Modal -->
+    <div class="mode-select-overlay" id="mode-select-overlay">
+        <div class="mode-select-card">
+            <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
+            <p>Select your group player configuration to embark upon the magipunk express:</p>
+            <div class="mode-buttons-container">
+                <button class="mode-btn" onclick="game.startGameMode(2)">Solo / 2-Hero Mode (Jan & Caden)</button>
+                <button class="mode-btn" onclick="game.startGameMode(5)">Full Squad Mode (5 Heroes)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Navigation & Global HUD -->
+    <header>
+        <div class="title-area">
+            <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
+            <span>Playable Prototype v8.0 | Tactical Rules Pass</span>
+        </div>
+        <div class="global-status">
+            <div class="status-badge">
+                <label>Phase</label>
+                <value id="hud-phase">1. Crisis</value>
+            </div>
+            <div class="status-badge">
+                <label>Speed</label>
+                <value id="hud-speed">3 / 12</value>
+            </div>
+            <div class="status-badge">
+                <label>Train HP</label>
+                <value id="hud-integrity">10 HP</value>
+            </div>
+            <div class="status-badge">
+                <label>Engine</label>
+                <value id="hud-engine">Operational</value>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main>
+        <!-- Left Sidebar: Heroes & Hand Cards -->
+        <aside class="left-sidebar">
+            <div class="section-header">Active Heroes</div>
+            <div class="hero-roster" id="hero-roster"></div>
+
+            <div class="section-header">Action Decks & Hand</div>
+            <div class="action-deck-area">
+                <div class="deck-buttons">
+                    <button class="magipunk-btn" id="btn-draw-hero" onclick="game.drawHeroCard()">Draw Action</button>
+                    <button class="magipunk-btn" id="btn-draw-crisis" onclick="game.drawCrisisCard()">Draw Crisis</button>
+                </div>
+                <div class="hand-container" id="hand-container">
+                    <div style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 35px; font-weight: bold;">Your hand is empty. Draw cards to begin.</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Central Master Board View: Perfectly Resized Grid -->
+        <main class="board-workspace">
+            <div class="master-board-container" id="master-board-container">
+                <div class="board-car-column" id="car-grid-1"></div>
+                <div class="board-car-column" id="car-grid-2"></div>
+                <div class="board-car-column" id="car-grid-3"></div>
+                <div class="board-car-column" id="car-grid-4"></div>
+                <div class="board-car-column" id="car-grid-5"></div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="right-sidebar">
+            <div class="round-control-box">
+                <h3 id="current-phase-title">Phase 1: Crisis Phase</h3>
+                <p id="current-phase-desc">Resolve active environmental crisis or draw a new threat card.</p>
+                <div class="ap-tracker">
+                    <span id="active-hero-label">Active: Jan Valek</span>
+                    <span id="active-ap-label">AP: 2 / 2</span>
+                </div>
+                <div class="deck-buttons">
+                    <button class="magipunk-btn primary" id="btn-end-turn" onclick="game.endHeroTurn()">End Hero Turn</button>
+                    <button class="magipunk-btn" onclick="game.advancePhase()">Advance Phase</button>
+                </div>
+            </div>
+
+            <div class="section-header">Dice Rolling Engine</div>
+            <div class="dice-engine-box">
+                <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: bold;">
+                    <span>Target: 4+ (1 success)</span>
+                    <span id="dice-status" style="color: var(--azure-glow);">Ready</span>
+                </div>
+                <div class="dice-tray" id="dice-tray">
+                    <span style="color: var(--text-muted); font-size: 14px; font-weight: bold;">Roll dice to test stats</span>
+                </div>
+                <div class="deck-buttons">
+                    <button class="magipunk-btn" onclick="game.rollDicePool(3)">Roll 3d6</button>
+                    <button class="magipunk-btn" onclick="game.rerollDicePool()">Reroll (Push)</button>
+                </div>
+            </div>
+
+            <div class="section-header">Event & Action Log</div>
+            <div class="log-console" id="log-console">
+                <div class="log-entry highlight">[System] Lightning Rail v7.3 waiting for player configuration selection.</div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Modal Inspector -->
+    <div class="modal-overlay" id="modal-overlay" onclick="game.closeModal(event)">
+        <div class="modal-card" id="modal-card">
+            <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <!-- Script Engine -->
+    <script>
+        class SoundEngine {
+            constructor() { this.ctx = null; }
+            init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
+            playClick() {
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(400, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(120, this.ctx.currentTime + 0.05);
+                gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.05);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.05);
+            }
+            playDiceRoll() {
+                this.init();
+                for(let i=0; i<4; i++) {
+                    setTimeout(() => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = 'square';
+                        osc.frequency.setValueAtTime(150 + Math.random()*200, this.ctx.currentTime);
+                        gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.08);
+                        osc.connect(gain); gain.connect(this.ctx.destination);
+                        osc.start(); osc.stop(this.ctx.currentTime + 0.08);
+                    }, i * 70);
+                }
+            }
+            playSuccess() {
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, this.ctx.currentTime);
+                osc.frequency.setValueAtTime(659.25, this.ctx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.3);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.3);
+            }
+        }
+
+        class WeatherEngine {
+            constructor(canvasId) {
+                this.canvas = document.getElementById(canvasId);
+                this.ctx = this.canvas.getContext('2d');
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+                this.drops = [];
+                for(let i=0; i<80; i++) {
+                    this.drops.push({
+                        x: Math.random() * this.width,
+                        y: Math.random() * this.height,
+                        length: 15 + Math.random() * 25,
+                        speed: 14 + Math.random() * 8
+                    });
+                }
+            }
+            resize() {
+                this.width = window.innerWidth;
+                this.height = window.innerHeight;
+                this.canvas.width = this.width;
+                this.canvas.height = this.height;
+            }
+            update() {
+                this.ctx.clearRect(0, 0, this.width, this.height);
+                this.ctx.strokeStyle = 'rgba(0, 229, 255, 0.35)';
+                this.ctx.lineWidth = 1.5;
+                for(let drop of this.drops) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(drop.x, drop.y);
+                    this.ctx.lineTo(drop.x - 2, drop.y + drop.length);
+                    this.ctx.stroke();
+                    drop.y += drop.speed;
+                    drop.x -= 0.5;
+                    if(drop.y > this.height) {
+                        drop.y = -30;
+                        drop.x = Math.random() * this.width;
+                    }
+                }
+                requestAnimationFrame(() => this.update());
+            }
+        }
+
+        class LightningRailGame {
+            constructor() {
+                this.sound = new SoundEngine();
+                this.phase = 1; this.round = 1; this.speed = 3; this.integrity = 10;
+                this.engineState = 'Operational'; this.gameOver = false;
+                this.allHeroes = [
+                    {id:'jan',name:'Jan Valek',role:'Vampire Detective',hp:12,maxHp:12,def:15,stress:0,car:1,cell:2,ap:2,maxAp:2,mv:4,arc:3,combat:4,tactics:3,agility:4,img:'token_hero_jan_valek.png',abilities:[{name:'Mist Step',desc:'Move up to 2 cars for 1 AP.',kind:'mist'},{name:'Shadow Blade',desc:'Deal 3 damage to a minion in the same or adjacent car; apply Bleed (1 damage at next enemy phase).',kind:'shadow'}]},
+                    {id:'caden',name:'Caden',role:'Arcane Sniper',hp:10,maxHp:10,def:14,stress:1,car:2,cell:4,ap:2,maxAp:2,mv:4,arc:2,combat:4,tactics:4,agility:4,img:'token_hero_caden.png',abilities:[{name:'Dead-Eye Shot',desc:'Deal 4 piercing damage to a minion within 4 cars for 1 AP.',kind:'sniper'},{name:'Evasive Roll',desc:'Reaction: +3 Defense against the next enemy attack this round.',kind:'evasive'}]},
+                    {id:'bromli',name:'Bromli',role:'Cannith Artificer',hp:14,maxHp:14,def:16,stress:0,car:1,cell:5,ap:2,maxAp:2,mv:3,arc:3,combat:3,tactics:4,agility:2,img:'token_hero_bromli.png',abilities:[{name:'Rapid Overhaul',desc:'Restore 2 Train Integrity for 1 AP (once per round).',kind:'overhaul'},{name:'Kinetic Blast',desc:'Deal 2 damage and push up to 3 minions one car away for 1 AP.',kind:'blast'}]},
+                    {id:'fix',name:'Fix',role:'Changeling Bard',hp:10,maxHp:10,def:14,stress:2,car:3,cell:1,ap:2,maxAp:2,mv:4,arc:4,combat:2,tactics:3,agility:4,img:'token_hero_fix.png',abilities:[{name:'Song of Severance',desc:'For 1 AP, allies gain +2 Defense against the next enemy attack this round.',kind:'song'},{name:'Faceless Swap',desc:'For 1 AP, swap places with another hero anywhere on the train.',kind:'swap'}]},
+                    {id:'temple',name:'Temple',role:'Warforged Guardian',hp:16,maxHp:16,def:17,stress:0,car:4,cell:3,ap:2,maxAp:2,mv:3,arc:2,combat:5,tactics:3,agility:2,img:'token_hero_temple.png',abilities:[{name:'Guardian Taunt',desc:'For 1 AP, enemies prioritize Temple until the next enemy phase.',kind:'taunt'},{name:'Adamantine Slam',desc:'Deal 3 damage and stun a minion for its next activation.',kind:'slam'}]}
+                ];
+                this.heroes=[]; this.activeHeroIndex=0; this.minions=[
+                    {id:'m1',name:'Daask Enforcer',hp:4,maxHp:4,car:5,cell:8,attack:2,img:'token_minion_generic.png'},
+                    {id:'m2',name:'Vampire Spawn',hp:5,maxHp:5,car:4,cell:2,attack:2,img:'token_minion_generic.png'}
+                ];
+                this.vips=[{id:'melindre',name:'Melindre',role:'Voice of the Silver Flame',hp:8,maxHp:8,car:2,cell:2,img:'token_vip_melindre.png',stable:false}];
+                this.hand=[]; this.currentDice=[]; this.pendingTest=null; this.activeCrisis=null; this.crisisResolved=false;
+                this.roundHeroesEnded=new Set(); this.bosses=[]; this.sabotageTokens=2; this.traitorId=null;
+                this.flags={overdrive:false,overdriveBonus:false,tauntUntil:0,teamDefBonusUntil:0,phantomsUntil:0};
+                this.usedAbilities=new Set();
+            }
+            safeSound(method){try{if(this.sound && this.sound[method]) this.sound[method]();}catch(e){}}
+            startGameMode(modeCount){
+                this.safeSound('playClick');
+                this.heroes=this.allHeroes.slice(0,modeCount===2?2:5).map(h=>({...h,abilities:h.abilities.map(a=>({...a}))}));
+                this.activeHeroIndex=0; document.getElementById('mode-select-overlay').style.display='none';
+                this.initUI();
+            }
+            getActiveHero(){return this.heroes[this.activeHeroIndex]||this.heroes[0];}
+            initUI(){
+                const box=document.querySelector('.round-control-box');
+                if(!document.getElementById('action-controls')){
+                    const panel=document.createElement('div'); panel.id='action-controls'; panel.className='deck-buttons'; panel.style.marginTop='10px';
+                    panel.innerHTML=`<button class="magipunk-btn" onclick="game.moveHero(-1)">Move ←</button><button class="magipunk-btn" onclick="game.moveHero(1)">Move →</button><button class="magipunk-btn" onclick="game.basicAttack()">Attack</button><button class="magipunk-btn" onclick="game.repairEngine()">Repair</button><button class="magipunk-btn" onclick="game.engineOverdrive()">Engine Overdrive</button><button class="magipunk-btn" onclick="game.useAbility()">Signature Ability</button><button class="magipunk-btn" onclick="game.stabilizeVIP()">Stabilize Melindre</button><button class="magipunk-btn" onclick="game.clearStress()">Clear Stress</button>`;
+                    box.appendChild(panel);
+                }
+                const diceButtons=document.querySelector('.dice-engine-box .deck-buttons');
+                if(diceButtons) diceButtons.style.display='none';
+                this.renderMasterBoardGrid(); this.renderRoster(); this.renderHand(); this.updateHUD(); this.updateActionEconomyUI();
+                this.log(`Game started with ${this.heroes.length} heroes. Round 1: resolve a crisis to begin.`, 'highlight');
+            }
+            log(msg,type=''){const el=document.getElementById('log-console');if(!el)return;const d=document.createElement('div');d.className=`log-entry ${type}`;d.innerText=`> ${msg}`;el.appendChild(d);el.scrollTop=el.scrollHeight;}
+            updateHUD(){
+                document.getElementById('hud-phase').innerText=['1. Crisis','2. Hero','3. Enemy','4. Train'][this.phase-1];
+                document.getElementById('hud-speed').innerText=`${this.speed} / 12`;
+                document.getElementById('hud-integrity').innerText=`${this.integrity} HP`;
+                document.getElementById('hud-engine').innerText=this.engineState;
+                document.getElementById('current-phase-title').innerText=`Phase ${this.phase}: ${['Crisis Phase','Hero Phase','Enemy Phase','Train & Track Phase'][this.phase-1]}`;
+                document.getElementById('current-phase-desc').innerText=[
+                    this.crisisResolved?'Crisis resolved. Advance to the Hero Phase.':'Draw and resolve one crisis before the heroes can act.',
+                    'Each hero has 2 AP. Move, attack, repair, use an ability, or take another valid action.',
+                    'Enemies advance and attack automatically when you advance this phase.',
+                    'The engine advances the train if operational; victory and defeat are checked.'
+                ][this.phase-1];
+            }
+            renderRoster(){
+                const el=document.getElementById('hero-roster');if(!el)return;el.innerHTML='';
+                this.heroes.forEach((h,i)=>{const card=document.createElement('button');card.type='button';card.className=`hero-card-mini ${i===this.activeHeroIndex?'active':''}`;card.style.width='100%';card.style.textAlign='left';card.style.color='inherit';card.style.cursor='pointer';
+                    card.innerHTML=`<div class="hero-info"><h4>${h.name} ${i===this.activeHeroIndex?'⭐':''}</h4><span>${h.role} (AP: ${h.ap}/${h.maxAp})</span></div><div class="hero-stats-mini"><span class="stat-hp">HP:${h.hp}/${h.maxHp}</span><span class="stat-def">DEF:${this.getDefense(h)}</span><span class="stat-stress">S:${h.stress}/5</span></div>`;
+                    card.onclick=()=>{if(this.phase===2){if(this.roundHeroesEnded.has(h.id)){this.log(`${h.name} has already ended their turn this round.`,'alert');return;}this.activeHeroIndex=i;this.renderRoster();this.updateActionEconomyUI();this.renderTokens();}else this.inspectHero(h);};el.appendChild(card);});
+            }
+            renderMasterBoardGrid(){
+                for(let c=1;c<=5;c++){const col=document.getElementById(`car-grid-${c}`);if(!col)continue;col.innerHTML='';for(let i=0;i<10;i++){const cell=document.createElement('div');cell.className='grid-cell';cell.dataset.car=c;cell.dataset.cell=i;cell.tabIndex=0;cell.setAttribute('role','button');cell.setAttribute('aria-label',`Car ${c}, space ${i+1}; click to move active hero here`);cell.onclick=()=>this.moveToCell(c,i);cell.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();this.moveToCell(c,i);}};cell.ondragover=e=>e.preventDefault();cell.ondrop=e=>this.handleTokenDrop(e,c,i);col.appendChild(cell);}}
+                this.renderTokens();
+            }
+            renderTokens(){
+                document.querySelectorAll('.token').forEach(t=>t.remove());
+                const put=(entity,kind)=>{const cell=document.querySelector(`#car-grid-${entity.car} .grid-cell[data-cell="${entity.cell}"]`);if(!cell)return;const token=document.createElement('div');token.className=`token ${kind}`;token.style.backgroundImage=`url('${entity.img}')`;token.title=`${entity.name}${entity.hp!==undefined?` (HP ${entity.hp})`:''}`;token.setAttribute('aria-label',token.title);if(kind==='hero'){token.draggable=this.phase===2&&entity.id===this.getActiveHero().id&&entity.ap>0;token.ondragstart=e=>{e.dataTransfer.setData('text/plain',JSON.stringify({type:'hero',id:entity.id}));};token.onclick=e=>{e.stopPropagation();this.inspectHero(entity);};}cell.appendChild(token);};
+                this.heroes.forEach(h=>put(h,'hero'));this.minions.filter(m=>m.hp>0).forEach(m=>put(m,'minion'));this.vips.filter(v=>v.hp>0).forEach(v=>put(v,'vip'));
+            }
+            handleTokenDrop(e,c,cell){e.preventDefault();try{const d=JSON.parse(e.dataTransfer.getData('text/plain'));if(d.type==='hero'&&d.id===this.getActiveHero().id)this.moveToCell(c,cell);}catch(err){this.log('Could not read the dragged token. Try clicking a destination space instead.','alert');}}
+            updateActionEconomyUI(){const h=this.getActiveHero();if(!h)return;document.getElementById('active-hero-label').innerText=`Active: ${h.name}`;document.getElementById('active-ap-label').innerText=`AP: ${h.ap} / ${h.maxAp}`;document.getElementById('btn-end-turn').disabled=this.phase!==2||this.gameOver;document.getElementById('btn-draw-hero').disabled=this.phase!==2||h.ap<=0||this.gameOver;document.getElementById('btn-draw-crisis').disabled=this.phase!==1||this.crisisResolved||this.gameOver;const controls=document.getElementById('action-controls');if(controls)controls.querySelectorAll('button').forEach(b=>b.disabled=this.phase!==2||h.ap<=0||this.gameOver);}
+            spendAP(h=this.getActiveHero(),n=1){if(this.gameOver||this.phase!==2||!h||h.ap<n){this.log('Action unavailable: this requires the Hero Phase and sufficient AP.','alert');return false;}h.ap-=n;return true;}
+            getDefense(h){return h.def-(h.stress>=3?1:0)+(this.flags.teamDefBonusUntil>=this.round?2:0)+(h.evasiveUntil>=this.round?3:0);}
+            drawHeroCard(){if(!this.spendAP())return;const cards=[{title:'Mist Step',cost:1,desc:'Teleport up to 2 cars instantly through shadow conduits.',kind:'mist'},{title:'Arcane Shielding',cost:1,desc:'Prevent the next 2 damage to Train Integrity or Melindre.',kind:'shield'},{title:'Overclock Resonance',cost:1,desc:'+2 to a Repair/Tinkering check in Car 1 this round.',kind:'overclock'},{title:'Aether Conduit Vault',cost:1,desc:'Move up to 2 cars for no additional AP.',kind:'vault'}];const c={...cards[Math.floor(Math.random()*cards.length)],cost:0};this.hand.push(c);this.renderHand();this.log(`${this.getActiveHero().name} drew ${c.title}. 1 AP spent.`);this.refresh();}
+            renderHand(){const el=document.getElementById('hand-container');if(!el)return;if(!this.hand.length){el.innerHTML='<div style="text-align:center;color:var(--text-muted);font-size:14px;margin-top:35px;font-weight:bold;">Your hand is empty. Draw an action card during the Hero Phase.</div>';return;}el.innerHTML='';this.hand.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.className='card-item';b.innerHTML=`<strong>${c.title}</strong><div class="cost">Click to play</div>`;b.onclick=()=>this.playCard(i);el.appendChild(b);});}
+            playCard(i){const c=this.hand[i];if(!c||this.phase!==2||this.gameOver){this.log('Cards can only be played during the Hero Phase.','alert');return;}const h=this.getActiveHero();if(c.kind==='mist'||c.kind==='vault'){const max=c.kind==='mist'?2:2;const dest=prompt(`${c.title}: enter destination car (1–5).`);const car=Number(dest);if(!Number.isInteger(car)||car<1||car>5||Math.abs(car-h.car)>max){this.log('Invalid destination; card was not used.','alert');return;}h.car=car;this.hand.splice(i,1);this.log(`${h.name} played ${c.title} and moved to Car ${car}.`);}else if(c.kind==='shield'){this.flags.shield=2;this.hand.splice(i,1);this.log('Arcane Shielding is active: next 2 damage to Integrity or Melindre is prevented.','highlight');}else if(c.kind==='overclock'){this.flags.overclockUntil=this.round;this.hand.splice(i,1);this.log('Overclock Resonance is active for this round.','highlight');}this.renderHand();this.refresh();}
+            drawCrisisCard(){if(this.phase!==1||this.crisisResolved){this.log('Only one crisis may be drawn in each Crisis Phase.','alert');return;}if(this.activeCrisis){this.showCrisisModal();return;}const crises=[
+                {id:'overload',title:'Conduit Rail Arc Overload',dc:12,skill:'tactics',penalty:'Train Integrity -2',success:'The engine remains Operational.',fail:()=>{this.damageIntegrity(2);}},
+                {id:'core',title:'Core Instability',dc:13,skill:'arc',penalty:'Engine becomes Damaged and Train Integrity -2',success:'Heat sinks are stabilized.',fail:()=>{this.engineState='Damaged';this.damageIntegrity(2);}},
+                {id:'mournland',title:'Mournland Surge',dc:14,skill:'agility',penalty:'Spectral phantoms disrupt all movement this round',success:'Spectral phantoms are repelled.',fail:()=>{this.flags.phantomsUntil=this.round;}}
+            ];this.activeCrisis=crises[Math.floor(Math.random()*crises.length)];this.showCrisisModal();this.log(`Crisis: ${this.activeCrisis.title} (DC ${this.activeCrisis.dc}).`,'alert');this.updateActionEconomyUI();}
+            showCrisisModal(){const c=this.activeCrisis,h=this.getActiveHero();const modal=document.getElementById('modal-overlay'),content=document.getElementById('modal-content');content.innerHTML=`<h2 style="color:var(--crimson-accent);margin-bottom:8px;">CRISIS: ${c.title}</h2><p style="line-height:1.5;margin:12px 0;"><b>Check:</b> ${c.skill.toUpperCase()} (DC ${c.dc})<br><b>Success:</b> ${c.success}<br><b>Failure:</b> ${c.penalty}</p><p>The active hero, ${h.name}, rolls their ${c.skill.toUpperCase()} pool (${h[c.skill]}d6). 4, 5 or 6 = 1 success. DC ${c.dc} requires ${this.successesNeeded(c.dc)} success${this.successesNeeded(c.dc)===1?'':'es'}.</p><div class="deck-buttons"><button class="magipunk-btn primary" onclick="game.rollCrisisTest()">Roll ${h[c.skill]}d6</button><button class="magipunk-btn" onclick="game.closeModal(null)">Close (crisis remains unresolved)</button></div><div id="crisis-result" style="margin-top:12px;"></div>`;modal.style.display='flex';}
+            successesNeeded(dc){return dc<=12?1:dc===13?2:3;}
+            rollCrisisTest(){if(!this.activeCrisis||this.crisisResolved)return;const h=this.getActiveHero(),skill=this.activeCrisis.skill;this.pendingTest={heroId:h.id,skill,dc:this.activeCrisis.dc,kind:'crisis',dice:Array.from({length:h[skill]},()=>1+Math.floor(Math.random()*6)),rerolled:false};this.showTestResult();}
+            countSuccesses(dice){return dice.filter(d=>d>=4).length;}
+            showTestResult(){const t=this.pendingTest;if(!t)return;const successes=this.countSuccesses(t.dice),needed=this.successesNeeded(t.dc),box=document.getElementById('crisis-result');if(!box)return;box.innerHTML=`<div style="padding:12px;background:rgba(0,0,0,.6);border-radius:6px;"><b>Dice:</b> [${t.dice.join(', ')}]<br><b>Successes:</b> ${successes} / ${needed} required${t.rerolled?' (reroll used)':''}<div class="deck-buttons" style="margin-top:10px;">${!t.rerolled?'<button class="magipunk-btn" onclick="game.rerollTest()">Reroll all failures once</button>':''}<button class="magipunk-btn primary" onclick="game.resolveCrisisTest()">Resolve Crisis</button></div></div>`;}
+            rerollTest(){const t=this.pendingTest;if(!t||t.rerolled){this.log('This test has already used its reroll.','alert');return;}const h=this.heroes.find(x=>x.id===t.heroId);let ones=0;t.dice=t.dice.map(d=>{if(d>=4)return d;const n=1+Math.floor(Math.random()*6);if(n===1)ones++;return n;});t.rerolled=true;if(ones){h.stress=Math.min(5,h.stress+ones);this.log(`${h.name} rolled ${ones} one(s) on the reroll and gained ${ones} Stress.`,'alert');if(h.stress>=5)this.log(`${h.name} is Staggered: loses 1 AP next turn and must spend 1 AP to clear 2 Stress.`,'alert');}this.showTestResult();this.renderRoster();}
+            resolveCrisisTest(){const t=this.pendingTest,c=this.activeCrisis;if(!t||!c||this.crisisResolved)return;const successes=this.countSuccesses(t.dice),h=this.heroes.find(x=>x.id===t.heroId),needed=this.successesNeeded(c.dc),ok=successes>=needed;if(ok){this.log(`Crisis passed: ${c.title}. ${c.success}`,'highlight');if(c.id==='overload')this.engineState='Operational';}else{c.fail();this.log(`Crisis failed: ${c.title}. ${c.penalty}`,'alert');}this.crisisResolved=true;this.pendingTest=null;this.activeCrisis=null;this.closeModal(null);this.checkEndConditions();this.refresh();}
+            damageIntegrity(n){if(this.flags.shield){const blocked=Math.min(n,this.flags.shield);this.flags.shield-=blocked;n-=blocked;this.log(`Arcane Shielding prevented ${blocked} damage.`,'highlight');}this.integrity=Math.max(0,this.integrity-n);}
+            moveHero(dir){const h=this.getActiveHero();const dest=Math.max(1,Math.min(5,h.car+dir));if(dest===h.car){this.log('The train has no car in that direction.','alert');return;}this.moveToCell(dest,h.cell);}
+            moveToCell(car,cell){const h=this.getActiveHero();if(this.phase!==2||this.gameOver){this.log('Movement is only available during the Hero Phase.','alert');return;}if(h.ap<=0){this.log(`${h.name} has no AP remaining.`,'alert');return;}const distance=Math.abs(Number(car)-h.car);if(distance>1){this.log('Normal movement is limited to one train car per action. Use a movement ability/card to travel farther.','alert');return;}if(Number(car)===h.car&&Number(cell)===h.cell){return;}if(this.flags.phantomsUntil>=this.round){this.log('Spectral phantoms prevent movement this round.','alert');return;}if(!this.spendAP(h))return;h.car=Number(car);h.cell=Number(cell);this.log(`${h.name} moved to Car ${h.car} (1 AP).`);this.refresh();}
+            basicAttack(){const h=this.getActiveHero();if(!this.spendAP(h))return;const targets=this.minions.filter(m=>m.hp>0&&Math.abs(m.car-h.car)<=1);if(!targets.length){h.ap++;this.log('No minion in this or an adjacent car. Attack cancelled; AP refunded.','alert');return;}const target=targets.sort((a,b)=>Math.abs(a.car-h.car)-Math.abs(b.car-h.car))[0];const pool=Array.from({length:h.combat},()=>1+Math.floor(Math.random()*6)),hits=this.countSuccesses(pool),dmg=Math.max(1,hits);target.hp-=dmg;this.log(`${h.name} attacks ${target.name}: [${pool.join(', ')}] = ${hits} success(es), ${dmg} damage. ${Math.max(0,target.hp)} HP left.`);if(target.hp<=0)this.log(`${target.name} defeated.`,'highlight');this.refresh();}
+            engineOverdrive(){const h=this.getActiveHero();if(h.car!==1){this.log('Engine Overdrive requires the hero to be in Car 1.','alert');return;}if(!this.spendAP(h))return;const pool=Array.from({length:h.tactics},()=>1+Math.floor(Math.random()*6)),success=this.countSuccesses(pool)>=1;if(success){this.flags.overdriveBonus=true;this.log(`${h.name} activates Engine Overdrive: [${pool.join(', ')}]. The train gains +1 bonus Speed this Train Phase.`,'highlight');}else{this.damageIntegrity(1);this.log(`${h.name} fails Engine Overdrive: [${pool.join(', ')}]. Train Integrity -1.`,'alert');}this.refresh();this.checkEndConditions();}
+            repairEngine(){const h=this.getActiveHero();if(h.car!==1){this.log('Engine repairs require the hero to be in Car 1.','alert');return;}if(this.engineState==='Operational'&&this.integrity>=10){this.log('The engine is already operational and Integrity is full.','alert');return;}if(!this.spendAP(h))return;const bonus=this.flags.overclockUntil===this.round?2:0;const pool=Array.from({length:h.tactics},()=>1+Math.floor(Math.random()*6)),success=this.countSuccesses(pool)+bonus>=2;if(success){this.integrity=Math.min(10,this.integrity+2);this.engineState='Operational';this.log(`${h.name} repairs the engine: [${pool.join(', ')}]${bonus?` + ${bonus} Overclock`:''}. Engine Operational; Integrity ${this.integrity}/10.`,'highlight');}else{this.log(`${h.name}'s repair check failed: [${pool.join(', ')}].`,'alert');}this.refresh();}
+            useAbility(){const h=this.getActiveHero();const list=h.abilities||[];if(!list.length)return;const choice=prompt(`${h.name} abilities:\n${list.map((a,i)=>`${i+1}. ${a.name} — ${a.desc}`).join('\n')}\nEnter number:`);const a=list[Number(choice)-1];if(!a)return;if(!this.spendAP(h))return;let used=true;switch(a.kind){case'mist':{const dest=Number(prompt('Teleport to which car (1–5)?'));if(!Number.isInteger(dest)||dest<1||dest>5||Math.abs(dest-h.car)>2){h.ap++;used=false;this.log('Invalid destination; AP refunded.','alert');break;}h.car=dest;this.log(`${h.name} uses Mist Step to Car ${dest}.`);break;}case'shadow':{const t=this.closestTarget(h,1);if(!t){h.ap++;used=false;this.log('No minion in the same or adjacent car; AP refunded.','alert');break;}t.hp-=3;t.bleed=true;this.log(`${h.name} uses Shadow Blade on ${t.name}: 3 damage and Bleed.`);break;}case'sniper':{const t=this.closestTarget(h,4);if(!t){h.ap++;used=false;this.log('No minion within 4 cars; AP refunded.','alert');break;}t.hp-=4;this.log(`${h.name} uses Dead-Eye Shot: ${t.name} takes 4 piercing damage.`,'highlight');break;}case'evasive':h.evasiveUntil=this.round;this.log(`${h.name} prepares Evasive Roll (+3 Defense against next attack this round).`);break;case'overhaul':if(this.usedAbilities.has(`${this.round}:overhaul`)){h.ap++;used=false;this.log('Rapid Overhaul can only be used once per round; AP refunded.','alert');break;}this.usedAbilities.add(`${this.round}:overhaul`);this.integrity=Math.min(10,this.integrity+2);this.engineState='Operational';this.log(`Bromli uses Rapid Overhaul: +2 Integrity; engine Operational.`,'highlight');break;case'blast':{const ts=this.minions.filter(m=>m.hp>0&&Math.abs(m.car-h.car)<=1).slice(0,3);if(!ts.length){h.ap++;used=false;this.log('No minions nearby; AP refunded.','alert');break;}ts.forEach(t=>{t.hp-=2;t.car=Math.max(1,Math.min(5,t.car+(t.car>=h.car?1:-1)));});this.log(`Bromli's Kinetic Blast hits ${ts.length} minion(s) for 2 and pushes them away.`);break;}case'song':this.flags.teamDefBonusUntil=this.round;this.log('Fix’s Song of Severance grants allies +2 Defense against attacks this round.','highlight');break;case'swap':{const choices=this.heroes.filter(x=>x.id!==h.id);const n=prompt(`Swap with which hero?\n${choices.map((x,i)=>`${i+1}. ${x.name} (Car ${x.car})`).join('\n')}`);const other=choices[Number(n)-1];if(!other){h.ap++;used=false;this.log('Swap cancelled; AP refunded.','alert');break;}[h.car,other.car]=[other.car,h.car];[h.cell,other.cell]=[other.cell,h.cell];this.log(`${h.name} swaps position with ${other.name}.`);break;}case'taunt':this.flags.tauntUntil=this.round;this.log('Temple taunts enemies; they will prioritize Temple this enemy phase.','highlight');break;case'slam':{const t=this.closestTarget(h,1);if(!t){h.ap++;used=false;this.log('No minion nearby; AP refunded.','alert');break;}t.hp-=3;t.stunned=true;this.log(`Temple’s Adamantine Slam deals 3 to ${t.name} and stuns it.`);break;}}
+                if(used){this.refresh();this.checkEndConditions();}}
+            closestTarget(h,range){return this.minions.filter(m=>m.hp>0&&Math.abs(m.car-h.car)<=range).sort((a,b)=>Math.abs(a.car-h.car)-Math.abs(b.car-h.car))[0]||null;}
+            stabilizeVIP(){const h=this.getActiveHero(),v=this.vips[0];if(!v||v.hp>0||v.stable){this.log('Melindre does not need stabilization.','alert');return;}if(Math.abs(h.car-v.car)>1){this.log('Move to Melindre’s car or an adjacent car to stabilize her.','alert');return;}if(!this.spendAP(h))return;v.stable=true;v.hp=1;delete v.downRound;this.log(`${h.name} stabilizes Melindre before the end of the round!`,'highlight');this.refresh();}
+            clearStress(){const h=this.getActiveHero();if(h.stress<=0){this.log(`${h.name} has no Stress to clear.`);return;}if(!this.spendAP(h))return;const before=h.stress;h.stress=Math.max(0,h.stress-2);this.log(`${h.name} spends 1 AP to clear ${before-h.stress} Stress (now ${h.stress}).`);this.refresh();}
+            endHeroTurn(){if(this.phase!==2||this.gameOver)return;const h=this.getActiveHero();if(this.roundHeroesEnded.has(h.id)){this.log(`${h.name} has already ended their turn this round.`,'alert');return;}this.roundHeroesEnded.add(h.id);this.log(`${h.name} ends their turn.`);if(this.roundHeroesEnded.size>=this.heroes.length){this.phase=3;this.log('All heroes have acted. Enemy Phase begins.','highlight');this.updateHUD();this.updateActionEconomyUI();return;}for(let n=1;n<=this.heroes.length;n++){const idx=(this.activeHeroIndex+n)%this.heroes.length;if(!this.roundHeroesEnded.has(this.heroes[idx].id)){this.activeHeroIndex=idx;break;}}this.renderRoster();this.renderTokens();this.updateActionEconomyUI();}
+            advancePhase(){if(this.gameOver)return;this.safeSound('playClick');if(this.phase===1){if(!this.crisisResolved){this.log('Resolve the crisis before advancing to the Hero Phase.','alert');return;}this.phase=2;this.activeHeroIndex=0;this.roundHeroesEnded.clear();this.heroes.forEach(h=>{const staggered=h.stress>=5;const crisisPenalty=this.flags.nextRoundApPenalty?1:0;h.ap=Math.max(0,h.maxAp-(staggered?1:0)-crisisPenalty);if(staggered)this.log(`${h.name} is Staggered: loses 1 AP this turn and must spend 1 AP to clear 2 Stress.`,'alert');});this.flags.nextRoundApPenalty=false;this.usedAbilities.clear();this.log('Hero Phase begins. Every hero has 2 AP (modified by Staggered).','highlight');}
+                else if(this.phase===2){if(this.roundHeroesEnded.size<this.heroes.length){this.log('Each hero must end their turn before the Enemy Phase begins. Use End Hero Turn for each hero.','alert');return;}this.phase=3;}
+                else if(this.phase===3){this.runEnemyPhase();if(this.checkEndConditions())return;this.phase=4;}
+                else if(this.phase===4){if(this.engineState==='Operational'){const gain=1+(this.flags.overdriveBonus?1:0);this.speed=Math.min(12,this.speed+gain);this.log(`Train advances by ${gain} Speed to ${this.speed}/12${this.flags.overdriveBonus?' (Engine Overdrive bonus included)':''}.`,'highlight');}else this.log(`Engine is ${this.engineState}; train does not advance.`,'alert');this.flags.overdriveBonus=false;this.checkEndConditions();if(this.gameOver)return;this.round++;this.phase=1;this.crisisResolved=false;this.activeCrisis=null;this.roundHeroesEnded.clear();if(this.flags.nextRoundApPenalty)this.log('Mournland Surge penalty will apply in the next Hero Phase: each hero loses 1 AP.','alert');this.log(`Round ${this.round} begins. Draw a new crisis.`,'highlight');}
+                this.updateHUD();this.renderRoster();this.renderTokens();this.updateActionEconomyUI();}
+            runEnemyPhase(){this.log(`Round ${this.round}: enemies activate.`);this.minions.filter(m=>m.hp>0).forEach(m=>{if(m.bleed){m.hp--;this.log(`${m.name} takes 1 Bleed damage.`);m.bleed=false;if(m.hp<=0){this.log(`${m.name} is defeated by Bleed.`,'highlight');return;}}if(m.stunned){m.stunned=false;this.log(`${m.name} is stunned and loses its activation.`);return;}const living=this.heroes.filter(h=>h.hp>0);if(!living.length)return;let target;if(this.flags.tauntUntil>=this.round)target=living.find(h=>h.id==='temple')||living[0];else target=living.sort((a,b)=>Math.abs(a.car-m.car)-Math.abs(b.car-m.car))[0];if(Math.abs(target.car-m.car)>0){m.car+=target.car>m.car?1:-1;this.log(`${m.name} moves to Car ${m.car}, pursuing ${target.name}.`);}else{const roll=10+Math.floor(Math.random()*11);if(roll>=this.getDefense(target)){target.hp=Math.max(0,target.hp-m.attack);this.log(`${m.name} attacks ${target.name}: hits for ${m.attack} damage (HP ${target.hp}/${target.maxHp}).`,'alert');if(target.hp===0)this.log(`${target.name} is down!`,'alert');}else this.log(`${m.name} attacks ${target.name}, but misses (roll ${roll} vs DEF ${this.getDefense(target)}).`);} });if(this.round===2||this.round===5||this.round===8){this.sabotageTokens++;this.log(`A Boss entrance is due this round: traitor sabotage pool increases to ${this.sabotageTokens}. Boss behavior is a later implementation step.`,'alert');}}
+            checkEndConditions(){if(this.integrity<=0){this.finishGame('TRAITOR VICTORY — DERAILMENT. Train Integrity reached 0.');return true;}const v=this.vips[0];if(v&&v.hp<=0&&!v.stable){if(v.downRound===undefined)v.downRound=this.round;if(this.round>v.downRound&&this.phase===4){this.finishGame('TRAITOR VICTORY — MELINDRE WAS NOT STABILIZED WITHIN ONE FULL ROUND.');return true;}}if(this.speed>=12&&this.integrity>0&&v&&v.hp>0){this.finishGame('LOYALIST VICTORY! The train reaches Flamekeep with Melindre alive.');return true;}if(this.round>=10&&this.phase===4&&this.speed<12){this.finishGame('TRAITOR VICTORY — STALL. Round 10 ended before the train reached Speed 12.');return true;}return false;}
+            finishGame(msg){this.gameOver=true;this.log(msg,'highlight');const content=document.getElementById('modal-content');content.innerHTML=`<h2 style="color:var(--gold-primary);">${msg.includes('LOYALIST')?'VICTORY':'DEFEAT'}</h2><p style="margin:18px 0;line-height:1.5;">${msg}</p><button class="magipunk-btn primary" onclick="location.reload()">Start a New Game</button>`;document.getElementById('modal-overlay').style.display='flex';this.updateActionEconomyUI();}
+            refresh(){this.updateHUD();this.renderRoster();this.renderTokens();this.renderHand();this.updateActionEconomyUI();}
+            rollDicePool(numDice){const h=this.getActiveHero();this.pendingTest={heroId:h.id,skill:'combat',dc:12,kind:'free',dice:Array.from({length:Math.max(1,Math.min(8,numDice))},()=>1+Math.floor(Math.random()*6)),rerolled:false};this.showFreeTest();}
+            showFreeTest(){const t=this.pendingTest;document.getElementById('dice-tray').innerHTML=t.dice.map(d=>`<span class="die ${d>=4?'success':''}">${d}</span>`).join('');document.getElementById('dice-status').innerText=`${this.countSuccesses(t.dice)} successes`;this.log(`Dice: [${t.dice.join(', ')}] = ${this.countSuccesses(t.dice)} successes.`);}
+            rerollDicePool(){if(!this.pendingTest){this.log('Roll a test first.','alert');return;}this.rerollTest();this.showFreeTest();}
+            inspectCard(card){const modal=document.getElementById('modal-overlay'),content=document.getElementById('modal-content');content.innerHTML=`<h2 style="color:var(--gold-primary);">${card.title}</h2><p style="margin:14px 0;line-height:1.5;">${card.desc}</p><button class="magipunk-btn primary" onclick="game.closeModal(null)">Close</button>`;modal.style.display='flex';}
+            inspectHero(h){const modal=document.getElementById('modal-overlay'),content=document.getElementById('modal-content');content.innerHTML=`<h2 style="color:var(--gold-primary);">${h.name}</h2><p style="margin:10px 0;">${h.role}</p><p>HP: ${h.hp}/${h.maxHp} · Defense: ${this.getDefense(h)} · Stress: ${h.stress}/5 · AP: ${h.ap}/${h.maxAp}</p><p style="margin-top:10px;">Arcana ${h.arc} · Combat ${h.combat} · Tactics ${h.tactics} · Agility ${h.agility}</p><button class="magipunk-btn primary" onclick="game.closeModal(null)">Close</button>`;modal.style.display='flex';}
+            closeModal(e){if(!e||e.target.id==='modal-overlay'||e.target.classList.contains('modal-close')||e.target.tagName==='BUTTON')document.getElementById('modal-overlay').style.display='none';}
+        }
+        const weather = new WeatherEngine('weather-canvas');
+        weather.update();
+        const game = new LightningRailGame();
+    </script>
+</body>
+</html>
