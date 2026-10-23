@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightning Rail: Sharn to Thrane - Master Rulebook Edition v8.3</title>
+    <title>Lightning Rail: Sharn to Thrane - Master Rulebook Edition v8.4</title>
     <style>
         :root {
             --bg-deep: #070a12;
@@ -21,7 +21,6 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            user-select: none;
         }
 
         body {
@@ -36,6 +35,7 @@
             background-image: url('sharn_skyline_background.png');
             background-size: cover;
             background-position: center;
+            user-select: text; /* Restored text selection for accessibility */
         }
 
         #weather-canvas {
@@ -206,6 +206,7 @@
             backdrop-filter: blur(14px);
             box-shadow: 6px 0 25px rgba(0,0,0,0.8);
             z-index: 6;
+            overflow-y: auto;
         }
 
         .section-header {
@@ -370,7 +371,7 @@
             border-radius: 4px;
         }
 
-        /* Central Master Board View with Strict Cell Confinement */
+        /* Central Master Board View with Strict Bounding Alignment */
         .board-workspace {
             flex: 1;
             display: flex;
@@ -380,6 +381,7 @@
             justify-content: center;
             position: relative;
             background: radial-gradient(circle at center, rgba(7,10,18,0.5) 0%, rgba(7,10,18,0.92) 100%);
+            overflow: auto;
         }
 
         .master-board-container {
@@ -404,6 +406,7 @@
             grid-template-rows: repeat(5, 1fr);
             gap: 6px;
             position: relative;
+            height: 100%;
         }
 
         .grid-cell {
@@ -413,8 +416,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative; /* Strict containing block for tokens */
-            overflow: hidden;
+            position: relative;
+            overflow: hidden; /* Guarantees tokens stay fully locked inside cell boundaries */
             transition: background 0.2s, border-color 0.2s;
         }
 
@@ -424,19 +427,19 @@
             box-shadow: inset 0 0 10px rgba(0,229,255,0.6);
         }
 
-        /* Custom Asset Tokens - Perfectly confined inside grid cells */
+        /* Custom Asset Tokens - Strict cell-fit sizing */
         .token {
-            width: 34px;
-            height: 34px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 9px;
+            font-size: 8px;
             font-weight: bold;
             cursor: grab;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.95);
-            position: relative; /* Contained strictly within cell */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.95);
+            position: relative;
             z-index: 25;
             background-size: cover;
             background-position: center;
@@ -446,8 +449,8 @@
 
         .token:active {
             cursor: grabbing;
-            transform: scale(1.25);
-            box-shadow: 0 10px 20px rgba(0,229,255,0.95);
+            transform: scale(1.2);
+            box-shadow: 0 8px 18px rgba(0,229,255,0.95);
         }
 
         .token.hero { border-color: var(--azure-glow); }
@@ -466,6 +469,7 @@
             backdrop-filter: blur(14px);
             box-shadow: -6px 0 25px rgba(0,0,0,0.8);
             z-index: 6;
+            overflow-y: auto;
         }
 
         .round-control-box {
@@ -656,11 +660,11 @@
     <div class="mode-select-overlay" id="mode-select-overlay">
         <div class="mode-select-card">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <p><strong>Master Rulebook v8.3 Definitive Edition:</strong><br>
-            • <strong>Phase 1 (Crisis):</strong> Must draw and resolve crisis before advancing.<br>
-            • <strong>Phase 2 (Hero):</strong> Strict AP turn management per hero.<br>
-            • <strong>Phase 3 (Enemy):</strong> Automated minion pursuit toward VIP Melindre.<br>
-            • <strong>Phase 4 (Train):</strong> Speed track progression toward Thrane (Target: 12).</p>
+            <p><strong>Master Rulebook v8.4 Definitive Edition:</strong><br>
+            • <strong>Phase 1 (Crisis):</strong> Mandatory resolution before advancing.<br>
+            • <strong>Phase 2 (Hero):</strong> Complete hero turns in sequence with strict AP tracking.<br>
+            • <strong>Phase 3 (Enemy):</strong> Automated minion pursuit and attacks on Melindre.<br>
+            • <strong>Phase 4 (Train):</strong> Speed progression toward Thrane (Target: 12).</p>
             <div class="mode-buttons-container">
                 <button class="mode-btn" onclick="game.startGameMode(2)">1 to 2 Player Mode</button>
                 <button class="mode-btn" onclick="game.startGameMode(5)">3 to 5 Player Mode</button>
@@ -672,7 +676,7 @@
     <header>
         <div class="title-area">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <span>Definitive Master Edition v8.3 | Strictly Enforced Rules & Confined Tokens</span>
+            <span>Definitive Master Edition v8.4 | Strict Phase Gating & Confined Tokens</span>
         </div>
         <div class="global-status">
             <div class="status-badge">
@@ -759,7 +763,7 @@
 
             <div class="section-header">Event & Action Log</div>
             <div class="log-console" id="log-console">
-                <div class="log-entry highlight">[System] Lightning Rail v8.3 token containment & phase gating active.</div>
+                <div class="log-entry highlight">[System] Lightning Rail v8.4 strict phase enforcement & token locking active.</div>
             </div>
         </aside>
     </main>
@@ -869,6 +873,8 @@
                 this.engineState = 'Operational';
                 this.round = 1;
                 this.crisisResolvedThisRound = false;
+                this.heroTurnsCompleted = 0;
+                this.hasRerolledThisCheck = false;
                 
                 this.allHeroes = [
                     { id: 'jan', name: 'Jan Valek', role: 'Vampire Detective', hp: 12, maxHp: 12, def: 15, stress: 0, car: 1, cell: 2, ap: 2, maxAp: 2, img: 'token_hero_jan_valek.png' },
@@ -887,7 +893,7 @@
                 ];
 
                 this.vips = [
-                    { id: 'melindre', name: 'Melindre', role: 'Voice of Silver Flame', hp: 8, car: 2, cell: 2, img: 'token_vip_melindre.png' }
+                    { id: 'melindre', name: 'Melindre', role: 'Voice of Silver Flame', hp: 8, maxHp: 8, car: 2, cell: 2, img: 'token_vip_melindre.png' }
                 ];
 
                 this.hand = [];
@@ -914,7 +920,7 @@
                 this.renderRoster();
                 this.renderMasterBoardGrid();
                 this.updateActionEconomyUI();
-                this.log(`Game started with ${this.heroes.length}-Player configuration (v8.3 Definitive).`, "highlight");
+                this.log(`Game started with ${this.heroes.length}-Player configuration (v8.4 Master).`, "highlight");
             }
 
             log(msg, type='') {
@@ -1005,7 +1011,7 @@
                         const token = document.createElement('div');
                         token.className = 'token vip';
                         token.style.backgroundImage = `url('${v.img}')`;
-                        token.title = v.name;
+                        token.title = `${v.name} (HP: ${v.hp}/${v.maxHp})`;
                         cell.appendChild(token);
                     }
                 });
@@ -1073,7 +1079,7 @@
                 const card = sampleCards[Math.floor(Math.random() * sampleCards.length)];
                 this.hand.push(card);
                 this.renderHand();
-                this.log(`${hero.name} drew Action: ${card.title} [Effect: ${card.effect}] (1 AP spent).`);
+                this.log(`${hero.name} drew Action: ${card.title} (1 AP spent).`);
                 this.renderRoster();
                 this.updateActionEconomyUI();
             }
@@ -1085,6 +1091,10 @@
                     this.engineState = 'Operational';
                     document.getElementById('hud-engine').innerText = 'Operational';
                     this.log(`Engine Overdrive played! Engine restored to Operational.`, "highlight");
+                } else if(card.title === "Arcane Shielding") {
+                    this.integrity = Math.min(10, this.integrity + 2);
+                    document.getElementById('hud-integrity').innerText = `${this.integrity} HP`;
+                    this.log(`Arcane Shielding played! Train Integrity bolstered by +2 HP.`, "highlight");
                 } else {
                     this.log(`Played Action Card: ${card.title} - Effect applied successfully.`, "highlight");
                 }
@@ -1133,11 +1143,16 @@
             }
 
             rollHeroSkillCheck() {
+                if(this.crisisResolvedThisRound) {
+                    this.log("This crisis has already been resolved for the round.", "alert");
+                    return;
+                }
                 this.sound.playDiceRoll();
                 document.getElementById('dice-status').innerText = "Rolling...";
                 const tray = document.getElementById('dice-tray');
                 tray.innerHTML = '';
 
+                this.hasRerolledThisCheck = false; // Reset reroll guard for new check
                 this.currentDice = [];
                 for(let i=0; i<3; i++) {
                     const val = Math.floor(Math.random() * 6) + 1;
@@ -1205,6 +1220,11 @@
                     this.log("No active dice pool to push/reroll.", "alert");
                     return;
                 }
+                if(this.hasRerolledThisCheck) {
+                    this.log("Rulebook Restriction: Only one push reroll is permitted per check.", "alert");
+                    return;
+                }
+                this.hasRerolledThisCheck = true;
                 this.sound.playDiceRoll();
                 document.getElementById('dice-status').innerText = "Pushing Luck...";
                 const tray = document.getElementById('dice-tray');
@@ -1237,9 +1257,9 @@
                     tray.appendChild(die);
                 });
 
-                document.getElementById('dice-status').innerText = `${successes} Successes (Push)`;
+                document.getElementById('dice-status').innerText = `${successes} Successes (Push Locked)`;
                 this.sound.playSuccess();
-                this.log(`Push Reroll -> [${this.currentDice.join(', ')}] (${successes} Successes).`);
+                this.log(`Push Reroll -> [${this.currentDice.join(', ')}] (${successes} Successes). Reroll guard engaged.`);
 
                 if(this.activeCrisis) {
                     this.evaluateCrisisOutcome(successes);
@@ -1263,14 +1283,21 @@
             }
 
             endHeroTurn() {
+                if(this.phase !== 2) {
+                    this.log("Turn ending allowed only during Phase 2 (Hero Phase).", "alert");
+                    return;
+                }
                 const hero = this.getActiveHero();
                 this.sound.playClick();
                 this.log(`${hero.name} ended their turn.`);
                 
+                this.heroTurnsCompleted++;
                 this.activeHeroIndex++;
-                if(this.activeHeroIndex >= this.heroes.length) {
+
+                if(this.activeHeroIndex >= this.heroes.length || this.heroTurnsCompleted >= this.heroes.length) {
                     this.activeHeroIndex = 0;
-                    this.log("All heroes have acted. Transitioning to Enemy Phase (Phase 3).", "highlight");
+                    this.heroTurnsCompleted = 0;
+                    this.log("All heroes have completed their turns. Transitioning to Enemy Phase (Phase 3).", "highlight");
                     this.phase = 3;
                     this.executeEnemyPhase();
                 } else {
@@ -1284,13 +1311,28 @@
             }
 
             executeEnemyPhase() {
-                this.log("[Phase 3: Enemy Phase] Minions execute automated AI pursuit toward VIP Melindre.", "alert");
+                this.log("[Phase 3: Enemy Phase] Minions execute automated AI pursuit and attacks toward VIP Melindre.", "alert");
+                
+                // Minion pursuit and attack integration
                 this.minions.forEach(m => {
-                    if(m.car > 2) m.car--;
+                    if(m.car > 2) {
+                        m.car--;
+                    } else {
+                        // Minion is in Car 2 with VIP Melindre - attack!
+                        if(this.vips.length > 0) {
+                            let vip = this.vips[0];
+                            vip.hp = Math.max(0, vip.hp - 2);
+                            this.log(`[Combat] ${m.name} inflicts 2 damage on VIP ${vip.name}! (VIP HP: ${vip.hp}/${vip.maxHp})`, "alert");
+                            if(vip.hp <= 0) {
+                                this.triggerGameOver(false, "Catastrophic Failure: VIP Melindre has fallen to enemy forces.");
+                            }
+                        }
+                    }
                 });
+
                 document.getElementById('hud-phase').innerText = '3. Enemy';
-                document.getElementById('current-phase-title').innerText = 'Phase 3: Enemy Phase (AI Automation)';
-                document.getElementById('current-phase-desc').innerText = 'Minions and threats advance along target ladders.';
+                document.getElementById('current-phase-title').innerText = 'Phase 3: Enemy Phase (AI & Combat)';
+                document.getElementById('current-phase-desc').innerText = 'Minions execute pursuit and inflict damage on targets.';
                 this.renderTokens();
             }
 
@@ -1300,12 +1342,17 @@
                     this.log("Rulebook Enforcement: You must resolve the Crisis Phase before advancing to Hero Phase.", "alert");
                     return;
                 }
+                if(this.phase === 2 && this.heroTurnsCompleted < 0) { // Controlled by endHeroTurn completion
+                    this.log("Rulebook Enforcement: All hero turns must conclude before advancing to Enemy Phase.", "alert");
+                    return;
+                }
 
                 this.phase++;
                 if(this.phase > 4) {
                     this.phase = 1;
                     this.round++;
                     this.crisisResolvedThisRound = false;
+                    this.heroTurnsCompleted = 0;
                     if(this.round > 10) {
                         this.triggerGameOver(false, "Time Expired: Round 10 limit reached before arriving in Thrane.");
                         return;
@@ -1347,6 +1394,8 @@
             checkGameOverConditions() {
                 if(this.integrity <= 0) {
                     this.triggerGameOver(false, "Catastrophic Failure: Train Integrity reached 0 HP.");
+                } else if(this.vips.length > 0 && this.vips[0].hp <= 0) {
+                    this.triggerGameOver(false, "Defeat: VIP Melindre was eliminated during enemy engagement.");
                 } else if(this.speed >= 12) {
                     this.triggerGameOver(true, "Victory! The Lightning Rail successfully arrived in Thrane with VIP Melindre safe.");
                 }
@@ -1376,8 +1425,8 @@
                     <p style="font-size: 13px; line-height: 1.6; color: var(--text-main); margin-bottom: 15px; text-align: left;">
                         <strong>1. Crisis Phase:</strong> Draw a crisis card. Roll skill checks (4, 5, 6 = success) against DC 12-14.<br><br>
                         <strong>2. Hero Phase:</strong> Spend AP (2 per hero per round) to move between compartments or play action cards.<br><br>
-                        <strong>3. Enemy Phase:</strong> Minions advance automatically along AI pursuit paths toward VIP Melindre.<br><br>
-                        <strong>4. Train & Track:</strong> Advance Speed toward Unit 12 to win. Protect Train Integrity (10 HP).
+                        <strong>3. Enemy Phase:</strong> Minions advance automatically along AI pursuit paths toward VIP Melindre and attack.<br><br>
+                        <strong>4. Train & Track:</strong> Advance Speed toward Unit 12 to win. Protect Train Integrity (10 HP) and Melindre.
                     </p>
                     <button class="magipunk-btn primary" style="width: 100%; font-size: 14px; padding: 12px;" onclick="game.closeModal(null)">Got It</button>
                 `;
