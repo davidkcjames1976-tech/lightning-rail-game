@@ -1,9 +1,10 @@
+HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightning Rail: Sharn to Thrane - Master Rulebook Edition v7.4</title>
+    <title>Lightning Rail: Sharn to Thrane - Master Rulebook Edition v7.5</title>
     <style>
         :root {
             --bg-deep: #070a12;
@@ -357,7 +358,7 @@
             border-radius: 4px;
         }
 
-        /* Central Master Board View */
+        /* Central Master Board View - Perfect Grid-to-Cell Proportions */
         .board-workspace {
             flex: 1;
             display: flex;
@@ -370,7 +371,7 @@
         }
 
         .master-board-container {
-            width: 1080px;
+            width: 1040px;
             height: 600px;
             background-image: url('board_layout_tactical_grid.png');
             background-size: cover;
@@ -381,22 +382,22 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.95), inset 0 0 35px rgba(0,0,0,0.7);
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            padding: 75px 55px 70px 55px;
-            gap: 20px;
+            padding: 110px 55px 75px 55px;
+            gap: 16px;
         }
 
         .board-car-column {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             grid-template-rows: repeat(5, 1fr);
-            gap: 8px;
+            gap: 6px;
             position: relative;
         }
 
         .grid-cell {
-            background: rgba(255,255,255,0.01);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 6px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(0, 229, 255, 0.25);
+            border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -405,35 +406,35 @@
         }
 
         .grid-cell:hover {
-            background: rgba(0,229,255,0.25);
+            background: rgba(0,229,255,0.3);
             border-color: var(--azure-glow);
-            box-shadow: inset 0 0 12px rgba(0,229,255,0.6);
+            box-shadow: inset 0 0 10px rgba(0,229,255,0.6);
         }
 
-        /* Custom Asset Tokens */
+        /* Custom Asset Tokens - Perfectly sized to fit cleanly inside grid cells */
         .token {
-            width: 52px;
-            height: 52px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: 10px;
             font-weight: bold;
             cursor: grab;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.95);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.95);
             position: absolute;
             z-index: 25;
             background-size: cover;
             background-position: center;
-            border: 3px solid var(--gold-primary);
+            border: 2.5px solid var(--gold-primary);
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s;
         }
 
         .token:active {
             cursor: grabbing;
-            transform: scale(1.35) translateY(-6px);
-            box-shadow: 0 18px 40px rgba(0,229,255,0.95);
+            transform: scale(1.3) translateY(-4px);
+            box-shadow: 0 14px 30px rgba(0,229,255,0.95);
         }
 
         .token.hero { border-color: var(--azure-glow); }
@@ -652,7 +653,7 @@
     <header>
         <div class="title-area">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <span>Master Rulebook Edition v7.4 | Fully Audited Gameplay Loop</span>
+            <span>Master Rulebook Edition v7.5 | Perfect-Fit Grid Sizing</span>
         </div>
         <div class="global-status">
             <div class="status-badge">
@@ -693,7 +694,7 @@
             </div>
         </aside>
 
-        <!-- Central Master Board View -->
+        <!-- Central Master Board View with perfectly aligned grid cells -->
         <main class="board-workspace">
             <div class="master-board-container" id="master-board-container">
                 <div class="board-car-column" id="car-grid-1"></div>
@@ -736,7 +737,7 @@
 
             <div class="section-header">Event & Action Log</div>
             <div class="log-console" id="log-console">
-                <div class="log-entry highlight">[System] Lightning Rail v7.4 initialized with Rulebook v2.3 fixes.</div>
+                <div class="log-entry highlight">[System] Lightning Rail v7.5 token sizing perfectly aligned to grid cells.</div>
             </div>
         </aside>
     </main>
@@ -890,7 +891,7 @@
                 this.renderRoster();
                 this.renderMasterBoardGrid();
                 this.updateActionEconomyUI();
-                this.log(`Game started with ${this.heroes.length}-Player configuration per Rulebook v2.3.`, "highlight");
+                this.log(`Game started with ${this.heroes.length}-Player configuration.`, "highlight");
             }
 
             log(msg, type='') {
@@ -999,7 +1000,6 @@
                     return;
                 }
 
-                // Tactical distance check per Rulebook v2.3 (adjacent car or adjacent cell)
                 const carDiff = Math.abs(hero.car - parseInt(targetCar));
                 const cellDiff = Math.abs(hero.cell - parseInt(targetCell));
                 if(carDiff > 1 || cellDiff > 3) {
@@ -1114,7 +1114,7 @@
                         const val = this.currentDice[idx];
                         if(val >= 6) {
                             die.classList.add('critical');
-                            successes += 2; // Crits count as 2 successes per Rulebook v2.3
+                            successes += 2;
                         } else if(val >= 4) {
                             die.classList.add('success');
                             successes++;
@@ -1266,16 +1266,14 @@
                 document.getElementById('current-phase-title').innerText = titles[this.phase - 1];
                 document.getElementById('current-phase-desc').innerText = descs[this.phase - 1];
 
-                // Phase 3: Automated Enemy AI execution per Rulebook v2.3
                 if(this.phase === 3) {
                     this.log("[Enemy Phase] Daask Enforcer & Vampire Spawn execute automated pursuit AI toward VIP Melindre.", "alert");
                     this.minions.forEach(m => {
-                        if(m.car > 2) m.car--; // Pursuing toward VIP in Car 2
+                        if(m.car > 2) m.car--;
                     });
                     this.renderTokens();
                 }
 
-                // Phase 4: Train & Track Phase execution per Rulebook v2.3
                 if(this.phase === 4) {
                     if(this.engineState === 'Operational') {
                         this.speed++;
