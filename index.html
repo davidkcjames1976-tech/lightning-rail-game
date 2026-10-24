@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightning Rail: Sharn to Thrane — Master Edition v6.3 Balanced (60/40)</title>
+    <title>Lightning Rail: Sharn to Thrane — Master Edition v6.4 Fixed Flow & Token Alignment</title>
     <style>
         :root {
             --bg-deep: #070a12;
@@ -359,19 +359,7 @@
             box-shadow: 0 0 18px rgba(0,229,255,0.8);
         }
 
-        .card-item .cost {
-            position: absolute;
-            top: 6px;
-            right: 10px;
-            background: var(--azure-glow);
-            color: #000;
-            font-size: 11px;
-            font-weight: bold;
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-
-        /* Central Master Board View with Bulletproof Containment */
+        /* Central Master Board View with Strict Carriage Alignment & Clipping */
         .board-workspace {
             flex: 1;
             display: flex;
@@ -420,7 +408,7 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            overflow: hidden;
+            overflow: hidden; /* Strict clipping inside carriage cells */
             contain: layout size;
             isolation: isolate;
             transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
@@ -439,32 +427,25 @@
             box-shadow: inset 0 0 12px rgba(0,229,255,0.7);
         }
 
+        /* Strictly Contained Tokens using margin: auto */
         .token {
-            width: 80%;
-            height: 80%;
-            max-width: 26px;
-            max-height: 26px;
-            margin: auto;
+            width: 75%;
+            height: 75%;
+            max-width: 24px;
+            max-height: 24px;
+            margin: auto; /* Mathematically centers token inside grid cell */
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 7px;
+            font-size: 6px;
             font-weight: bold;
-            cursor: grab;
             box-shadow: 0 4px 10px rgba(0,0,0,0.95);
             position: relative;
             z-index: 25;
             background-size: cover;
             background-position: center;
             border: 2px solid var(--gold-primary);
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s;
-        }
-
-        .token:active {
-            cursor: grabbing;
-            transform: scale(1.15);
-            box-shadow: 0 8px 18px rgba(0,229,255,0.95);
         }
 
         .token.hero { border-color: var(--azure-glow); }
@@ -653,10 +634,10 @@
     <div class="mode-select-overlay" id="mode-select-overlay">
         <div class="mode-select-card">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <p><strong id="startup-version-label">Master Edition v6.3 Balanced (60/40 Win Rate)</strong><br>
-            • <strong>Calibrated Difficulty:</strong> Train Integrity starts at <strong>14 HP</strong> with stricter DC scaling (13–15) to achieve a 60/40 balance[cite: 3, 5].<br>
-            • <strong>Secret Card Bidding:</strong> Step 3 Crisis resolution uses hidden skill card bidding plus 2 Elemental Chaos Cards[cite: 3, 5].<br>
-            • <strong>Suspicion Markers:</strong> Failed checks by 3+ points trigger Suspicion Marker assignments[cite: 4, 5].</p>
+            <p><strong id="startup-version-label">Master Edition v6.4 Flow & Alignment Fix</strong><br>
+            • <strong>Fixed Step Transitions:</strong> Step buttons and auto-advancement now correctly transition from Step 1 (Draw) → Step 2 (Actions) → Step 3 (Crisis) → Step 4 (Threats) → Step 5 (Cleanup).<br>
+            • <strong>Strict Token Containment:</strong> Grid cells enforce strict clipping (`overflow: hidden`) and relative flex margins (`margin: auto`) so tokens remain perfectly centered inside carriage cells.<br>
+            • <strong>Balanced 60/40 Play:</strong> 14 HP Train Integrity and Secret Card Bidding[cite: 3, 5].</p>
             <div class="mode-buttons-container">
                 <button class="mode-btn" onclick="game.startGameMode(2, false)">1-2 Player (Shadow Agent Mode)</button>
                 <button class="mode-btn" onclick="game.startGameMode(4, true)">3-6 Player (Master Social Deduction)</button>
@@ -668,7 +649,7 @@
     <header>
         <div class="title-area">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <span id="header-version-label">Master Rulebook v6.3 | Balanced 60/40 Specification</span>
+            <span id="header-version-label">Master Rulebook v6.4 | Strict Flow & Token Alignment</span>
         </div>
         <div class="global-status">
             <div class="status-badge">
@@ -700,15 +681,15 @@
         <aside class="left-sidebar">
             <div class="section-header">
                 <span>Active Operatives</span>
-                <span class="help-link" onclick="game.showHowToPlay()">Rules v6.3</span>
+                <span class="help-link" onclick="game.showHowToPlay()">Rules v6.4</span>
             </div>
             <div class="hero-roster" id="hero-roster"></div>
 
             <div class="section-header">Skill Hand & Deck (Max 10)</div>
             <div class="action-deck-area">
                 <div class="deck-buttons">
-                    <button class="magipunk-btn" id="btn-draw-hero" onclick="game.drawSkillCardManual()">Draw Skill (Step 1)</button>
-                    <button class="magipunk-btn primary" id="btn-draw-crisis" onclick="game.drawCrisisCard()">Draw Crisis (Step 3)</button>
+                    <button class="magipunk-btn primary" id="btn-draw-skill" onclick="game.drawSkillCardManual()">1. Draw Skill</button>
+                    <button class="magipunk-btn primary" id="btn-draw-crisis" onclick="game.drawCrisisCard()">3. Draw Crisis</button>
                 </div>
                 <div class="hand-container" id="hand-container">
                     <div style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 35px; font-weight: bold;">Your hand is empty. Receive skills to begin.</div>
@@ -719,7 +700,7 @@
         <!-- Central Master Board View with Strict Cell Clipping -->
         <div class="board-workspace">
             <div class="board-control-hint" style="width:min(1040px,100%);padding:8px 12px;margin-bottom:8px;border:1px solid rgba(74,222,128,.45);border-radius:8px;background:rgba(5,18,24,.88);color:#d9fbe7;font-size:12px;line-height:1.45;">
-                <strong>Balanced Mode (60/40):</strong> Starting Integrity set to 14 HP with stricter Crisis DCs (13-15)[cite: 3, 5]. Protect <strong>Melindre & Shetari</strong> in Car 2[cite: 3].
+                <strong>Turn Flow:</strong> Click <strong>1. Draw Skill</strong> (Step 1) → Spend AP in Step 2 → Click <strong>3. Draw Crisis</strong> (Step 3) → Submit Bid → Step 4 Threats → Click <strong>Pass Turn</strong> (Step 5)[cite: 4, 5]. Tokens are strictly locked inside carriage bounds.
             </div>
             <div style="width:min(1040px,100%);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-bottom:5px;text-align:center;font-size:clamp(9px, .8vw, 12px);font-weight:bold;color:var(--gold-light);text-shadow:0 1px 4px #000;">
                 <span>1 · Engine Room</span><span>2 · Passenger Car</span><span>3 · Cargo / Brig</span><span>4 · Dining Lounge</span><span>5 · Rear Observation</span>
@@ -736,14 +717,14 @@
         <!-- Right Sidebar -->
         <aside class="right-sidebar">
             <div class="round-control-box">
-                <h3 id="current-phase-title">Step 2: Hero Action Step (2 AP)</h3>
-                <p id="current-phase-desc">Spend AP to Move, Attack, Repair Train, or issue VIP Commands[cite: 4, 5].</p>
+                <h3 id="current-phase-title">Step 1: Receive Skills (Draw Step)</h3>
+                <p id="current-phase-desc">Click 'Draw Skill' in the left panel to begin your turn[cite: 4, 5].</p>
                 <div class="ap-tracker">
                     <span id="active-hero-label">Active: Jan Valek</span>
                     <span id="active-ap-label">AP: 2 / 2</span>
                 </div>
                 <div class="deck-buttons">
-                    <button class="magipunk-btn primary" id="btn-end-turn" onclick="game.endHeroTurn()">Pass Turn (Step 5)</button>
+                    <button class="magipunk-btn primary" id="btn-end-turn" onclick="game.endHeroTurn()">Pass Turn (Step 5)[cite: 5]</button>
                     <button class="magipunk-btn" onclick="game.attackNearestEnemy()">Attack Enemy (1 AP)[cite: 5]</button>
                     <button class="magipunk-btn" onclick="game.performRepairAction()">Repair Train (1 AP)[cite: 5]</button>
                     <button class="magipunk-btn" onclick="game.openAccusationModal()">Accuse in Car 4 (2 AP)[cite: 3, 5]</button>
@@ -759,7 +740,7 @@
                     <span id="bidding-status" style="color: var(--azure-glow);">Ready</span>
                 </div>
                 <div class="bidding-tray" id="bidding-tray">
-                    <span>Draw a Crisis in Step 3 to initiate secret skill card bidding (+2 Chaos Cards)[cite: 3, 5].</span>
+                    <span>Complete Step 2 (Actions), then click 'Draw Crisis' to bid skill cards (+2 Chaos Cards)[cite: 3, 5].</span>
                 </div>
                 <div id="crisis-board-panel" style="display:none;margin-top:12px;padding:12px;border:1px solid var(--gold-primary);border-radius:8px;background:rgba(4,12,24,.92);line-height:1.5;"></div>
                 <div class="deck-buttons">
@@ -769,7 +750,7 @@
 
             <div class="section-header">Event & Action Log</div>
             <div class="log-console" id="log-console">
-                <div class="log-entry highlight" id="startup-log-entry">[System] Master Rulebook v6.3 Balanced (60/40) loaded.</div>
+                <div class="log-entry highlight" id="startup-log-entry">[System] Master Rulebook v6.4 loaded successfully.</div>
             </div>
         </aside>
     </main>
@@ -785,14 +766,14 @@
     <!-- Script Engine -->
     <script>
         const GAME_RELEASE = Object.freeze({
-            version: '6.3',
-            edition: 'Balanced Specification (60/40 Win Rate)',
-            buildId: 'LR-2026-10-23-BALANCED',
+            version: '6.4',
+            edition: 'Flow & Alignment Master Edition',
+            buildId: 'LR-2026-10-23-FIXED',
             releaseDate: '2026-10-23',
             changes: [
-                'Calibrated starting Train Integrity to 14 HP and tightened Crisis DCs (13-15) for a 60/40 win/loss balance.',
-                'Enforced secret skill card bidding pool + 2 Elemental Chaos Cards for Step 3.',
-                'Integrated Quori Awakening and VIP Companion commands.'
+                'Fixed turn step transition logic so players can seamlessly move from Step 1 -> Step 2 -> Step 3 Crisis Bidding -> Step 4 Threats -> Step 5 Cleanup.',
+                'Enforced strict cell clipping and margin auto centering so tokens never drift outside carriage cell boundaries.',
+                'Calibrated 14 HP Train Integrity and secret card bidding.'
             ]
         });
 
@@ -801,9 +782,9 @@
             const startupLabel = document.getElementById('startup-version-label');
             if (startupLabel) startupLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} · Build ${GAME_RELEASE.buildId}`;
             const headerLabel = document.getElementById('header-version-label');
-            if (headerLabel) headerLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} | Balanced 60/40 Spec`;
+            if (headerLabel) headerLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} | Flow & Alignment`;
             const startupLog = document.getElementById('startup-log-entry');
-            if (startupLog) startupLog.textContent = `[System] Master Rulebook v6.3 Balanced loaded successfully[cite: 3, 5].`;
+            if (startupLog) startupLog.textContent = `[System] Master Rulebook v6.4 loaded successfully[cite: 4].`;
         }
 
         class SoundEngine {
@@ -880,10 +861,10 @@
         class LightningRailGame {
             constructor() {
                 this.sound = new SoundEngine();
-                this.step = 1;
+                this.step = 1; // 1: Draw, 2: Actions, 3: Crisis, 4: Threats, 5: Cleanup
                 this.distance = 3;
                 this.round = 1;
-                this.integrity = 14; // Balanced starting HP for 60/40 win rate
+                this.integrity = 14;
                 this.engineState = 'Operational';
                 this.hasTraitorMode = false;
                 this.awakeningTriggered = false;
@@ -988,7 +969,7 @@
                 this.renderRoster();
                 this.renderMasterBoardGrid();
                 this.updateActionEconomyUI();
-                this.log(`Game started with ${this.heroes.length} operatives — Master Rulebook v6.3 Balanced (14 HP)[cite: 3, 5].`, "highlight");
+                this.log(`Game started with ${this.heroes.length} operatives — Step 1: Draw Skill[cite: 4, 5].`, "highlight");
             }
 
             log(msg, type='') {
@@ -1249,19 +1230,18 @@
                 document.getElementById('active-hero-label').innerText = `Active: ${hero.name} — Car ${hero.car}, space ${hero.cell}`;
                 document.getElementById('active-ap-label').innerText = `AP: ${hero.ap} / ${hero.maxAp}[cite: 4]`;
                 this.refreshLegalMoves();
-                const btnEnd = document.getElementById('btn-end-turn');
-                if (btnEnd) btnEnd.disabled = (this.step !== 5 && this.step !== 2);
             }
 
             drawSkillCardManual() {
                 if(this.step !== 1) {
-                    this.log("Skill draw is restricted to Step 1 of your turn[cite: 5].", "alert");
+                    this.log("Skill draw is already completed for this turn. Proceed to Step 2 Actions[cite: 4, 5].", "alert");
                     return;
                 }
                 const hero = this.getActiveHero();
                 this.sound.playClick();
                 this.refreshHandToLimit();
-                this.log(`${hero.name} completes Step 1: Draw Skills[cite: 5]. Hand ready.`);
+                this.log(`${hero.name} completes Step 1: Receive Skills[cite: 4, 5]. Advancing to Step 2 Hero Actions.`);
+                
                 this.step = 2; // Advance to Step 2
                 document.getElementById('current-phase-title').innerText = 'Step 2: Hero Action Step (2 AP)';
                 document.getElementById('current-phase-desc').innerText = 'Spend AP to Move, Attack, Repair Train, or issue VIP Commands[cite: 4, 5].';
@@ -1269,11 +1249,12 @@
             }
 
             drawCrisisCard() {
-                if(this.step !== 3) {
-                    this.log("Crisis cards are drawn during Step 3[cite: 5].", "alert");
+                if(this.step !== 2) {
+                    this.log("Complete Step 1 (Draw Skills) and Step 2 (Hero Actions) before drawing a Crisis in Step 3[cite: 4, 5].", "alert");
                     return;
                 }
                 this.sound.playClick();
+                this.step = 3; // Advance to Step 3: Crisis
                 const crises = [
                     { title: "Conduit Rail Arc Overload", dc: 13, penalty: "Train Integrity -2 HP" },
                     { title: "Core Instability", dc: 14, penalty: "Engine Damaged; Integrity -3 HP" },
@@ -1281,11 +1262,14 @@
                 ];
                 this.activeCrisis = crises[Math.floor(Math.random() * crises.length)];
                 
+                document.getElementById('current-phase-title').innerText = 'Step 3: Crisis Event & Secret Bidding';
+                document.getElementById('current-phase-desc').innerText = 'Secretly bid skill cards into pool alongside 2 Elemental Chaos Cards[cite: 3, 5].';
+
                 const tray = document.getElementById('bidding-tray');
                 if (tray) {
                     tray.innerHTML = `<strong>Active Crisis:</strong> ${this.activeCrisis.title} (Target DC ${this.activeCrisis.dc})<br><em>Secretly bidding skill cards + 2 Elemental Chaos Cards[cite: 3, 5]...</em>`;
                 }
-                this.log(`[Step 3: Crisis Event] ${this.activeCrisis.title} drawn (Target DC ${this.activeCrisis.dc})[cite: 5]. Secret card bidding active.`, "alert");
+                this.log(`[Step 3: Crisis Event] ${this.activeCrisis.title} drawn (Target DC ${this.activeCrisis.dc})[cite: 3, 5]. Secret card bidding active.`, "alert");
             }
 
             resolveCrisisBidding() {
@@ -1355,7 +1339,7 @@
 
             endHeroTurn() {
                 if (this.step !== 5) {
-                    this.log("Complete Step 3 (Crisis Bidding) and Step 4 (Threats) before ending your turn[cite: 5].", "alert");
+                    this.log("Complete Step 2 (Actions), Step 3 (Crisis Bidding), and Step 4 (Threats) before passing your turn[cite: 5].", "alert");
                     return;
                 }
                 
@@ -1379,8 +1363,8 @@
                 this.heroes.forEach(h => h.ap = h.maxAp);
                 this.step = 1; // Back to Step 1: Draw Skills
                 document.getElementById('current-phase-title').innerText = 'Step 1: Receive Skills (Draw Step)';
-                document.getElementById('current-phase-desc').innerText = 'Draw character skill cards as specified on your dashboard[cite: 4, 5].';
-                document.getElementById('bidding-tray').innerHTML = `<span>Draw a Crisis in Step 3 to initiate secret skill card bidding (+2 Chaos Cards)[cite: 3, 5].</span>`;
+                document.getElementById('current-phase-desc').innerText = 'Click "Draw Skill" in the left panel to begin your turn[cite: 4, 5].';
+                document.getElementById('bidding-tray').innerHTML = `<span>Complete Step 2 (Actions), then click 'Draw Crisis' to bid skill cards (+2 Chaos Cards)[cite: 3, 5].</span>`;
                 this.renderTokens(); this.renderRoster(); this.updateActionEconomyUI();
             }
 
@@ -1420,11 +1404,11 @@
                 if (!content) return;
                 content.innerHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
-                    <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">MASTER RULEBOOK v6.3 RULES (60/40)</h2>
+                    <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">MASTER RULEBOOK v6.4 RULES</h2>
                     <p style="font-size:13px;line-height:1.6;text-align:left">
-                    <strong>1. 5-Step Turn Flow:</strong> 1. Draw Skills -> 2. Hero Actions (2 AP) -> 3. Crisis Bidding -> 4. Threat Activation & Distance +1 -> 5. Cleanup (Max 10 cards)[cite: 4, 5].<br><br>
-                    <strong>2. Secret Card Bidding:</strong> Step 3 uses secret skill card bidding + 2 Elemental Chaos Cards against tightened DCs (13-15)[cite: 3, 5].<br><br>
-                    <strong>3. Starting HP:</strong> Calibrated to 14 Train Integrity for a balanced 60/40 win rate.<br><br>
+                    <strong>1. 5-Step Turn Flow:</strong> 1. Draw Skill -> 2. Hero Actions (2 AP) -> 3. Crisis Bidding -> 4. Threat Activation & Distance +1 -> 5. Cleanup (Pass Turn)[cite: 4, 5].<br><br>
+                    <strong>2. Token Alignment:</strong> Tokens are strictly clipped and centered inside carriage cells (`overflow: hidden` and `margin: auto`).<br><br>
+                    <strong>3. Starting HP:</strong> 14 Train Integrity for balanced 60/40 win rate.<br><br>
                     <strong>4. Victory:</strong> Reach Distance 12 before Round 10 with Melindre alive[cite: 4].
                     </p>
                     <button class="magipunk-btn primary" style="width:100%;padding:12px;margin-top:14px" onclick="game.closeModal(null)">Got It</button>`;
