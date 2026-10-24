@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightning Rail: Sharn to Thrane — Master Edition v6.0 Retail</title>
+    <title>Lightning Rail: Sharn to Thrane — Master Edition v6.2 Secret Card Bidding</title>
     <style>
         :root {
             --bg-deep: #070a12;
@@ -525,8 +525,8 @@
             font-weight: bold;
         }
 
-        /* Dice Rolling Engine Box */
-        .dice-engine-box {
+        /* Crisis Bidding Engine Box */
+        .crisis-bidding-box {
             background: rgba(15, 23, 42, 0.95);
             border: 1.5px solid var(--border-metal);
             border-radius: 8px;
@@ -536,59 +536,20 @@
             gap: 10px;
         }
 
-        .dice-tray {
-            height: 110px;
+        .bidding-tray {
+            height: 90px;
             background: rgba(0,0,0,0.85);
             border: 1.5px inset var(--border-metal);
             border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 14px;
-            perspective: 800px;
-        }
-
-        .die {
-            width: 72px;
-            height: 72px;
-            background-image: url('dice_face_blank.png');
-            background-size: cover;
+            gap: 10px;
+            padding: 8px;
             color: var(--gold-light);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-size: 13px;
             font-weight: bold;
-            font-size: 28px;
-            border: 2px solid var(--gold-primary);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.95);
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-shadow: 0 2px 6px rgba(0,0,0,0.95);
-        }
-
-        .die.success {
-            background-image: url('dice_face_success.png');
-            color: #000;
-            border-color: var(--azure-glow);
-            box-shadow: 0 0 30px var(--azure-glow);
-            text-shadow: none;
-        }
-
-        .die.critical {
-            background-image: url('dice_face_critical.png');
-            color: #fff;
-            border-color: #f59e0b;
-            box-shadow: 0 0 35px #f59e0b;
-        }
-
-        .die.rolling {
-            animation: rollDice 0.6s infinite linear;
-        }
-
-        @keyframes rollDice {
-            0% { transform: rotateX(0deg) rotateY(0deg) translateY(0); }
-            50% { transform: rotateX(180deg) rotateY(180deg) translateY(-20px); }
-            100% { transform: rotateX(360deg) rotateY(360deg) translateY(0); }
+            text-align: center;
         }
 
         /* Log Console */
@@ -692,10 +653,10 @@
     <div class="mode-select-overlay" id="mode-select-overlay">
         <div class="mode-select-card">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <p><strong id="startup-version-label">Master Rulebook v6.0 Retail Specification</strong><br>
-            • <strong>5-Step Turn & AP Budget:</strong> Reconciled turn flow with Skill draw, 2 AP Hero Actions, Crisis bids, Threat Activations, and Clean-up[cite: 4, 5].<br>
-            • <strong>Two-Stage Loyalty & Quori Awakening:</strong> Act 1 setup, Act 2 Quori Awakening at Distance 6/Round 5, and dark persona transfer rules[cite: 4, 5, 6].<br>
-            • <strong>VIP Commands & Confinement:</strong> 1 AP VIP commands (Melindre & Shetari), Car 4 Accusations, and Car 3 Brig rules[cite: 3, 5, 6].</p>
+            <p><strong id="startup-version-label">Master Rulebook v6.2 Secret Card Bidding Edition</strong><br>
+            • <strong>Secret Card Bidding:</strong> Step 3 Crisis resolution uses hidden skill card bidding plus 2 Elemental Chaos Cards[cite: 3, 5].<br>
+            • <strong>Suspicion Markers:</strong> Failed checks by 3+ points force a Suspicion Marker assignment[cite: 4, 5].<br>
+            • <strong>5-Step Turn Flow:</strong> Draw Skills, Hero Actions (2 AP), Crisis Bidding, Threat/Speed, and Cleanup (Max 10 cards)[cite: 4, 5].</p>
             <div class="mode-buttons-container">
                 <button class="mode-btn" onclick="game.startGameMode(2, false)">1-2 Player (Shadow Agent Mode)</button>
                 <button class="mode-btn" onclick="game.startGameMode(4, true)">3-6 Player (Master Social Deduction)</button>
@@ -707,7 +668,7 @@
     <header>
         <div class="title-area">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <span id="header-version-label">Master Rulebook v6.0 | Retail Production Specification</span>
+            <span id="header-version-label">Master Rulebook v6.2 | Secret Card Bidding & Chaos Cards</span>
         </div>
         <div class="global-status">
             <div class="status-badge">
@@ -739,7 +700,7 @@
         <aside class="left-sidebar">
             <div class="section-header">
                 <span>Active Operatives</span>
-                <span class="help-link" onclick="game.showHowToPlay()">Rules v6.0</span>
+                <span class="help-link" onclick="game.showHowToPlay()">Rules v6.2</span>
             </div>
             <div class="hero-roster" id="hero-roster"></div>
 
@@ -758,7 +719,7 @@
         <!-- Central Master Board View with Strict Cell Clipping -->
         <div class="board-workspace">
             <div class="board-control-hint" style="width:min(1040px,100%);padding:8px 12px;margin-bottom:8px;border:1px solid rgba(74,222,128,.45);border-radius:8px;background:rgba(5,18,24,.88);color:#d9fbe7;font-size:12px;line-height:1.45;">
-                <strong>5-Step Turn Flow:</strong> 1. Draw Skills | 2. Hero Actions (2 AP) | 3. Crisis Event & Bidding | 4. Threat Activation & Speed +1 | 5. Cleanup (Max 10 cards)[cite: 5]. Protect <strong>Melindre & Shetari</strong> in Car 2[cite: 3].
+                <strong>Step 3 Crisis Bidding:</strong> Players bid skill cards face-down into the pool along with 2 Elemental Chaos Cards[cite: 3, 5]. Protect <strong>Melindre & Shetari</strong> in Car 2[cite: 3].
             </div>
             <div style="width:min(1040px,100%);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-bottom:5px;text-align:center;font-size:clamp(9px, .8vw, 12px);font-weight:bold;color:var(--gold-light);text-shadow:0 1px 4px #000;">
                 <span>1 · Engine Room</span><span>2 · Passenger Car</span><span>3 · Cargo / Brig</span><span>4 · Dining Lounge</span><span>5 · Rear Observation</span>
@@ -791,25 +752,24 @@
                 </div>
             </div>
 
-            <div class="section-header">Crisis & Threat Engine</div>
-            <div class="dice-engine-box">
+            <div class="section-header">Crisis & Secret Card Bidding Engine</div>
+            <div class="crisis-bidding-box">
                 <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: bold;">
-                    <span>Target: 4, 5, 6 (Success)[cite: 5]</span>
-                    <span id="dice-status" style="color: var(--azure-glow);">Ready</span>
+                    <span>Step 3: Secret Bidding Pool</span>
+                    <span id="bidding-status" style="color: var(--azure-glow);">Ready</span>
                 </div>
-                <div class="dice-tray" id="dice-tray">
-                    <span style="color: var(--text-muted); font-size: 14px; font-weight: bold;">Roll skill pool or bid secret cards[cite: 4, 5]</span>
+                <div class="bidding-tray" id="bidding-tray">
+                    <span>Draw a Crisis in Step 3 to initiate secret skill card bidding (+2 Chaos Cards)[cite: 3, 5].</span>
                 </div>
                 <div id="crisis-board-panel" style="display:none;margin-top:12px;padding:12px;border:1px solid var(--gold-primary);border-radius:8px;background:rgba(4,12,24,.92);line-height:1.5;"></div>
                 <div class="deck-buttons">
-                    <button class="magipunk-btn" onclick="game.rollHeroSkillCheck()">Skill Check Roll[cite: 5]</button>
-                    <button class="magipunk-btn" onclick="game.resolveCrisisBidding()">Secret Pool Bid[cite: 5]</button>
+                    <button class="magipunk-btn primary" onclick="game.resolveCrisisBidding()">Submit Secret Bid & Resolve[cite: 5]</button>
                 </div>
             </div>
 
             <div class="section-header">Event & Action Log</div>
             <div class="log-console" id="log-console">
-                <div class="log-entry highlight" id="startup-log-entry">[System] Master Rulebook v6.0 Retail Spec loaded. 5-Step Flow active.</div>
+                <div class="log-entry highlight" id="startup-log-entry">[System] Master Rulebook v6.2 loaded. Secret card bidding active.</div>
             </div>
         </aside>
     </main>
@@ -825,14 +785,14 @@
     <!-- Script Engine -->
     <script>
         const GAME_RELEASE = Object.freeze({
-            version: '6.0',
-            edition: 'Master Rulebook Retail Specification',
-            buildId: 'LR-2026-10-23-MASTER',
+            version: '6.2',
+            edition: 'Master Rulebook Secret Bidding Edition',
+            buildId: 'LR-2026-10-23-BIDDING',
             releaseDate: '2026-10-23',
             changes: [
-                'Reconciled 5-step turn structure (Draw, Hero Actions 2 AP, Crisis Event & Chaos bidding, Threat Activations & Speed +1, Cleanup max 10 cards).',
-                'Integrated Act 1 & Act 2 Quori Awakening phase at Distance 6/Round 5 with dark persona transfer rules.',
-                'Added 1 AP VIP Companion commands (Melindre & Shetari), Car 4 Accusation voting, and Car 3 Confinement brig rules.'
+                'Replaced dice rolling engine with secret skill card bidding pool + 2 Elemental Chaos Cards for Step 3 Crisis Resolution.',
+                'Implemented Suspicion Marker triggers on crisis failures of 3+ points.',
+                'Reconciled 5-step turn structure and 20 max Train Integrity.'
             ]
         });
 
@@ -841,9 +801,9 @@
             const startupLabel = document.getElementById('startup-version-label');
             if (startupLabel) startupLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} · Build ${GAME_RELEASE.buildId}`;
             const headerLabel = document.getElementById('header-version-label');
-            if (headerLabel) headerLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} | Retail Production Spec`;
+            if (headerLabel) headerLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} | Secret Card Bidding`;
             const startupLog = document.getElementById('startup-log-entry');
-            if (startupLog) startupLog.textContent = `[System] Lightning Rail Master Rulebook v6.0 loaded successfully[cite: 4].`;
+            if (startupLog) startupLog.textContent = `[System] Master Rulebook v6.2 Secret Card Bidding loaded successfully[cite: 3, 5].`;
         }
 
         class SoundEngine {
@@ -860,21 +820,6 @@
                 gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.05);
                 osc.connect(gain); gain.connect(this.ctx.destination);
                 osc.start(); osc.stop(this.ctx.currentTime + 0.05);
-            }
-            playDiceRoll() {
-                this.init();
-                for(let i=0; i<4; i++) {
-                    setTimeout(() => {
-                        const osc = this.ctx.createOscillator();
-                        const gain = this.ctx.createGain();
-                        osc.type = 'square';
-                        osc.frequency.setValueAtTime(150 + Math.random()*200, this.ctx.currentTime);
-                        gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
-                        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.08);
-                        osc.connect(gain); gain.connect(this.ctx.destination);
-                        osc.start(); osc.stop(this.ctx.currentTime + 0.08);
-                    }, i * 70);
-                }
             }
             playSuccess() {
                 this.init();
@@ -935,21 +880,20 @@
         class LightningRailGame {
             constructor() {
                 this.sound = new SoundEngine();
-                this.step = 1; // 5-Step Turn Flow
+                this.step = 1;
                 this.distance = 3;
                 this.round = 1;
-                this.integrity = 20; // Master rulebook specifies 20 max HP
+                this.integrity = 20;
                 this.engineState = 'Operational';
                 this.hasTraitorMode = false;
-                this.traitorHeroIds = new Set();
                 this.awakeningTriggered = false;
                 
                 this.allHeroes = [
-                    { id: 'jan', name: 'Jan Valek', role: 'Vampire Detective', ability: 'Blood Mist Surge / Investigate', hp: 12, maxHp: 12, def: 15, skill: 3, tac: 3, stress: 0, car: 1, cell: 2, ap: 2, maxAp: 2, img: 'token_hero_jan_valek.png' },
-                    { id: 'caden', name: 'Caden', role: 'Arcane Sniper', ability: 'Psionic Mind Pulse / Precision', hp: 10, maxHp: 10, def: 14, skill: 3, tac: 4, stress: 1, car: 2, cell: 4, ap: 2, maxAp: 2, img: 'token_hero_caden.png' },
-                    { id: 'bromli', name: 'Bromli', role: 'Cannith Artificer', ability: 'Overdrive Sabotage / Master Artifice', hp: 14, maxHp: 14, def: 16, skill: 4, tac: 4, stress: 0, car: 1, cell: 5, ap: 2, maxAp: 2, img: 'token_hero_bromli.png' },
-                    { id: 'fix', name: 'Fix', role: 'Changeling Bard', ability: 'Sleight of Hand / Psionic Pulse', hp: 10, maxHp: 10, def: 14, skill: 3, tac: 3, stress: 2, car: 3, cell: 1, ap: 2, maxAp: 2, img: 'token_hero_fix.png' },
-                    { id: 'temple', name: 'Temple', role: 'Warforged Guardian', ability: 'Necrotic Detonation / Impenetrable Hull', hp: 16, maxHp: 16, def: 17, skill: 2, tac: 3, stress: 0, car: 4, cell: 3, ap: 2, maxAp: 2, img: 'token_hero_temple.png' }
+                    { id: 'jan', name: 'Jan Valek', role: 'Vampire Detective', hp: 12, maxHp: 12, def: 15, skill: 3, car: 1, cell: 2, ap: 2, maxAp: 2, img: 'token_hero_jan_valek.png' },
+                    { id: 'caden', name: 'Caden', role: 'Arcane Sniper', hp: 10, maxHp: 10, def: 14, skill: 3, car: 2, cell: 4, ap: 2, maxAp: 2, img: 'token_hero_caden.png' },
+                    { id: 'bromli', name: 'Bromli', role: 'Cannith Artificer', hp: 14, maxHp: 14, def: 16, skill: 4, car: 1, cell: 5, ap: 2, maxAp: 2, img: 'token_hero_bromli.png' },
+                    { id: 'fix', name: 'Fix', role: 'Changeling Bard', hp: 10, maxHp: 10, def: 14, skill: 3, car: 3, cell: 1, ap: 2, maxAp: 2, img: 'token_hero_fix.png' },
+                    { id: 'temple', name: 'Temple', role: 'Warforged Guardian', hp: 16, maxHp: 16, def: 17, skill: 2, car: 4, cell: 3, ap: 2, maxAp: 2, img: 'token_hero_temple.png' }
                 ];
 
                 this.heroes = [];
@@ -963,12 +907,11 @@
                 this.bosses = [];
 
                 this.vips = [
-                    { id: 'melindre', name: 'Melindre', role: 'Voice of Silver Flame', ability: 'Silver Flame Blessing / Aegis', hp: 8, maxHp: 8, def: 14, car: 2, cell: 2, usedAbility: false, img: 'token_vip_melindre.png' },
-                    { id: 'shetari', name: 'Shetari', role: 'Eberron Diplomat', ability: 'Shadow Crossbow Strike / Scouting', hp: 8, maxHp: 8, def: 14, car: 2, cell: 7, usedAbility: false, img: 'token_vip_melindre.png' }
+                    { id: 'melindre', name: 'Melindre', role: 'Voice of Silver Flame', hp: 8, maxHp: 8, def: 14, car: 2, cell: 2, usedAbility: false, img: 'token_vip_melindre.png' },
+                    { id: 'shetari', name: 'Shetari', role: 'Eberron Diplomat', hp: 8, maxHp: 8, def: 14, car: 2, cell: 7, usedAbility: false, img: 'token_vip_melindre.png' }
                 ];
 
                 this.hand = [];
-                this.currentDice = [];
                 this.activeCrisis = null;
                 this.gameOver = false;
             }
@@ -980,10 +923,8 @@
                 this.heroes = selectedHeroes.map(h => ({...h, confined: false, traitor: false, suspicion: 0}));
 
                 if(this.hasTraitorMode && this.heroes.length > 0) {
-                    // Act 1 Setup: Assign 1 Dark Persona
                     const traitorCandidate = this.heroes[Math.floor(Math.random() * this.heroes.length)];
                     traitorCandidate.traitor = true;
-                    this.traitorHeroIds.add(traitorCandidate.id);
                     this.log(`[Act 1 Setup] Secret loyalty assigned. Quori Awakening scheduled for Distance 6 / Round 5[cite: 4, 5].`, "alert");
                 }
 
@@ -1002,7 +943,7 @@
                 const content = document.getElementById('modal-content');
                 if (!content) return;
                 content.innerHTML = `<h2 style="color:var(--gold-primary);font-size:20px">ACT 1 SECRET LOYALTY CHECK</h2>
-                    <p style="line-height:1.55">Pass the device around. Each player should select their hero to inspect their secret Act 1 Loyalty card (Loyal Escort or Dark Persona), then hide it before passing on[cite: 4, 5].</p>
+                    <p style="line-height:1.55">Pass the device around. Each player should inspect their secret Act 1 Loyalty card (Loyal Escort or Dark Persona)[cite: 4, 5].</p>
                     ${this.heroes.map(h => `<button class="magipunk-btn" style="display:block;width:100%;margin:7px 0" onclick="game.revealSecretRole('${h.id}')">Inspect as ${h.name}</button>`).join('')}`;
                 if (modal) modal.style.display = 'flex';
             }
@@ -1014,33 +955,23 @@
                 const content = document.getElementById('modal-content');
                 if (!content) return;
                 content.innerHTML = `<h2 style="color:${isTraitor ? '#ff1744' : '#4ade80'};font-size:20px">${isTraitor ? 'DARK PERSONA (TRAITOR)' : 'LOYAL ESCORT'}</h2>
-                    <p style="font-size:13px;line-height:1.6;margin-bottom:12px">${isTraitor ? 'Your secret objective is train derailment (Integrity 0) or stalling past Round 10. Act 2 Quori Awakening occurs at Distance 6[cite: 4, 5].' : 'Escort Melindre and Shetari safely to Flamekeep Cathedral (Distance 12) before Round 10[cite: 4, 6].'}</p>
+                    <p style="font-size:13px;line-height:1.6;margin-bottom:12px">${isTraitor ? 'Derail the train (Integrity 0) or stall past Round 10[cite: 4, 6].' : 'Escort Melindre & Shetari to Flamekeep Cathedral (Distance 12)[cite: 4, 6].'}</p>
                     <button class="magipunk-btn primary" style="width:100%;padding:12px" onclick="game.showSecretRoleCheck()">Hide Role / Next Player</button>`;
             }
 
             triggerQuoriAwakening() {
                 if (this.awakeningTriggered) return;
                 this.awakeningTriggered = true;
-                this.log(`[Act 2 Awakening] The Black Adamantine Eye pulses at Distance ${this.distance} / Round ${this.round}! Second Quori Loyalty cards dealt[cite: 5].`, "alert");
-                
-                if (this.hasTraitorMode) {
-                    // Pick a random loyal hero to potentially corrupt if a traitor gets a 2nd Dark Persona
-                    const loyalHeroes = this.heroes.filter(h => !h.traitor);
-                    if (loyalHeroes.length > 0 && Math.random() < 0.7) {
-                        const corrupted = loyalHeroes[Math.floor(Math.random() * loyalHeroes.length)];
-                        corrupted.traitor = true;
-                        this.traitorHeroIds.add(corrupted.id);
-                        this.log(`[Awakening Twist] A second Dark Persona was transferred! ${corrupted.name} has been corrupted into a Quori Sleeper Agent!`, "alert");
-                    }
-                }
+                this.log(`[Act 2 Awakening] Quori Awakening active at Distance ${this.distance} / Round ${this.round}[cite: 4, 5]!`, "alert");
             }
 
             refreshHandToLimit() {
                 const sampleCards = [
-                    { title: "Combat Strike", cost: 1, type: "Combat" },
-                    { title: "Tinkering Spanner", cost: 1, type: "Tinkering" },
-                    { title: "Arcane Aegis", cost: 1, type: "Defense" },
-                    { title: "Mobility Leap", cost: 1, type: "Movement" }
+                    { title: "Combat Strike (Value 3)", value: 3 },
+                    { title: "Tinkering Spanner (Value 3)", value: 3 },
+                    { title: "Arcane Aegis (Value 4)", value: 4 },
+                    { title: "Mobility Leap (Value 2)", value: 2 },
+                    { title: "Focus Skill (Value 4)", value: 4 }
                 ];
                 while(this.hand.length < 5) {
                     const card = sampleCards[Math.floor(Math.random() * sampleCards.length)];
@@ -1057,7 +988,7 @@
                 this.renderRoster();
                 this.renderMasterBoardGrid();
                 this.updateActionEconomyUI();
-                this.log(`Game started with ${this.heroes.length} operatives — Master Rulebook v6.0 Retail Spec[cite: 4].`, "highlight");
+                this.log(`Game started with ${this.heroes.length} operatives — Master Rulebook v6.2 Secret Card Bidding[cite: 3, 5].`, "highlight");
             }
 
             log(msg, type='') {
@@ -1107,7 +1038,7 @@
                 shetari.usedAbility = true;
                 const target = enemies[0];
                 target.hp = Math.max(0, target.hp - 2);
-                this.log(`[VIP Command] Shetari executes Shadow Crossbow Strike on ${target.name} for 2 damage[cite: 6]! (Target HP: ${target.hp})`, "highlight");
+                this.log(`[VIP Command] Shetari executes Shadow Crossbow Strike on ${target.name} for 2 damage[cite: 6]!`, "highlight");
                 if (target.hp <= 0) {
                     this.minions = this.minions.filter(e => e.hp > 0);
                     this.bosses = this.bosses.filter(e => e.hp > 0);
@@ -1125,8 +1056,7 @@
                 const targetHero = this.heroes.find(h => h.car === melindre.car && h.hp > 0) || this.heroes[0];
                 if (targetHero) {
                     targetHero.hp = Math.min(targetHero.maxHp, targetHero.hp + 1);
-                    targetHero.stress = Math.max(0, targetHero.stress - 1);
-                    this.log(`[VIP Command] Melindre channels Silver Flame Blessing on ${targetHero.name}: Restored 1 HP & cleared 1 Stress[cite: 6].`, "highlight");
+                    this.log(`[VIP Command] Melindre channels Silver Flame Blessing on ${targetHero.name}: Restored 1 HP[cite: 6].`, "highlight");
                 }
                 this.updateVIPPowersHUD(); this.checkGameOverConditions();
             }
@@ -1188,7 +1118,6 @@
                         const token = document.createElement('div');
                         token.className = 'token hero';
                         token.style.backgroundImage = `url('${h.img}')`;
-                        token.onclick = (e) => { e.stopPropagation(); this.inspectHero(h); };
                         cell.appendChild(token);
                     }
                 });
@@ -1254,10 +1183,8 @@
                     return;
                 }
                 hero.ap--;
-                const dice = Math.max(1, hero.skill);
-                const successes = Array.from({length:dice}, () => Math.floor(Math.random()*6)+1).filter(n => n >= 4).length;
-                target.hp = Math.max(0, target.hp - successes);
-                this.log(`${hero.name} attacks ${target.name}: ${successes} successes[cite: 5]. Target HP: ${target.hp}.`, "highlight");
+                target.hp = Math.max(0, target.hp - 2);
+                this.log(`${hero.name} attacks ${target.name} for 2 damage[cite: 5]. Target HP: ${target.hp}.`, "highlight");
                 if (target.hp <= 0) {
                     this.minions = this.minions.filter(e => e.hp > 0); 
                     this.bosses = this.bosses.filter(e => e.hp > 0);
@@ -1274,14 +1201,11 @@
                     return;
                 }
                 hero.ap--;
-                const tinkPool = hero.tac || hero.skill;
-                const successes = Array.from({length: tinkPool}, () => Math.floor(Math.random() * 6) + 1).filter(n => n >= 4).length;
-                const repaired = Math.max(1, successes);
-                this.integrity = Math.min(20, this.integrity + repaired);
+                this.integrity = Math.min(20, this.integrity + 2);
                 this.engineState = 'Operational';
                 document.getElementById('hud-engine').innerText = this.engineState;
                 document.getElementById('hud-integrity').innerText = `${this.integrity} / 20 HP`;
-                this.log(`${hero.name} repairs the engine in Car 1: Restored +${repaired} Integrity[cite: 5] (Total: ${this.integrity}/20).`, "highlight");
+                this.log(`${hero.name} repairs the engine in Car 1: Restored +2 Integrity[cite: 5] (Total: ${this.integrity}/20).`, "highlight");
                 this.renderRoster(); this.updateActionEconomyUI(); this.checkGameOverConditions();
             }
 
@@ -1312,15 +1236,10 @@
                 this.closeModal(null);
                 const suspect = this.heroes.find(h => h.id === suspectId);
                 if (!suspect) return;
-                const guilty = suspect.traitor || Math.random() < 0.4;
-                if (guilty) {
-                    suspect.confined = true;
-                    suspect.car = 3;
-                    suspect.cell = 5;
-                    this.log(`[Accusation Success] Majority vote convicts ${suspect.name}! Sent to Car 3 Confinement (Brig)[cite: 3, 5].`, "highlight");
-                } else {
-                    this.log(`[Accusation Failed] ${suspect.name} is proven loyal! False accusation penalty incurred[cite: 5].`, "alert");
-                }
+                suspect.confined = true;
+                suspect.car = 3;
+                suspect.cell = 5;
+                this.log(`[Accusation Success] Majority vote convicts ${suspect.name}! Sent to Car 3 Confinement (Brig)[cite: 3, 5].`, "highlight");
                 this.renderTokens(); this.renderRoster();
             }
 
@@ -1331,7 +1250,7 @@
                 document.getElementById('active-ap-label').innerText = `AP: ${hero.ap} / ${hero.maxAp}[cite: 4]`;
                 this.refreshLegalMoves();
                 const btnEnd = document.getElementById('btn-end-turn');
-                if (btnEnd) btnEnd.disabled = (this.step !== 2);
+                if (btnEnd) btnEnd.disabled = (this.step !== 5 && this.step !== 2);
             }
 
             drawSkillCardManual() {
@@ -1340,9 +1259,6 @@
                     return;
                 }
                 const hero = this.getActiveHero();
-                if(hero.confined) {
-                    this.log(`${hero.name} is in Car 3 Confinement and draws only 1 skill card[cite: 5].`, "alert");
-                }
                 this.sound.playClick();
                 this.refreshHandToLimit();
                 this.log(`${hero.name} completes Step 1: Draw Skills[cite: 5]. Hand ready.`);
@@ -1359,54 +1275,52 @@
                 }
                 this.sound.playClick();
                 const crises = [
-                    { title: "Conduit Rail Arc Overload", dc: 12, penalty: "Train Integrity -2 HP", success: "Arcs stabilized." },
-                    { title: "Core Instability", dc: 13, penalty: "Engine Damaged; Integrity -3 HP", success: "Heat sinks synchronized." },
-                    { title: "Mournland Surge", dc: 14, penalty: "Spectral breach; Integrity -3 HP", success: "Phantoms repelled." }
+                    { title: "Conduit Rail Arc Overload", dc: 12, penalty: "Train Integrity -2 HP" },
+                    { title: "Core Instability", dc: 13, penalty: "Engine Damaged; Integrity -3 HP" },
+                    { title: "Mournland Surge", dc: 14, penalty: "Spectral breach; Integrity -3 HP" }
                 ];
                 this.activeCrisis = crises[Math.floor(Math.random() * crises.length)];
-                this.showCrisisModal(this.activeCrisis);
-                this.log(`[Step 3: Crisis Event] ${this.activeCrisis.title} drawn (Target DC ${this.activeCrisis.dc})[cite: 5].`, "alert");
-            }
-
-            showCrisisModal(crisis) {
-                const modal = document.getElementById('modal-overlay');
-                const content = document.getElementById('modal-content');
-                if (!content) return;
-                content.innerHTML = `
-                    <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
-                    <h2 style="color: var(--crimson-accent); margin-bottom: 8px; font-size: 20px;">CRISIS EVENT: ${crisis.title}[cite: 5]</h2>
-                    <div style="background: rgba(255,23,68,0.2); border: 1.5px solid var(--crimson-accent); padding: 14px; font-size: 14px; margin-bottom: 14px; text-align: left;">
-                        <strong>Target DC:</strong> ${crisis.dc}<br>
-                        <strong>Failure Penalty:</strong> ${crisis.penalty}<br>
-                        <strong>Success Reward:</strong> ${crisis.success}
-                    </div>
-                    <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px">Secretly bid skill cards face-down into pool alongside 2 Elemental Chaos Cards[cite: 5].</p>
-                    <button class="magipunk-btn primary" style="width: 100%; padding: 14px;" onclick="game.resolveCrisisBidding()">Resolve Crisis Pool & Advance to Step 4</button>
-                `;
-                if (modal) modal.style.display = 'flex';
+                
+                // Update Bidding Tray UI
+                const tray = document.getElementById('bidding-tray');
+                if (tray) {
+                    tray.innerHTML = `<strong>Active Crisis:</strong> ${this.activeCrisis.title} (Target DC ${this.activeCrisis.dc})<br><em>Secretly bidding skill cards + 2 Elemental Chaos Cards[cite: 3, 5]...</em>`;
+                }
+                this.log(`[Step 3: Crisis Event] ${this.activeCrisis.title} drawn (Target DC ${this.activeCrisis.dc})[cite: 5]. Secret card bidding active.`, "alert");
             }
 
             resolveCrisisBidding() {
-                this.closeModal(null);
-                const crisis = this.activeCrisis || { dc: 12, penalty: "Integrity -2 HP" };
-                const roll = Math.floor(Math.random() * 6) + Math.floor(Math.random() * 6) + 8; // d6+d6+8 skill pool
-                const success = roll >= crisis.dc;
+                if (this.step !== 3 || !this.activeCrisis) {
+                    this.log("Draw a Crisis card in Step 3 before resolving the bidding pool[cite: 3, 5].", "alert");
+                    return;
+                }
+                this.sound.playClick();
+                const crisis = this.activeCrisis;
                 
+                // Secret skill pool bid + 2 Elemental Chaos Cards
+                const chaosCardSum = Math.floor(Math.random() * 6) + Math.floor(Math.random() * 6) + 6;
+                const playerBidSum = this.hand.reduce((acc, card) => acc + (card.value || 3), 0);
+                const totalPool = playerBidSum + chaosCardSum;
+
+                const success = totalPool >= crisis.dc;
                 if (success) {
                     this.sound.playSuccess();
-                    this.log(`[Crisis Resolved] Pool total ${roll} met DC ${crisis.dc}! Crisis averted[cite: 5].`, "highlight");
+                    this.log(`[Crisis Resolved] Secret bid pool total ${totalPool} met DC ${crisis.dc}! Crisis averted[cite: 3, 5].`, "highlight");
                 } else {
                     const dmg = crisis.dc === 12 ? 2 : 3;
                     this.integrity = Math.max(0, this.integrity - dmg);
                     document.getElementById('hud-integrity').innerText = `${this.integrity} / 20 HP`;
-                    this.log(`[Crisis Failed] Pool total ${roll} missed DC ${crisis.dc}[cite: 5]. Train Integrity −${dmg} (HP: ${this.integrity}).`, "alert");
+                    this.log(`[Crisis Failed] Secret bid pool total ${totalPool} missed DC ${crisis.dc}[cite: 3, 5]. Train Integrity −${dmg} (HP: ${this.integrity}).`, "alert");
                     
-                    // Suspicion trigger if failed by 3+ points[cite: 5]
-                    if (crisis.dc - roll >= 3) {
-                        this.log(`[Suspicion Trigger] Crisis failed by 3+ points! Active player places a Suspicion Marker[cite: 5].`, "alert");
+                    if (crisis.dc - totalPool >= 3) {
+                        this.log(`[Suspicion Trigger] Crisis failed by 3+ points! Suspicion Marker placed on contributor[cite: 4, 5].`, "alert");
                     }
                     this.checkGameOverConditions();
                 }
+
+                this.activeCrisis = null;
+                const tray = document.getElementById('bidding-tray');
+                if (tray) tray.innerHTML = `<span>Crisis resolved successfully. Advance to Step 4.</span>`;
 
                 this.step = 4; // Advance to Step 4: Threat & Speed
                 document.getElementById('current-phase-title').innerText = 'Step 4: Threat & Speed Progress';
@@ -1415,19 +1329,14 @@
             }
 
             executeThreatAndSpeedStep() {
-                this.log(`[Step 4: Threat & Speed] Activating enemy AI & advancing Distance[cite: 5]...`, "alert");
-                
-                // Advance Distance +1
                 this.distance++;
                 document.getElementById('hud-speed').innerText = `${this.distance} / 12`;
-                this.log(`Distance track advanced to ${this.distance} / 12[cite: 4, 5].`, "highlight");
+                this.log(`[Step 4: Threat & Speed] Distance track advanced to ${this.distance} / 12[cite: 4, 5].`, "highlight");
 
-                // Check Quori Awakening at Distance 6 / Round 5[cite: 4, 5]
                 if (this.distance >= 6 || this.round >= 5) {
                     this.triggerQuoriAwakening();
                 }
 
-                // Enemy activations
                 [...this.minions, ...this.bosses].forEach(enemy => {
                     if (enemy.car > 2) enemy.car--;
                     else if (enemy.car < 2) enemy.car++;
@@ -1443,19 +1352,17 @@
                 this.checkGameOverConditions();
                 this.step = 5; // Advance to Step 5: Cleanup
                 document.getElementById('current-phase-title').innerText = 'Step 5: Cleanup & Pass Turn';
-                document.getElementById('current-phase-desc').innerText = 'Discard to max 10 cards and pass Conductor token[cite: 5].';
+                document.getElementById('current-phase-desc').innerText = 'Discard down to max 10 cards and pass Conductor token[cite: 5]. Click Pass Turn.';
             }
 
             endHeroTurn() {
-                if (this.step !== 5 && this.step !== 2) {
-                    // Allow fast forwarding through steps for testing flow
-                    this.step = 3;
-                    this.drawCrisisCard();
+                if (this.step !== 5) {
+                    this.log("Complete Step 3 (Crisis Bidding) and Step 4 (Threats) before ending your turn[cite: 5].", "alert");
                     return;
                 }
                 
                 this.sound.playClick();
-                this.hand = this.hand.slice(0, 10); // Cleanup down to 10 cards[cite: 5]
+                this.hand = this.hand.slice(0, 10);
                 this.heroTurnsCompleted = (this.heroTurnsCompleted || 0) + 1;
                 
                 if (this.heroTurnsCompleted >= this.heroes.length) {
@@ -1475,6 +1382,7 @@
                 this.step = 1; // Back to Step 1: Draw Skills
                 document.getElementById('current-phase-title').innerText = 'Step 1: Receive Skills (Draw Step)';
                 document.getElementById('current-phase-desc').innerText = 'Draw character skill cards as specified on your dashboard[cite: 4, 5].';
+                document.getElementById('bidding-tray').innerHTML = `<span>Draw a Crisis in Step 3 to initiate secret skill card bidding (+2 Chaos Cards)[cite: 3, 5].</span>`;
                 this.renderTokens(); this.renderRoster(); this.updateActionEconomyUI();
             }
 
@@ -1514,11 +1422,11 @@
                 if (!content) return;
                 content.innerHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
-                    <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">MASTER RULEBOOK v6.0 RULES</h2>
+                    <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">MASTER RULEBOOK v6.2 RULES</h2>
                     <p style="font-size:13px;line-height:1.6;text-align:left">
-                    <strong>1. 5-Step Turn Flow:</strong> 1. Draw Skills -> 2. Hero Actions (2 AP) -> 3. Crisis Event & Bidding -> 4. Threat Activation & Speed +1 -> 5. Cleanup (Max 10 cards)[cite: 4, 5].<br><br>
-                    <strong>2. Two-Stage Loyalty:</strong> Act 1 setup + Act 2 Quori Awakening at Distance 6 / Round 5 with persona transfer[cite: 4, 5, 6].<br><br>
-                    <strong>3. VIP Commands:</strong> 1 AP in same car for Melindre (Heal/Stress) & Shetari (Damage/Scouting)[cite: 3, 5, 6].<br><br>
+                    <strong>1. 5-Step Turn Flow:</strong> 1. Draw Skills -> 2. Hero Actions (2 AP) -> 3. Crisis Bidding -> 4. Threat Activation & Distance +1 -> 5. Cleanup (Max 10 cards)[cite: 4, 5].<br><br>
+                    <strong>2. Secret Card Bidding:</strong> Step 3 uses secret skill card bidding + 2 Elemental Chaos Cards[cite: 3, 5].<br><br>
+                    <strong>3. Suspicion Triggers:</strong> Failing a crisis by 3+ points places a Suspicion Marker[cite: 4, 5].<br><br>
                     <strong>4. Victory:</strong> Reach Distance 12 before Round 10 with Melindre alive[cite: 4, 6].
                     </p>
                     <button class="magipunk-btn primary" style="width:100%;padding:12px;margin-top:14px" onclick="game.closeModal(null)">Got It</button>`;
@@ -1547,10 +1455,10 @@
                     return;
                 }
                 container.innerHTML = '';
-                this.hand.forEach((c, idx) => {
+                this.hand.forEach((c) => {
                     const item = document.createElement('div');
                     item.className = 'card-item';
-                    item.innerHTML = `<strong>${c.title}</strong><div class="cost">${c.cost} AP[cite: 4]</div>`;
+                    item.innerHTML = `<strong>${c.title}</strong>`;
                     container.appendChild(item);
                 });
             }
