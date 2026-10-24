@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightning Rail: Sharn to Thrane — Master Edition v6.5 Precision Alignment & Auto-Flow</title>
+    <title>Lightning Rail: Sharn to Thrane — Master Edition v6.6 Hand Render & Flow Fix</title>
     <style>
         :root {
             --bg-deep: #070a12;
@@ -385,7 +385,7 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.95), inset 0 0 35px rgba(0,0,0,0.7);
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            padding: 105px 50px 70px 50px; /* Calibrated precision padding matching carriage artwork */
+            padding: 105px 50px 70px 50px;
             gap: 18px;
         }
 
@@ -408,7 +408,7 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            overflow: hidden; /* Guaranteed strict cell clipping */
+            overflow: hidden;
             contain: layout size;
             isolation: isolate;
             transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
@@ -427,13 +427,12 @@
             box-shadow: inset 0 0 12px rgba(0,229,255,0.7);
         }
 
-        /* Strictly Contained Tokens using margin: auto */
         .token {
             width: 75%;
             height: 75%;
             max-width: 22px;
             max-height: 22px;
-            margin: auto; /* Mathematically centers token inside grid cell */
+            margin: auto;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -634,10 +633,10 @@
     <div class="mode-select-overlay" id="mode-select-overlay">
         <div class="mode-select-card">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <p><strong id="startup-version-label">Master Edition v6.5 Precision Alignment & Auto-Flow</strong><br>
-            • <strong>Automatic Step Advancement:</strong> When you spend your AP or click 'End Hero Turn' in Step 2, the game automatically transitions you to Step 3 (Crisis Bidding)[cite: 4, 5].<br>
-            • <strong>Precision Token Alignment:</strong> Board grid padding and cell constraints have been recalibrated so tokens stay perfectly inside carriage artwork across all viewports.<br>
-            • <strong>Balanced 60/40 Play:</strong> 14 HP Train Integrity & Secret Card Bidding[cite: 3, 5].</p>
+            <p><strong id="startup-version-label">Master Edition v6.6 Hand Render & Flow Fix</strong><br>
+            • <strong>Visible Skill Hand:</strong> Skill cards now render immediately into the hand container during Step 1[cite: 4, 5].<br>
+            • <strong>Seamless Turn Progression:</strong> Click <strong>1. Draw Skill</strong> (Step 1) → Spend AP or click *Pass Turn* to instantly trigger Step 3 (Crisis Bidding).<br>
+            • <strong>Strict Token Alignment:</strong> Tokens are precisely locked inside carriage rooms.</p>
             <div class="mode-buttons-container">
                 <button class="mode-btn" onclick="game.startGameMode(2, false)">1-2 Player (Shadow Agent Mode)</button>
                 <button class="mode-btn" onclick="game.startGameMode(4, true)">3-6 Player (Master Social Deduction)</button>
@@ -649,7 +648,7 @@
     <header>
         <div class="title-area">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <span id="header-version-label">Master Rulebook v6.5 | Precision Alignment & Auto-Flow</span>
+            <span id="header-version-label">Master Rulebook v6.6 | Hand Render & Flow Fix</span>
         </div>
         <div class="global-status">
             <div class="status-badge">
@@ -681,7 +680,7 @@
         <aside class="left-sidebar">
             <div class="section-header">
                 <span>Active Operatives</span>
-                <span class="help-link" onclick="game.showHowToPlay()">Rules v6.5</span>
+                <span class="help-link" onclick="game.showHowToPlay()">Rules v6.6</span>
             </div>
             <div class="hero-roster" id="hero-roster"></div>
 
@@ -700,7 +699,7 @@
         <!-- Central Master Board View with Strict Cell Clipping -->
         <div class="board-workspace">
             <div class="board-control-hint" style="width:min(1040px,100%);padding:8px 12px;margin-bottom:8px;border:1px solid rgba(74,222,128,.45);border-radius:8px;background:rgba(5,18,24,.88);color:#d9fbe7;font-size:12px;line-height:1.45;">
-                <strong>Turn Flow:</strong> Click <strong>1. Draw Skill</strong> (Step 1) → Spend AP in Step 2 (auto-advances to Step 3 when AP = 0 or End Turn clicked) → Submit Bid → Step 4 Threats → Click <strong>Pass Turn</strong> (Step 5)[cite: 4, 5]. Tokens are locked inside carriages.
+                <strong>Turn Flow:</strong> Click <strong>1. Draw Skill</strong> (Step 1) to view cards in hand → Spend AP in Step 2 (click <strong>Pass Turn</strong> when finished to advance to Step 3 Crisis Bidding)[cite: 3, 4, 5]. Tokens are strictly locked inside carriages.
             </div>
             <div style="width:min(1040px,100%);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-bottom:5px;text-align:center;font-size:clamp(9px, .8vw, 12px);font-weight:bold;color:var(--gold-light);text-shadow:0 1px 4px #000;">
                 <span>1 · Engine Room</span><span>2 · Passenger Car</span><span>3 · Cargo / Brig</span><span>4 · Dining Lounge</span><span>5 · Rear Observation</span>
@@ -724,7 +723,7 @@
                     <span id="active-ap-label">AP: 2 / 2</span>
                 </div>
                 <div class="deck-buttons">
-                    <button class="magipunk-btn primary" id="btn-end-turn" onclick="game.endHeroTurn()">Pass Turn (Step 5)[cite: 5]</button>
+                    <button class="magipunk-btn primary" id="btn-end-turn" onclick="game.endHeroTurn()">Pass Turn (Step 2→3)[cite: 5]</button>
                     <button class="magipunk-btn" onclick="game.attackNearestEnemy()">Attack Enemy (1 AP)[cite: 5]</button>
                     <button class="magipunk-btn" onclick="game.performRepairAction()">Repair Train (1 AP)[cite: 5]</button>
                     <button class="magipunk-btn" onclick="game.openAccusationModal()">Accuse in Car 4 (2 AP)[cite: 3, 5]</button>
@@ -740,7 +739,7 @@
                     <span id="bidding-status" style="color: var(--azure-glow);">Ready</span>
                 </div>
                 <div class="bidding-tray" id="bidding-tray">
-                    <span>Spend your AP in Step 2 to automatically advance to Step 3 Crisis Bidding (+2 Chaos Cards)[cite: 3, 5].</span>
+                    <span>Complete Step 2 (Actions), then click 'Pass Turn' or draw crisis to bid skill cards (+2 Chaos Cards)[cite: 3, 5].</span>
                 </div>
                 <div id="crisis-board-panel" style="display:none;margin-top:12px;padding:12px;border:1px solid var(--gold-primary);border-radius:8px;background:rgba(4,12,24,.92);line-height:1.5;"></div>
                 <div class="deck-buttons">
@@ -750,7 +749,7 @@
 
             <div class="section-header">Event & Action Log</div>
             <div class="log-console" id="log-console">
-                <div class="log-entry highlight" id="startup-log-entry">[System] Master Rulebook v6.5 loaded successfully.</div>
+                <div class="log-entry highlight" id="startup-log-entry">[System] Master Rulebook v6.6 loaded successfully.</div>
             </div>
         </aside>
     </main>
@@ -766,14 +765,14 @@
     <!-- Script Engine -->
     <script>
         const GAME_RELEASE = Object.freeze({
-            version: '6.5',
-            edition: 'Precision Alignment & Auto-Flow Edition',
-            buildId: 'LR-2026-10-23-PERFECT',
+            version: '6.6',
+            edition: 'Hand Render & Flow Master Edition',
+            buildId: 'LR-2026-10-23-FIXED-HAND',
             releaseDate: '2026-10-23',
             changes: [
-                'Implemented automatic transition from Step 2 to Step 3 when AP hits 0 or when ending hero actions.',
-                'Calibrated board grid padding and cell constraints to ensure tokens stay strictly inside carriage rooms.',
-                'Maintained 14 HP Train Integrity and secret card bidding.'
+                'Added direct renderHand() call in refreshHandToLimit() so skill cards are fully visible in the left panel hand container.',
+                'Fixed endHeroTurn() / Pass Turn flow so clicking it in Step 2 automatically advances to Step 3 Crisis Bidding.',
+                'Locked tokens strictly inside carriage cell boundaries.'
             ]
         });
 
@@ -782,9 +781,9 @@
             const startupLabel = document.getElementById('startup-version-label');
             if (startupLabel) startupLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} · Build ${GAME_RELEASE.buildId}`;
             const headerLabel = document.getElementById('header-version-label');
-            if (headerLabel) headerLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} | Precision & Auto-Flow`;
+            if (headerLabel) headerLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} | Hand Render & Flow Fix`;
             const startupLog = document.getElementById('startup-log-entry');
-            if (startupLog) startupLog.textContent = `[System] Master Rulebook v6.5 loaded successfully[cite: 4].`;
+            if (startupLog) startupLog.textContent = `[System] Master Rulebook v6.6 loaded successfully[cite: 4].`;
         }
 
         class SoundEngine {
@@ -961,6 +960,22 @@
                 this.renderHand();
             }
 
+            renderHand() {
+                const container = document.getElementById('hand-container');
+                if (!container) return;
+                if(this.hand.length === 0) {
+                    container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 35px; font-weight: bold;">Your hand is empty.</div>`;
+                    return;
+                }
+                container.innerHTML = '';
+                this.hand.forEach((c) => {
+                    const item = document.createElement('div');
+                    item.className = 'card-item';
+                    item.innerHTML = `<strong>${c.title}</strong>`;
+                    container.appendChild(item);
+                });
+            }
+
             getActiveHero() {
                 return this.heroes[this.activeHeroIndex];
             }
@@ -969,7 +984,7 @@
                 this.renderRoster();
                 this.renderMasterBoardGrid();
                 this.updateActionEconomyUI();
-                this.log(`Game started with ${this.heroes.length} operatives — Step 1: Draw Skill[cite: 4, 5].`, "highlight");
+                this.log(`Game started with ${this.heroes.length} operatives — Click '1. Draw Skill'[cite: 4, 5].`, "highlight");
             }
 
             log(msg, type='') {
@@ -1351,7 +1366,7 @@
 
             endHeroTurn() {
                 if (this.step === 2) {
-                    // If player wants to pass turn early during actions, auto-trigger crisis bidding
+                    // Clicking Pass Turn during Step 2 actions auto-triggers Crisis Bidding (Step 3)
                     this.drawCrisisCard();
                     return;
                 }
@@ -1381,7 +1396,7 @@
                 this.step = 1; // Back to Step 1: Draw Skills
                 document.getElementById('current-phase-title').innerText = 'Step 1: Receive Skills (Draw Step)';
                 document.getElementById('current-phase-desc').innerText = 'Click "Draw Skill" in the left panel to begin your turn[cite: 4, 5].';
-                document.getElementById('bidding-tray').innerHTML = `<span>Spend your AP in Step 2 to automatically advance to Step 3 Crisis Bidding (+2 Chaos Cards)[cite: 3, 5].</span>`;
+                document.getElementById('bidding-tray').innerHTML = `<span>Complete Step 2 (Actions), then click 'Pass Turn' or draw crisis to bid skill cards (+2 Chaos Cards)[cite: 3, 5].</span>`;
                 this.renderTokens(); this.renderRoster(); this.updateActionEconomyUI();
             }
 
@@ -1421,12 +1436,11 @@
                 if (!content) return;
                 content.innerHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
-                    <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">MASTER RULEBOOK v6.5 RULES</h2>
+                    <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">MASTER RULEBOOK v6.6 RULES</h2>
                     <p style="font-size:13px;line-height:1.6;text-align:left">
-                    <strong>1. Auto-Flow:</strong> Spending AP in Step 2 automatically advances you to Step 3 Crisis Bidding[cite: 3, 4, 5].<br><br>
-                    <strong>2. Token Alignment:</strong> Grid cells have precise padding and strict clipping so tokens stay inside carriage artwork.<br><br>
-                    <strong>3. Starting HP:</strong> 14 Train Integrity for balanced 60/40 win rate.<br><br>
-                    <strong>4. Victory:</strong> Reach Distance 12 before Round 10 with Melindre alive[cite: 4].
+                    <strong>1. Hand Rendering:</strong> Skill cards now correctly render in the left-hand panel when drawn in Step 1[cite: 4, 5].<br><br>
+                    <strong>2. Turn Progression:</strong> Click 'Draw Skill' (Step 1) -> Take actions (Step 2) -> Click 'Pass Turn' or exhaust AP to trigger Crisis Bidding (Step 3)[cite: 3, 4, 5].<br><br>
+                    <strong>3. Victory:</strong> Reach Distance 12 before Round 10 with Melindre alive[cite: 4].
                     </p>
                     <button class="magipunk-btn primary" style="width:100%;padding:12px;margin-top:14px" onclick="game.closeModal(null)">Got It</button>`;
                 if (modal) modal.style.display = 'flex';
@@ -1446,26 +1460,10 @@
                 if (modal) modal.style.display = 'flex';
             }
 
-            renderHand() {
-                const container = document.getElementById('hand-container');
-                if (!container) return;
-                if(this.hand.length === 0) {
-                    container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 35px; font-weight: bold;">Your hand is empty.</div>`;
-                    return;
-                }
-                container.innerHTML = '';
-                this.hand.forEach((c) => {
-                    const item = document.createElement('div');
-                    item.className = 'card-item';
-                    item.innerHTML = `<strong>${c.title}</strong>`;
-                    container.appendChild(item);
-                });
-            }
-
             closeModal(e) {
                 if (!e || e.target.id === 'modal-overlay' || e.target.classList.contains('modal-close')) {
                     const modal = document.getElementById('modal-overlay');
-                    if (modal) modal.side = 'none';
+                    if (modal) modal.style.display = 'none';
                 }
             }
         }
