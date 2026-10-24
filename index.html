@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightning Rail: Sharn to Thrane — Master Edition v6.2 Secret Card Bidding</title>
+    <title>Lightning Rail: Sharn to Thrane — Master Edition v6.3 Balanced (60/40)</title>
     <style>
         :root {
             --bg-deep: #070a12;
@@ -653,10 +653,10 @@
     <div class="mode-select-overlay" id="mode-select-overlay">
         <div class="mode-select-card">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <p><strong id="startup-version-label">Master Rulebook v6.2 Secret Card Bidding Edition</strong><br>
+            <p><strong id="startup-version-label">Master Edition v6.3 Balanced (60/40 Win Rate)</strong><br>
+            • <strong>Calibrated Difficulty:</strong> Train Integrity starts at <strong>14 HP</strong> with stricter DC scaling (13–15) to achieve a 60/40 balance[cite: 3, 5].<br>
             • <strong>Secret Card Bidding:</strong> Step 3 Crisis resolution uses hidden skill card bidding plus 2 Elemental Chaos Cards[cite: 3, 5].<br>
-            • <strong>Suspicion Markers:</strong> Failed checks by 3+ points force a Suspicion Marker assignment[cite: 4, 5].<br>
-            • <strong>5-Step Turn Flow:</strong> Draw Skills, Hero Actions (2 AP), Crisis Bidding, Threat/Speed, and Cleanup (Max 10 cards)[cite: 4, 5].</p>
+            • <strong>Suspicion Markers:</strong> Failed checks by 3+ points trigger Suspicion Marker assignments[cite: 4, 5].</p>
             <div class="mode-buttons-container">
                 <button class="mode-btn" onclick="game.startGameMode(2, false)">1-2 Player (Shadow Agent Mode)</button>
                 <button class="mode-btn" onclick="game.startGameMode(4, true)">3-6 Player (Master Social Deduction)</button>
@@ -668,7 +668,7 @@
     <header>
         <div class="title-area">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <span id="header-version-label">Master Rulebook v6.2 | Secret Card Bidding & Chaos Cards</span>
+            <span id="header-version-label">Master Rulebook v6.3 | Balanced 60/40 Specification</span>
         </div>
         <div class="global-status">
             <div class="status-badge">
@@ -681,7 +681,7 @@
             </div>
             <div class="status-badge">
                 <label>Train Integrity</label>
-                <value id="hud-integrity">20 / 20 HP</value>
+                <value id="hud-integrity">14 / 14 HP</value>
             </div>
             <div class="status-badge">
                 <label>VIP Powers</label>
@@ -700,7 +700,7 @@
         <aside class="left-sidebar">
             <div class="section-header">
                 <span>Active Operatives</span>
-                <span class="help-link" onclick="game.showHowToPlay()">Rules v6.2</span>
+                <span class="help-link" onclick="game.showHowToPlay()">Rules v6.3</span>
             </div>
             <div class="hero-roster" id="hero-roster"></div>
 
@@ -719,7 +719,7 @@
         <!-- Central Master Board View with Strict Cell Clipping -->
         <div class="board-workspace">
             <div class="board-control-hint" style="width:min(1040px,100%);padding:8px 12px;margin-bottom:8px;border:1px solid rgba(74,222,128,.45);border-radius:8px;background:rgba(5,18,24,.88);color:#d9fbe7;font-size:12px;line-height:1.45;">
-                <strong>Step 3 Crisis Bidding:</strong> Players bid skill cards face-down into the pool along with 2 Elemental Chaos Cards[cite: 3, 5]. Protect <strong>Melindre & Shetari</strong> in Car 2[cite: 3].
+                <strong>Balanced Mode (60/40):</strong> Starting Integrity set to 14 HP with stricter Crisis DCs (13-15)[cite: 3, 5]. Protect <strong>Melindre & Shetari</strong> in Car 2[cite: 3].
             </div>
             <div style="width:min(1040px,100%);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-bottom:5px;text-align:center;font-size:clamp(9px, .8vw, 12px);font-weight:bold;color:var(--gold-light);text-shadow:0 1px 4px #000;">
                 <span>1 · Engine Room</span><span>2 · Passenger Car</span><span>3 · Cargo / Brig</span><span>4 · Dining Lounge</span><span>5 · Rear Observation</span>
@@ -747,8 +747,8 @@
                     <button class="magipunk-btn" onclick="game.attackNearestEnemy()">Attack Enemy (1 AP)[cite: 5]</button>
                     <button class="magipunk-btn" onclick="game.performRepairAction()">Repair Train (1 AP)[cite: 5]</button>
                     <button class="magipunk-btn" onclick="game.openAccusationModal()">Accuse in Car 4 (2 AP)[cite: 3, 5]</button>
-                    <button class="magipunk-btn" onclick="game.useShetariStrike()" style="background:linear-gradient(to bottom,#78350f,#451a03)">Shetari Command[cite: 6]</button>
-                    <button class="magipunk-btn" onclick="game.useMelindreHeal()" style="background:linear-gradient(to bottom,#065f46,#064e3b)">Melindre Command[cite: 6]</button>
+                    <button class="magipunk-btn" onclick="game.useShetariStrike()" style="background:linear-gradient(to bottom,#78350f,#451a03)">Shetari Command</button>
+                    <button class="magipunk-btn" onclick="game.useMelindreHeal()" style="background:linear-gradient(to bottom,#065f46,#064e3b)">Melindre Command</button>
                 </div>
             </div>
 
@@ -769,7 +769,7 @@
 
             <div class="section-header">Event & Action Log</div>
             <div class="log-console" id="log-console">
-                <div class="log-entry highlight" id="startup-log-entry">[System] Master Rulebook v6.2 loaded. Secret card bidding active.</div>
+                <div class="log-entry highlight" id="startup-log-entry">[System] Master Rulebook v6.3 Balanced (60/40) loaded.</div>
             </div>
         </aside>
     </main>
@@ -785,14 +785,14 @@
     <!-- Script Engine -->
     <script>
         const GAME_RELEASE = Object.freeze({
-            version: '6.2',
-            edition: 'Master Rulebook Secret Bidding Edition',
-            buildId: 'LR-2026-10-23-BIDDING',
+            version: '6.3',
+            edition: 'Balanced Specification (60/40 Win Rate)',
+            buildId: 'LR-2026-10-23-BALANCED',
             releaseDate: '2026-10-23',
             changes: [
-                'Replaced dice rolling engine with secret skill card bidding pool + 2 Elemental Chaos Cards for Step 3 Crisis Resolution.',
-                'Implemented Suspicion Marker triggers on crisis failures of 3+ points.',
-                'Reconciled 5-step turn structure and 20 max Train Integrity.'
+                'Calibrated starting Train Integrity to 14 HP and tightened Crisis DCs (13-15) for a 60/40 win/loss balance.',
+                'Enforced secret skill card bidding pool + 2 Elemental Chaos Cards for Step 3.',
+                'Integrated Quori Awakening and VIP Companion commands.'
             ]
         });
 
@@ -801,9 +801,9 @@
             const startupLabel = document.getElementById('startup-version-label');
             if (startupLabel) startupLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} · Build ${GAME_RELEASE.buildId}`;
             const headerLabel = document.getElementById('header-version-label');
-            if (headerLabel) headerLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} | Secret Card Bidding`;
+            if (headerLabel) headerLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} | Balanced 60/40 Spec`;
             const startupLog = document.getElementById('startup-log-entry');
-            if (startupLog) startupLog.textContent = `[System] Master Rulebook v6.2 Secret Card Bidding loaded successfully[cite: 3, 5].`;
+            if (startupLog) startupLog.textContent = `[System] Master Rulebook v6.3 Balanced loaded successfully[cite: 3, 5].`;
         }
 
         class SoundEngine {
@@ -883,7 +883,7 @@
                 this.step = 1;
                 this.distance = 3;
                 this.round = 1;
-                this.integrity = 20;
+                this.integrity = 14; // Balanced starting HP for 60/40 win rate
                 this.engineState = 'Operational';
                 this.hasTraitorMode = false;
                 this.awakeningTriggered = false;
@@ -955,7 +955,7 @@
                 const content = document.getElementById('modal-content');
                 if (!content) return;
                 content.innerHTML = `<h2 style="color:${isTraitor ? '#ff1744' : '#4ade80'};font-size:20px">${isTraitor ? 'DARK PERSONA (TRAITOR)' : 'LOYAL ESCORT'}</h2>
-                    <p style="font-size:13px;line-height:1.6;margin-bottom:12px">${isTraitor ? 'Derail the train (Integrity 0) or stall past Round 10[cite: 4, 6].' : 'Escort Melindre & Shetari to Flamekeep Cathedral (Distance 12)[cite: 4, 6].'}</p>
+                    <p style="font-size:13px;line-height:1.6;margin-bottom:12px">${isTraitor ? 'Derail the train (Integrity 0) or stall past Round 10[cite: 4].' : 'Escort Melindre & Shetari to Flamekeep Cathedral (Distance 12)[cite: 4].'}</p>
                     <button class="magipunk-btn primary" style="width:100%;padding:12px" onclick="game.showSecretRoleCheck()">Hide Role / Next Player</button>`;
             }
 
@@ -967,11 +967,11 @@
 
             refreshHandToLimit() {
                 const sampleCards = [
-                    { title: "Combat Strike (Value 3)", value: 3 },
-                    { title: "Tinkering Spanner (Value 3)", value: 3 },
-                    { title: "Arcane Aegis (Value 4)", value: 4 },
+                    { title: "Combat Strike (Value 2)", value: 2 },
+                    { title: "Tinkering Spanner (Value 2)", value: 2 },
+                    { title: "Arcane Aegis (Value 3)", value: 3 },
                     { title: "Mobility Leap (Value 2)", value: 2 },
-                    { title: "Focus Skill (Value 4)", value: 4 }
+                    { title: "Focus Skill (Value 3)", value: 3 }
                 ];
                 while(this.hand.length < 5) {
                     const card = sampleCards[Math.floor(Math.random() * sampleCards.length)];
@@ -988,7 +988,7 @@
                 this.renderRoster();
                 this.renderMasterBoardGrid();
                 this.updateActionEconomyUI();
-                this.log(`Game started with ${this.heroes.length} operatives — Master Rulebook v6.2 Secret Card Bidding[cite: 3, 5].`, "highlight");
+                this.log(`Game started with ${this.heroes.length} operatives — Master Rulebook v6.3 Balanced (14 HP)[cite: 3, 5].`, "highlight");
             }
 
             log(msg, type='') {
@@ -1027,18 +1027,18 @@
             useShetariStrike() {
                 const shetari = this.vips.find(v => v.id === 'shetari');
                 if (!shetari || shetari.usedAbility || shetari.hp <= 0) {
-                    this.log("Shetari has already used her 1 AP command this turn or is down[cite: 5, 6].", "alert");
+                    this.log("Shetari has already used her 1 AP command this turn or is down[cite: 5].", "alert");
                     return;
                 }
                 const enemies = [...this.minions, ...this.bosses].filter(e => e.hp > 0 && e.car === shetari.car);
                 if (enemies.length === 0) {
-                    this.log("No minion in Shetari's car for Shadow Crossbow Strike[cite: 6].", "alert");
+                    this.log("No minion in Shetari's car for Shadow Crossbow Strike.", "alert");
                     return;
                 }
                 shetari.usedAbility = true;
                 const target = enemies[0];
                 target.hp = Math.max(0, target.hp - 2);
-                this.log(`[VIP Command] Shetari executes Shadow Crossbow Strike on ${target.name} for 2 damage[cite: 6]!`, "highlight");
+                this.log(`[VIP Command] Shetari executes Shadow Crossbow Strike on ${target.name} for 2 damage!`, "highlight");
                 if (target.hp <= 0) {
                     this.minions = this.minions.filter(e => e.hp > 0);
                     this.bosses = this.bosses.filter(e => e.hp > 0);
@@ -1049,14 +1049,14 @@
             useMelindreHeal() {
                 const melindre = this.vips.find(v => v.id === 'melindre');
                 if (!melindre || melindre.usedAbility || melindre.hp <= 0) {
-                    this.log("Melindre has already used her 1 AP command this turn or is down[cite: 5, 6].", "alert");
+                    this.log("Melindre has already used her 1 AP command this turn or is down[cite: 5].", "alert");
                     return;
                 }
                 melindre.usedAbility = true;
                 const targetHero = this.heroes.find(h => h.car === melindre.car && h.hp > 0) || this.heroes[0];
                 if (targetHero) {
                     targetHero.hp = Math.min(targetHero.maxHp, targetHero.hp + 1);
-                    this.log(`[VIP Command] Melindre channels Silver Flame Blessing on ${targetHero.name}: Restored 1 HP[cite: 6].`, "highlight");
+                    this.log(`[VIP Command] Melindre channels Silver Flame Blessing on ${targetHero.name}: Restored 1 HP.`, "highlight");
                 }
                 this.updateVIPPowersHUD(); this.checkGameOverConditions();
             }
@@ -1201,11 +1201,11 @@
                     return;
                 }
                 hero.ap--;
-                this.integrity = Math.min(20, this.integrity + 2);
+                this.integrity = Math.min(14, this.integrity + 2);
                 this.engineState = 'Operational';
                 document.getElementById('hud-engine').innerText = this.engineState;
-                document.getElementById('hud-integrity').innerText = `${this.integrity} / 20 HP`;
-                this.log(`${hero.name} repairs the engine in Car 1: Restored +2 Integrity[cite: 5] (Total: ${this.integrity}/20).`, "highlight");
+                document.getElementById('hud-integrity').innerText = `${this.integrity} / 14 HP`;
+                this.log(`${hero.name} repairs the engine in Car 1: Restored +2 Integrity[cite: 5] (Total: ${this.integrity}/14).`, "highlight");
                 this.renderRoster(); this.updateActionEconomyUI(); this.checkGameOverConditions();
             }
 
@@ -1275,13 +1275,12 @@
                 }
                 this.sound.playClick();
                 const crises = [
-                    { title: "Conduit Rail Arc Overload", dc: 12, penalty: "Train Integrity -2 HP" },
-                    { title: "Core Instability", dc: 13, penalty: "Engine Damaged; Integrity -3 HP" },
-                    { title: "Mournland Surge", dc: 14, penalty: "Spectral breach; Integrity -3 HP" }
+                    { title: "Conduit Rail Arc Overload", dc: 13, penalty: "Train Integrity -2 HP" },
+                    { title: "Core Instability", dc: 14, penalty: "Engine Damaged; Integrity -3 HP" },
+                    { title: "Mournland Surge", dc: 15, penalty: "Spectral breach; Integrity -3 HP" }
                 ];
                 this.activeCrisis = crises[Math.floor(Math.random() * crises.length)];
                 
-                // Update Bidding Tray UI
                 const tray = document.getElementById('bidding-tray');
                 if (tray) {
                     tray.innerHTML = `<strong>Active Crisis:</strong> ${this.activeCrisis.title} (Target DC ${this.activeCrisis.dc})<br><em>Secretly bidding skill cards + 2 Elemental Chaos Cards[cite: 3, 5]...</em>`;
@@ -1297,9 +1296,8 @@
                 this.sound.playClick();
                 const crisis = this.activeCrisis;
                 
-                // Secret skill pool bid + 2 Elemental Chaos Cards
-                const chaosCardSum = Math.floor(Math.random() * 6) + Math.floor(Math.random() * 6) + 6;
-                const playerBidSum = this.hand.reduce((acc, card) => acc + (card.value || 3), 0);
+                const chaosCardSum = Math.floor(Math.random() * 6) + Math.floor(Math.random() * 6) + 3;
+                const playerBidSum = this.hand.reduce((acc, card) => acc + (card.value || 2), 0);
                 const totalPool = playerBidSum + chaosCardSum;
 
                 const success = totalPool >= crisis.dc;
@@ -1307,9 +1305,9 @@
                     this.sound.playSuccess();
                     this.log(`[Crisis Resolved] Secret bid pool total ${totalPool} met DC ${crisis.dc}! Crisis averted[cite: 3, 5].`, "highlight");
                 } else {
-                    const dmg = crisis.dc === 12 ? 2 : 3;
+                    const dmg = crisis.dc === 13 ? 2 : 3;
                     this.integrity = Math.max(0, this.integrity - dmg);
-                    document.getElementById('hud-integrity').innerText = `${this.integrity} / 20 HP`;
+                    document.getElementById('hud-integrity').innerText = `${this.integrity} / 14 HP`;
                     this.log(`[Crisis Failed] Secret bid pool total ${totalPool} missed DC ${crisis.dc}[cite: 3, 5]. Train Integrity −${dmg} (HP: ${this.integrity}).`, "alert");
                     
                     if (crisis.dc - totalPool >= 3) {
@@ -1372,7 +1370,7 @@
                     this.log(`[Round Advance] Round ${this.round} begins[cite: 4, 5].`, "highlight");
                     
                     if (this.round > 10 && this.distance < 12) {
-                        this.triggerGameOver(false, "Time Expired: Round 10 ended before reaching Flamekeep Cathedral[cite: 4, 6].");
+                        this.triggerGameOver(false, "Time Expired: Round 10 ended before reaching Flamekeep Cathedral[cite: 4].");
                         return;
                     }
                 }
@@ -1388,15 +1386,15 @@
 
             checkGameOverConditions() {
                 if (this.integrity <= 0) {
-                    this.triggerGameOver(false, "Derailment: Train Integrity reached 0 HP[cite: 6]. (Traitor Win Precedence)");
+                    this.triggerGameOver(false, "Derailment: Train Integrity reached 0 HP. (Traitor Win Precedence)");
                 } else if (this.vips.some(v => v.hp <= 0)) {
-                    this.triggerGameOver(false, "VIP Assassination: Melindre HP reached 0[cite: 6].");
+                    this.triggerGameOver(false, "VIP Assassination: Melindre HP reached 0.");
                 } else if (this.distance >= 12) {
                     const melAlive = this.vips.find(v => v.id === 'melindre').hp > 0;
                     if (melAlive) {
-                        this.triggerGameOver(true, "Loyalist Victory: Reached Flamekeep Cathedral (Distance 12) with Melindre alive[cite: 4, 6]!");
+                        this.triggerGameOver(true, "Loyalist Victory: Reached Flamekeep Cathedral (Distance 12) with Melindre alive[cite: 4]!");
                     } else {
-                        this.triggerGameOver(false, "Defeat: Reached Distance 12, but Melindre did not survive[cite: 6].");
+                        this.triggerGameOver(false, "Defeat: Reached Distance 12, but Melindre did not survive.");
                     }
                 }
             }
@@ -1422,12 +1420,12 @@
                 if (!content) return;
                 content.innerHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
-                    <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">MASTER RULEBOOK v6.2 RULES</h2>
+                    <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">MASTER RULEBOOK v6.3 RULES (60/40)</h2>
                     <p style="font-size:13px;line-height:1.6;text-align:left">
                     <strong>1. 5-Step Turn Flow:</strong> 1. Draw Skills -> 2. Hero Actions (2 AP) -> 3. Crisis Bidding -> 4. Threat Activation & Distance +1 -> 5. Cleanup (Max 10 cards)[cite: 4, 5].<br><br>
-                    <strong>2. Secret Card Bidding:</strong> Step 3 uses secret skill card bidding + 2 Elemental Chaos Cards[cite: 3, 5].<br><br>
-                    <strong>3. Suspicion Triggers:</strong> Failing a crisis by 3+ points places a Suspicion Marker[cite: 4, 5].<br><br>
-                    <strong>4. Victory:</strong> Reach Distance 12 before Round 10 with Melindre alive[cite: 4, 6].
+                    <strong>2. Secret Card Bidding:</strong> Step 3 uses secret skill card bidding + 2 Elemental Chaos Cards against tightened DCs (13-15)[cite: 3, 5].<br><br>
+                    <strong>3. Starting HP:</strong> Calibrated to 14 Train Integrity for a balanced 60/40 win rate.<br><br>
+                    <strong>4. Victory:</strong> Reach Distance 12 before Round 10 with Melindre alive[cite: 4].
                     </p>
                     <button class="magipunk-btn primary" style="width:100%;padding:12px;margin-top:14px" onclick="game.closeModal(null)">Got It</button>`;
                 if (modal) modal.style.display = 'flex';
