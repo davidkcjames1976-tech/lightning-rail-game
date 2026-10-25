@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Lightning Rail: Master Edition v15.6</title>
+    <title>Lightning Rail: Master Edition v15.7</title>
     <style>
         :root { --bg-deep: #070a12; --panel-bg: rgba(15, 23, 42, 0.97); --gold-primary: #d4af37; --azure-glow: #00e5ff; --crimson-accent: #ff1744; --text-main: #f5f2e9; --text-muted: #e2e8f0; --border-metal: #455a64; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -60,7 +60,7 @@
             <div>
                 <div class="eyebrow">Eberron · Magipunk Social Deduction</div>
                 <h1>⚡ Lightning Rail: Sharn to Thrane</h1>
-                <div class="subtitle">Master Edition v15.6 — Confirmed Execution</div>
+                <div class="subtitle">Master Edition v15.7 — Full Interface Restoration</div>
             </div>
             <div class="actions">
                 <button class="magipunk-btn primary" onclick="newGame(true)">New Game</button>
@@ -165,6 +165,7 @@
 
         function openModal(html) { $('modal').innerHTML = html; $('overlay').classList.remove('hidden'); }
         function closeModal() { $('overlay').classList.add('hidden'); }
+        function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
         function log(s, type='') { if(!G) return; G.log.unshift({s, type}); G.log = G.log.slice(0, 60); if($('log')) $('log').innerHTML = G.log.map(x => `<p class="${x.type}">> ${esc(x.s)}</p>`).join(''); }
 
         function startMenu() {
@@ -488,8 +489,10 @@
             const isVictory = (G.distance >= 12 && mel && mel.hp > 0);
             
             if (isDefeat) {
+                const traitorObj = G.heroes.find(h => h.id === G.traitor);
+                const traitorAlive = traitorObj ? traitorObj.hp > 0 : false;
+                
                 let reason = G.integrity <= 0 ? 'Train Derailment.' : (allDead ? 'Party wiped.' : (!mel || mel.hp<=0 ? 'VIP Assassination.' : 'Time Expired.'));
-                const traitorAlive = G.heroes.find(h => h.id === G.traitor)?.hp > 0;
                 
                 if (G.social && traitorAlive) {
                     finish('TRAITOR VICTORY', reason);
