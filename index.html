@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightning Rail: Sharn to Thrane — Master Edition v6.9 Stable Startup Fix</title>
+    <title>Lightning Rail: Sharn to Thrane — Master Edition v7.0 Robust Startup Fix</title>
     <style>
         :root {
             --bg-deep: #070a12;
@@ -643,13 +643,13 @@
     <div class="mode-select-overlay" id="mode-select-overlay">
         <div class="mode-select-card">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <p><strong id="startup-version-label">Master Edition v6.9 Stable Startup Fix</strong><br>
-            • <strong>Clean Startup Overlay:</strong> Fully resolved script parsing issues to ensure seamless game initialization.<br>
+            <p><strong id="startup-version-label">Master Edition v7.0 Robust Startup Fix</strong><br>
+            • <strong>Reliable Event Binding:</strong> Mode selection buttons use direct JavaScript event listeners to guarantee seamless startup initialization across all browsers.<br>
             • <strong>Strategic Card Bidding:</strong> Click Commit on specific cards in your hand during Step 3 Crisis Bidding to sacrifice them to the pool.<br>
             • <strong>Balanced 5-Step Flow:</strong> Draw skills, 2 AP actions, secret bidding, threat activations, and cleanup.</p>
             <div class="mode-buttons-container">
-                <button class="mode-btn" onclick="game.startGameMode(2, false)">1-2 Player (Shadow Agent Mode)</button>
-                <button class="mode-btn" onclick="game.startGameMode(4, true)">3-6 Player (Master Social Deduction)</button>
+                <button class="mode-btn" id="btn-mode-standard">1-2 Player (Shadow Agent Mode)</button>
+                <button class="mode-btn" id="btn-mode-traitor">3-6 Player (Master Social Deduction)</button>
             </div>
         </div>
     </div>
@@ -658,7 +658,7 @@
     <header>
         <div class="title-area">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <span id="header-version-label">Master Rulebook v6.9 | Stable Startup Fix</span>
+            <span id="header-version-label">Master Rulebook v7.0 | Robust Event Binding</span>
         </div>
         <div class="global-status">
             <div class="status-badge">
@@ -690,15 +690,15 @@
         <aside class="left-sidebar">
             <div class="section-header">
                 <span>Active Operatives</span>
-                <span class="help-link" onclick="game.showHowToPlay()">Rules v6.9</span>
+                <span class="help-link" id="link-help">Rules v7.0</span>
             </div>
             <div class="hero-roster" id="hero-roster"></div>
 
             <div class="section-header">Skill Hand & Deck (Max 10)</div>
             <div class="action-deck-area">
                 <div class="deck-buttons">
-                    <button class="magipunk-btn primary" id="btn-draw-skill" onclick="game.drawSkillCardManual()">1. Draw Skill</button>
-                    <button class="magipunk-btn primary" id="btn-draw-crisis" onclick="game.drawCrisisCard()">3. Draw Crisis</button>
+                    <button class="magipunk-btn primary" id="btn-draw-skill">1. Draw Skill</button>
+                    <button class="magipunk-btn primary" id="btn-draw-crisis">3. Draw Crisis</button>
                 </div>
                 <div class="hand-container" id="hand-container">
                     <div style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 35px; font-weight: bold;">Your hand is empty. Receive skills to begin.</div>
@@ -733,12 +733,12 @@
                     <span id="active-ap-label">AP: 2 / 2</span>
                 </div>
                 <div class="deck-buttons">
-                    <button class="magipunk-btn primary" id="btn-end-turn" onclick="game.endHeroTurn()">Pass Turn (Step 2→3)</button>
-                    <button class="magipunk-btn" onclick="game.attackNearestEnemy()">Attack Enemy (1 AP)</button>
-                    <button class="magipunk-btn" onclick="game.performRepairAction()">Repair Train (1 AP)</button>
-                    <button class="magipunk-btn" onclick="game.openAccusationModal()">Accuse in Car 4 (2 AP)</button>
-                    <button class="magipunk-btn" onclick="game.useShetariStrike()" style="background:linear-gradient(to bottom,#78350f,#451a03)">Shetari Command (1 AP)</button>
-                    <button class="magipunk-btn" onclick="game.useMelindreHeal()" style="background:linear-gradient(to bottom,#065f46,#064e3b)">Melindre Command (1 AP)</button>
+                    <button class="magipunk-btn primary" id="btn-end-turn">Pass Turn (Step 2→3)</button>
+                    <button class="magipunk-btn" id="btn-attack">Attack Enemy (1 AP)</button>
+                    <button class="magipunk-btn" id="btn-repair">Repair Train (1 AP)</button>
+                    <button class="magipunk-btn" id="btn-accuse">Accuse in Car 4 (2 AP)</button>
+                    <button class="magipunk-btn" id="btn-shetari" style="background:linear-gradient(to bottom,#78350f,#451a03)">Shetari Command (1 AP)</button>
+                    <button class="magipunk-btn" id="btn-melindre" style="background:linear-gradient(to bottom,#065f46,#064e3b)">Melindre Command (1 AP)</button>
                 </div>
             </div>
 
@@ -753,21 +753,21 @@
                 </div>
                 <div id="crisis-board-panel" style="display:none;margin-top:12px;padding:12px;border:1px solid var(--gold-primary);border-radius:8px;background:rgba(4,12,24,.92);line-height:1.5;"></div>
                 <div class="deck-buttons">
-                    <button class="magipunk-btn primary" onclick="game.resolveCrisisBidding()">Submit Bid & Resolve</button>
+                    <button class="magipunk-btn primary" id="btn-resolve-bid">Submit Bid & Resolve</button>
                 </div>
             </div>
 
             <div class="section-header">Event & Action Log</div>
             <div class="log-console" id="log-console">
-                <div class="log-entry highlight" id="startup-log-entry">[System] Master Rulebook v6.9 loaded successfully.</div>
+                <div class="log-entry highlight" id="startup-log-entry">[System] Master Rulebook v7.0 loaded successfully.</div>
             </div>
         </aside>
     </main>
 
     <!-- Modal Inspector -->
-    <div class="modal-overlay" id="modal-overlay" onclick="game.closeModal(event)">
+    <div class="modal-overlay" id="modal-overlay">
         <div class="modal-card" id="modal-card">
-            <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
+            <span class="modal-close" id="modal-close-btn">&times;</span>
             <div id="modal-content"></div>
         </div>
     </div>
@@ -775,12 +775,12 @@
     <!-- Script Engine -->
     <script>
         const GAME_RELEASE = Object.freeze({
-            version: '6.9',
-            edition: 'Stable Startup Fix',
-            buildId: 'LR-2026-10-23-STABLE',
+            version: '7.0',
+            edition: 'Robust Event Binding Master Edition',
+            buildId: 'LR-2026-10-23-ROBUST',
             releaseDate: '2026-10-23',
             changes: [
-                'Cleaned up string formatting and modal templates for bug-free startup navigation.',
+                'Replaced inline onclick attributes with robust DOMContentLoaded event listeners for foolproof startup and controls.',
                 'Maintained genuine individual card commitment and sacrifice for Step 3 Crisis Bidding.',
                 'Enforced 14 HP Train Integrity and 5-step flow.'
             ]
@@ -791,9 +791,9 @@
             const startupLabel = document.getElementById('startup-version-label');
             if (startupLabel) startupLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} · Build ${GAME_RELEASE.buildId}`;
             const headerLabel = document.getElementById('header-version-label');
-            if (headerLabel) headerLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} | Stable Startup Fix`;
+            if (headerLabel) headerLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} | Robust Event Binding`;
             const startupLog = document.getElementById('startup-log-entry');
-            if (startupLog) startupLog.textContent = `[System] Master Rulebook v6.9 loaded successfully.`;
+            if (startupLog) startupLog.textContent = `[System] Master Rulebook v7.0 loaded successfully.`;
         }
 
         class SoundEngine {
@@ -934,8 +934,13 @@
                 if (!content) return;
                 content.innerHTML = `<h2 style="color:var(--gold-primary);font-size:20px">ACT 1 SECRET LOYALTY CHECK</h2>
                     <p style="line-height:1.55">Pass the device around. Each player should inspect their secret Act 1 Loyalty card (Loyal Escort or Dark Persona).</p>
-                    ${this.heroes.map(h => `<button class="magipunk-btn" style="display:block;width:100%;margin:7px 0" onclick="game.revealSecretRole('${h.id}')">Inspect as ${h.name}</button>`).join('')}`;
+                    ${this.heroes.map(h => `<button class="magipunk-btn" style="display:block;width:100%;margin:7px 0" data-hero-id="${h.id}" class="role-check-btn">Inspect as ${h.name}</button>`).join('')}`;
                 if (modal) modal.style.display = 'flex';
+                
+                content.querySelectorAll('.magipunk-btn').forEach(btn => {
+                    const hId = btn.getAttribute('data-hero-id');
+                    if(hId) btn.onclick = () => this.revealSecretRole(hId);
+                });
             }
 
             revealSecretRole(heroId) {
@@ -946,7 +951,10 @@
                 if (!content) return;
                 content.innerHTML = `<h2 style="color:${isTraitor ? '#ff1744' : '#4ade80'};font-size:20px">${isTraitor ? 'DARK PERSONA (TRAITOR)' : 'LOYAL ESCORT'}</h2>
                     <p style="font-size:13px;line-height:1.6;margin-bottom:12px">${isTraitor ? 'Derail the train (Integrity 0) or stall past Round 10.' : 'Escort Melindre & Shetari to Flamekeep Cathedral (Distance 12).'}</p>
-                    <button class="magipunk-btn primary" style="width:100%;padding:12px" onclick="game.showSecretRoleCheck()">Hide Role / Next Player</button>`;
+                    <button class="magipunk-btn primary" id="btn-next-role" style="width:100%;padding:12px">Hide Role / Next Player</button>`;
+                
+                const nextBtn = document.getElementById('btn-next-role');
+                if(nextBtn) nextBtn.onclick = () => this.showSecretRoleCheck();
             }
 
             triggerQuoriAwakening() {
@@ -986,11 +994,18 @@
                     item.innerHTML = `
                         <span><strong>${c.title}</strong></span>
                         <div class="card-actions">
-                            ${this.step === 3 ? `<button class="card-btn" onclick="game.toggleCommitCard(${idx})">${c.committed ? 'Uncommit' : 'Commit'}</button>` : ''}
-                            <button class="card-btn discard" onclick="game.discardCard(${idx})">Discard</button>
+                            ${this.step === 3 ? `<button class="card-btn" data-action="commit" data-index="${idx}">${c.committed ? 'Uncommit' : 'Commit'}</button>` : ''}
+                            <button class="card-btn discard" data-action="discard" data-index="${idx}">Discard</button>
                         </div>
                     `;
                     container.appendChild(item);
+                });
+
+                container.querySelectorAll('.card-btn').forEach(btn => {
+                    const action = btn.getAttribute('data-action');
+                    const idx = Number(btn.getAttribute('data-index'));
+                    if (action === 'commit') btn.onclick = () => this.toggleCommitCard(idx);
+                    if (action === 'discard') btn.onclick = () => this.discardCard(idx);
                 });
             }
 
@@ -1061,7 +1076,6 @@
                             <span class="stat-stress">S:${h.stress || 0}</span>
                         </div>
                     `;
-                    card.onclick = () => this.inspectHero(h);
                     rosterEl.appendChild(card);
                 });
             }
@@ -1298,8 +1312,14 @@
                 if (!content) return;
                 content.innerHTML = `<h2 style="color:var(--gold-primary);font-size:20px">EMERGENCY ACCUSATION VOTE (CAR 4)</h2>
                     <p style="line-height:1.5">Select a suspect to send to Car 3 Confinement (Brig). Majority vote required.</p>
-                    ${suspects.map(s => `<button class="magipunk-btn" style="display:block;width:100%;margin:7px 0" onclick="game.executeAccusationVote('${s.id}')">Accuse ${s.name} (${s.role})</button>`).join('')}`;
+                    ${suspects.map(s => `<button class="magipunk-btn" style="display:block;width:100%;margin:7px 0" data-suspect-id="${s.id}" class="suspect-btn">Accuse ${s.name} (${s.role})</button>`).join('')}`;
                 if (modal) modal.style.display = 'flex';
+                
+                content.querySelectorAll('.magipunk-btn').forEach(btn => {
+                    const sId = btn.getAttribute('data-suspect-id');
+                    if(sId) btn.onclick = () => this.executeAccusationVote(sId);
+                });
+
                 this.updateActionEconomyUI();
                 this.checkActionEconomyExhaustion();
             }
@@ -1499,9 +1519,11 @@
                 content.innerHTML = `
                     <h2 style="color: ${isVictory ? '#4ade80' : '#ff1744'}; margin-bottom: 12px; font-size: 22px;">${isVictory ? 'LOYALIST VICTORY' : 'TRAITOR / DEFEAT'}</h2>
                     <p style="font-size: 16px; font-weight: bold; margin-bottom: 22px;">${message}</p>
-                    <button class="magipunk-btn primary" style="width: 100%; padding: 14px;" onclick="location.reload()">Restart Campaign</button>
+                    <button class="magipunk-btn primary" id="btn-restart" style="width: 100%; padding: 14px;">Restart Campaign</button>
                 `;
                 if (modal) modal.style.display = 'flex';
+                const rBtn = document.getElementById('btn-restart');
+                if(rBtn) rBtn.onclick = () => location.reload();
             }
 
             showHowToPlay() {
@@ -1510,15 +1532,20 @@
                 const content = document.getElementById('modal-content');
                 if (!content) return;
                 content.innerHTML = `
-                    <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
-                    <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">MASTER RULEBOOK v6.9 RULES</h2>
+                    <span class="modal-close" id="modal-close-inner">&times;</span>
+                    <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">MASTER RULEBOOK v7.0 RULES</h2>
                     <p style="font-size:13px;line-height:1.6;text-align:left">
-                    <strong>1. Stable Startup:</strong> Startup modal overlays initialize smoothly without script parsing errors.<br><br>
+                    <strong>1. Robust Event Binding:</strong> Buttons are wired via listeners for instant responsiveness.<br><br>
                     <strong>2. Genuine Crisis Bidding:</strong> During Step 3, click 'Commit' on individual cards in your hand to sacrifice them to the pool.<br><br>
                     <strong>3. Victory:</strong> Reach Distance 12 before Round 10 with Melindre alive.
                     </p>
-                    <button class="magipunk-btn primary" style="width:100%;padding:12px;margin-top:14px" onclick="game.closeModal(null)">Got It</button>`;
+                    <button class="magipunk-btn primary" id="btn-got-it" style="width:100%;padding:12px;margin-top:14px">Got It</button>`;
                 if (modal) modal.style.display = 'flex';
+                
+                const closeInner = document.getElementById('modal-close-inner');
+                if(closeInner) closeInner.onclick = () => this.closeModal(null);
+                const gotIt = document.getElementById('btn-got-it');
+                if(gotIt) gotIt.onclick = () => this.closeModal(null);
             }
 
             inspectHero(hero) {
@@ -1527,26 +1554,49 @@
                 const content = document.getElementById('modal-content');
                 if (!content) return;
                 content.innerHTML = `
-                    <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
+                    <span class="modal-close" id="modal-close-inner">&times;</span>
                     <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">${hero.name}</h2>
                     <div style="color: var(--text-muted); font-size: 14px; margin-bottom: 8px;">${hero.role}</div>
                     <div style="font-size: 14px;">HP: <span style="color:#4ade80">${hero.hp}/${hero.maxHp}</span> | AP: <span style="color:var(--gold-light)">${hero.ap}/${hero.maxAp}</span></div>
                 `;
                 if (modal) modal.style.display = 'flex';
+                const closeInner = document.getElementById('modal-close-inner');
+                if(closeInner) closeInner.onclick = () => this.closeModal(null);
             }
 
             closeModal(e) {
-                if (!e || e.target.id === 'modal-overlay' || e.target.classList.contains('modal-close')) {
+                if (!e || e.target.id === 'modal-overlay' || e.target.id === 'modal-close-inner' || e.target.classList.contains('modal-close')) {
                     const modal = document.getElementById('modal-overlay');
                     if (modal) modal.style.display = 'none';
                 }
             }
         }
 
-        applyReleaseMetadata();
-        const weather = new WeatherEngine('weather-canvas');
-        weather.update();
-        const game = new LightningRailGame();
+        let game = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            applyReleaseMetadata();
+            const weather = new WeatherEngine('weather-canvas');
+            weather.update();
+            game = new LightningRailGame();
+
+            // Bind startup mode buttons
+            document.getElementById('btn-mode-standard').onclick = () => game.startGameMode(2, false);
+            document.getElementById('btn-mode-traitor').onclick = () => game.startGameMode(4, true);
+
+            // Bind UI control buttons
+            document.getElementById('btn-draw-skill').onclick = () => game.drawSkillCardManual();
+            document.getElementById('btn-draw-crisis').onclick = () => game.drawCrisisCard();
+            document.getElementById('btn-end-turn').onclick = () => game.endHeroTurn();
+            document.getElementById('btn-attack').onclick = () => game.attackNearestEnemy();
+            document.getElementById('btn-repair').onclick = () => game.performRepairAction();
+            document.getElementById('btn-accuse').onclick = () => game.openAccusationModal();
+            document.getElementById('btn-shetari').onclick = () => game.useShetariStrike();
+            document.getElementById('btn-melindre').onclick = () => game.useMelindreHeal();
+            document.getElementById('btn-resolve-bid').onclick = () => game.resolveCrisisBidding();
+            document.getElementById('link-help').onclick = () => game.showHowToPlay();
+            document.getElementById('modal-close-btn').onclick = (e) => game.closeModal(e);
+        });
     </script>
 </body>
 </html>
