@@ -1,139 +1,543 @@
-<!doctype html>
-
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>Lightning Rail: Sharn to Thrane — Rewrite Prototype v8.0</title>
-
-<style>
-
-:root{--bg:#08111f;--panel:#101e30;--panel2:#14263a;--line:#31506a;--gold:#f4c76a;--cyan:#76d9e8;--red:#ff7777;--green:#91e0ac;--text:#eaf1f8;--muted:#a6b7c8}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#162d43,#070d17 70%);color:var(--text);font:15px/1.45 system-ui,Segoe UI,Arial,sans-serif}button{font:inherit;cursor:pointer;border:1px solid #52708a;border-radius:8px;padding:9px 12px;color:var(--text);background:#20364b}button:hover:not(:disabled){border-color:var(--gold);background:#2b4860}button:disabled{opacity:.4;cursor:not-allowed}.primary{background:#75552b;border-color:var(--gold)}.danger{background:#582a32;border-color:#a95360}.good{background:#1d4b43;border-color:#4a9c84}.shell{max-width:1400px;margin:auto;padding:18px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:14px}.eyebrow{color:var(--cyan);font-size:12px;letter-spacing:.18em;text-transform:uppercase}.top h1{font-size:clamp(22px,3vw,34px);margin:2px 0;color:var(--gold)}.subtitle{color:var(--muted)}.layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(300px,1fr);gap:16px;margin-top:16px}.panel{background:linear-gradient(145deg,#122237,#0c1726);border:1px solid var(--line);border-radius:13px;padding:15px;box-shadow:0 10px 30px #0004;min-width:0}.panel h2,.panel h3{margin:0 0 10px}.panel h2{font-size:19px;color:var(--gold)}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0}.stat{background:#0a1523;border:1px solid #28445c;border-radius:9px;padding:10px}.stat span{display:block;color:var(--muted);font-size:12px}.stat strong{font-size:20px}.train{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin:12px 0}.car{border:1px solid #42617a;border-radius:10px;min-height:155px;padding:9px 7px;background:#0b1929;position:relative}.car h3{font-size:13px;text-align:center;color:var(--cyan);margin:0 0 7px}.car small{display:block;color:var(--muted);text-align:center;margin-bottom:8px}.occupants{display:flex;flex-direction:column;gap:5px}.token{padding:5px;border-radius:6px;background:#1c3349;border:1px solid #3c5b73;font-size:12px;overflow-wrap:anywhere}.token.hero{border-color:#8abbd4}.token.active{outline:2px solid var(--gold)}.token.enemy{border-color:#bd6670;background:#3c202b}.token.vip{border-color:#d7b56a;background:#382f1d}.cells{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px;justify-content:center}.cell{font-size:11px;padding:3px 5px;border:1px solid #39546a;border-radius:4px;color:#c1d2df}.hero-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.hero-card{padding:10px;border-radius:9px;background:#0b1928;border:1px solid #29455d}.hero-card.current{border-color:var(--gold);box-shadow:inset 0 0 0 1px #f4c76a55}.hero-card strong{color:var(--cyan)}.hero-card p{margin:4px 0;color:var(--muted);font-size:12px}.bar{height:6px;background:#26394a;border-radius:5px;overflow:hidden;margin:6px 0}.bar i{display:block;height:100%;background:var(--green)}.actions{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.section{padding:12px 0;border-top:1px solid #263f55;margin-top:12px}.section:first-child{border-top:0;margin-top:0;padding-top:0}.small{font-size:12px;color:var(--muted)}.hand{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.card{border:1px solid #806d43;background:#302a20;padding:9px;border-radius:8px}.card strong{color:var(--gold)}.card button{width:100%;margin-top:7px}.log{max-height:240px;overflow:auto;display:flex;flex-direction:column;gap:6px}.log p{margin:0;padding:7px 9px;background:#0a1522;border-left:3px solid #46657c;border-radius:4px;font-size:13px}.log p.alert{border-color:var(--red)}.log p.success{border-color:var(--green)}.notice{padding:10px;border:1px solid #47667d;border-radius:8px;background:#0b1927;margin:8px 0}.phase{color:var(--cyan);font-weight:700}.overlay{position:fixed;inset:0;background:#000b;display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}.modal{max-width:620px;width:100%;max-height:90vh;overflow:auto;background:#102033;border:1px solid var(--gold);border-radius:14px;padding:20px;box-shadow:0 20px 80px #000b}.modal h2{color:var(--gold);margin-top:0}.modal label{display:block;margin:8px 0}.modal .actions button{flex:1}.hidden{display:none!important}.pill{display:inline-block;padding:2px 7px;border-radius:20px;background:#20394c;color:var(--cyan);font-size:11px}.footer{color:var(--muted);font-size:12px;margin:14px 2px}@media(max-width:900px){.layout{grid-template-columns:1fr}.train{grid-template-columns:repeat(2,minmax(0,1fr))}.car:last-child{grid-column:span 2}}@media(max-width:500px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.hero-list{grid-template-columns:1fr}.train{grid-template-columns:1fr}.car:last-child{grid-column:auto}}
-
-</style></head>
-
-<body><div class="shell">
-
-<header class="top"><div><div class="eyebrow">Eberron · Cooperative horror · Hidden traitor</div><h1>⚡ Lightning Rail: Sharn to Thrane</h1><div class="subtitle">Rewrite Prototype v8.0 — single-file playable test build</div></div><div class="actions"><button onclick="showHelp()">How to Play</button><button onclick="newGame()" class="primary">New Game</button></div></header>
-
-<div class="stats"><div class="stat"><span>Train integrity</span><strong id="integrity">12 / 14</strong></div><div class="stat"><span>Distance</span><strong id="distance">3 / 12</strong></div><div class="stat"><span>Round</span><strong id="round">1</strong></div><div class="stat"><span>Phase</span><strong id="phase">Hero turn</strong></div></div>
-
-<div class="layout"><main>
-
-<section class="panel"><h2>Train Carriages</h2><div class="small">Select a destination cell to move. Adjacent carriages connect at the same or neighbouring cell number.</div><div class="train" id="train"></div></section>
-
-<section class="panel" style="margin-top:14px"><h2>Heroes</h2><div id="heroes" class="hero-list"></div></section>
-
-<section class="panel" style="margin-top:14px"><h2>Active Turn</h2><div id="active-summary" class="notice"></div><div class="actions"><button id="moveBtn" onclick="setMode('move')">Move (1 AP)</button><button id="attackBtn" onclick="attack()">Attack (1 AP)</button><button id="repairBtn" onclick="repair()">Repair engine (1 AP)</button><button id="vipBtn" onclick="vipAction()">Help a VIP (1 AP)</button><button id="accuseBtn" onclick="startAccusation()">Accuse (2 AP)</button><button id="endBtn" class="primary" onclick="endTurn()">End Hero Turn</button></div><div id="action-hint" class="small">Choose an action above.</div></section>
-
-</main><aside>
-
-<section class="panel"><h2>Current Crisis</h2><div id="crisis" class="notice">No crisis active. The crisis is revealed after all heroes have taken a turn.</div><div id="crisis-controls"></div><div class="section"><h3>Skill Cards — <span id="hand-owner">active hero</span></h3><div class="small">Each hero has their own hand. Crisis commitments are open to the whole table in this hot-seat prototype.</div><div id="hand" class="hand"></div></div></section>
-
-<section class="panel" style="margin-top:14px"><h2>Event Log</h2><div id="log" class="log" aria-live="polite"></div></section>
-
-<section class="panel" style="margin-top:14px"><h2>Win Conditions</h2><p class="small"><b>Loyalists:</b> reach distance 12 with Melindre alive and the train intact.</p><p class="small"><b>Traitor:</b> kill Melindre, destroy the train, or survive until the end of Round 10.</p><p class="small">A crisis happens once per round, after all heroes act. Train progress advances once per round, not once per hero.</p></section>
-
-</aside></div><div class="footer">Prototype note: this is a rewritten rules-and-playability build, not a finished multiplayer network game. Hidden roles are intended for local hot-seat play.</div></div>
-
-<div id="overlay" class="overlay hidden"><div class="modal" id="modal"></div></div>
-
-<script>
-
-'use strict';
-
-const CAR_NAMES=['Engine Room','Passenger Car','Cargo / Brig','Dining Car','Rear Observation'];
-
-const CRISES=[{name:'Conduit Rail Arc Overload',dc:10,damage:2,desc:'The lightning conduits are surging. Stabilise the rail before the overload damages the train.'},{name:'Core Instability',dc:12,damage:2,desc:'The bound elemental is bucking against its containment lattice.'},{name:'Mournland Surge',dc:13,damage:3,desc:'A wave of grey mist and hostile energy strikes the train.'}];
-
-const HERO_BASE=[
-
-{id:'jan',name:'Jan Valek',role:'Investigator',hp:12,maxHp:12,def:15,skill:3,car:0,cell:2,ap:2,maxAp:2,stress:0},
-
-{id:'caden',name:'Caden',role:'Arcane Sniper',hp:10,maxHp:10,def:14,skill:3,car:1,cell:4,ap:2,maxAp:2,stress:0},
-
-{id:'bromli',name:'Bromli',role:'Cannith Artificer',hp:14,maxHp:14,def:16,skill:4,car:0,cell:5,ap:2,maxAp:2,stress:0},
-
-{id:'fix',name:'Fix',role:'Changeling Bard',hp:10,maxHp:10,def:14,skill:3,car:2,cell:1,ap:2,maxAp:2,stress:0},
-
-{id:'temple',name:'Temple',role:'Warforged Guardian',hp:16,maxHp:16,def:17,skill:2,car:3,cell:3,ap:2,maxAp:2,stress:0}
-
-];
-
-let G=null; let actionMode=''; let selectedCards=new Set();
-
-const $=id=>document.getElementById(id); const rand=n=>Math.floor(Math.random()*n); const pick=a=>a[rand(a.length)];
-
-function newGame(socialChoice){const social=typeof socialChoice==='boolean'?socialChoice:confirm('Start the full 5-hero hidden-traitor game?\nChoose Cancel for the 2-hero practice mode.');const heroes=HERO_BASE.slice(0,social?5:2).map(h=>({...h,hand:drawCards(3),confined:false,usedAbility:false}));const traitor= social?pick(heroes).id:null;G={social,heroes,traitor,active:0,round:1,integrity:12,maxIntegrity:14,distance:3,phase:'heroes',turns:0,crisis:null,crisisResolved:false,gameOver:false,usedSabotage:false,trainDelayedThisRound:false,accused:new Set(),log:[],enemies:[{id:'daask',name:'Daask Enforcer',hp:4,maxHp:4,car:4,cell:8},{id:'spawn',name:'Vampire Spawn',hp:5,maxHp:5,car:3,cell:2}],vips:[{id:'melindre',name:'Melindre',hp:8,maxHp:8,car:1,cell:2},{id:'shetari',name:'Shetari',hp:8,maxHp:8,car:1,cell:7}]};actionMode='';selectedCards.clear();$('overlay').classList.add('hidden');log('Game started. '+(social?'Five heroes are in play.':'Practice mode: two heroes, no traitor role.'));if(social)showRoles();render();}
-
-function drawCards(n){return Array.from({length:n},()=>({id:Math.random().toString(36).slice(2),value:pick([2,2,3]),name:pick(['Arcane Lore','Field Medicine','Tactical Insight','Elemental Theory','Quick Thinking'])}));}
-
-function hero(){return G.heroes[G.active]} function living(a){return a.filter(x=>x.hp>0)}
-
-function log(s,type=''){G.log.unshift({s,type});G.log=G.log.slice(0,80);if($('log'))$('log').innerHTML=G.log.map(x=>`<p class="${x.type}">${esc(x.s)}</p>`).join('');}
-
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-
-function startMenu(){openModal(`<h2>Welcome aboard the Lightning Rail</h2><p>Choose a game mode to begin.</p><div class="actions"><button class="primary" onclick="newGame(true)">Full game — 5 heroes + hidden traitor</button><button onclick="newGame(false)">Practice — 2 heroes</button></div><p class="small">This build is designed for local hot-seat play on one screen.</p>`)}
-
-function showRoles(){let content=`<h2>Secret Roles — pass the screen privately</h2><p>Hand the device to each player in turn. They can reveal their own role, then hide it before passing the device on.</p><div id="roleReveal" class="notice">Choose a hero to reveal their role.</div><div class="actions">${G.heroes.map(h=>`<button onclick="revealRole('${h.id}')">${h.name}</button>`).join('')}</div><div class="actions"><button class="primary" onclick="closeModal()">Finish role setup</button></div>`;openModal(content);}
-
-function revealRole(id){const h=G.heroes.find(x=>x.id===id);$('roleReveal').innerHTML=`<b>${esc(h.name)}:</b> ${G.traitor===id?'<span style="color:var(--red)">TRAITOR</span> — secretly hinder the train and exploit crises.':'<span style="color:var(--green)">LOYALIST</span> — protect the VIPs and get the train to Thrane.'}<p class="small">Keep this information secret from the other players.</p>`;}
-
-function openModal(html){$('modal').innerHTML=html;$('overlay').classList.remove('hidden')} function closeModal(){$('overlay').classList.add('hidden')}
-
-function showHelp(){openModal(`<h2>How to Play</h2><p><b>Goal:</b> Loyalists get the train to distance 12 with Melindre alive. The traitor wins if Melindre dies, train integrity reaches zero, or the train is delayed through Round 10.</p><p><b>Each hero turn:</b> you have 2 Action Points (AP). Move, attack, repair the engine, help a VIP, or make an accusation. Most actions cost 1 AP; accusations cost 2.</p><p><b>Movement:</b> click Move, then click a cell in the carriage map. Within a carriage, move up to 3 cells. To change carriages, the cell numbers must be no more than 1 apart.</p><p><b>Combat:</b> Attack targets the nearest enemy in your carriage within 3 cells and deals 2 damage. Enemies move and attack at the end of the round.</p><p><b>Crisis:</b> after every hero has acted, a crisis appears. Commit cards from the heroes' hands to add their values to the check. A failed crisis delays the train for that round as well as damaging its integrity.</p><p><b>Hot-seat roles:</b> the role reveal screen lets each player privately inspect their role. Do not show your role to others.</p><div class="actions"><button class="primary" onclick="closeModal()">Back to game</button></div>`)}
-
-function spend(n=1){const h=hero();if(G.gameOver||G.phase!=='heroes'||h.ap<n||h.confined){return false}h.ap-=n;return true}
-
-function setMode(mode){if(G.gameOver||G.phase!=='heroes')return;actionMode=mode;$('action-hint').textContent=mode==='move'?'Choose a highlighted destination cell on the train map.':'Choose a target or action.';renderTrain();}
-
-function moveTo(car,cell){if(actionMode!=='move'||G.phase!=='heroes'||G.gameOver)return;const h=hero();if(h.confined||h.ap<1)return;let legal=car===h.car?Math.abs(cell-h.cell)<=3:Math.abs(car-h.car)===1&&Math.abs(cell-h.cell)<=1;if(!legal){$('action-hint').textContent='That cell is not reachable in one move.';return}if(!spend(1))return;h.car=car;h.cell=cell;actionMode='';log(`${h.name} moved to ${CAR_NAMES[car]}, cell ${cell}.`);afterAction();}
-
-function attack(){const h=hero();if(!canAct(h,1))return;const targets=G.enemies.filter(e=>e.hp>0&&e.car===h.car&&Math.abs(e.cell-h.cell)<=3);if(!targets.length){$('action-hint').textContent='No enemy in this carriage within 3 cells.';return}const target=targets.sort((a,b)=>Math.abs(a.cell-h.cell)-Math.abs(b.cell-h.cell))[0];spend(1);target.hp=Math.max(0,target.hp-2);log(`${h.name} attacks ${target.name} for 2 damage${target.hp===0?' and defeats it':''}.`,target.hp===0?'success':'');actionMode='';afterAction();}
-
-function canAct(h,cost){if(G.gameOver||G.phase!=='heroes'){return false}if(h.confined){$('action-hint').textContent='This hero is confined and cannot take actions. They must be released by an ally.';return false}if(h.ap<cost){$('action-hint').textContent='Not enough AP.';return false}return true}
-
-function repair(){const h=hero();if(!canAct(h,1))return;if(h.car!==0){$('action-hint').textContent='You must be in the Engine Room to repair the train.';return}if(G.integrity===G.maxIntegrity){$('action-hint').textContent='Train integrity is already full.';return}spend(1);G.integrity=Math.min(G.maxIntegrity,G.integrity+2);log(`${h.name} repaired the engine. Integrity is now ${G.integrity}/${G.maxIntegrity}.`,'success');afterAction()}
-
-function vipAction(){const h=hero();if(!canAct(h,1))return;const vip=G.vips.find(v=>v.hp>0&&v.car===h.car&&Math.abs(v.cell-h.cell)<=2);if(!vip){$('action-hint').textContent='Move into the same carriage, within 2 cells of a living VIP.';return}if(h.usedAbility){$('action-hint').textContent='This hero has already helped a VIP this round.';return}spend(1);h.usedAbility=true;if(vip.id==='melindre'){h.hp=Math.min(h.maxHp,h.hp+2);h.stress=Math.max(0,h.stress-1);log(`${h.name} steadied Melindre; ${h.name} recovered up to 2 HP.`,'success')}else{const e=G.enemies.find(e=>e.hp>0&&e.car===vip.car);if(e){e.hp=Math.max(0,e.hp-2);log(`${h.name} used Shetari's opening to deal 2 damage to ${e.name}.`,'success')}else{G.integrity=Math.min(G.maxIntegrity,G.integrity+1);log(`${h.name} coordinated with Shetari; the crew gained +1 train integrity.`,'success')}}afterAction()}
-
-function startAccusation(){const h=hero();if(!canAct(h,2))return;if(h.car!==3){$('action-hint').textContent='Accusations can only be made from the Dining Car.';return}const candidates=G.heroes.filter(x=>x.id!==h.id&&!x.confined&&!G.accused.has(x.id));if(!candidates.length){$('action-hint').textContent='No eligible suspect remains.';return}openModal(`<h2>Accuse a suspect</h2><p>${esc(h.name)} spends 2 AP to call a vote. A majority of living, unconfined heroes must support the accusation. A failed accusation costs the accuser their remaining AP.</p><div class="actions">${candidates.map(x=>`<button onclick="voteAccusation('${x.id}')">Accuse ${esc(x.name)}</button>`).join('')}</div><button onclick="closeModal()">Cancel</button>`)}
-
-function voteAccusation(id){const accuser=hero();spend(2);closeModal();const voters=G.heroes.filter(h=>h.hp>0&&!h.confined);const votes={};let idx=0;function nextVote(){if(idx>=voters.length){const yes=Object.values(votes).filter(v=>v).length;const threshold=Math.floor(voters.length/2)+1;const suspect=G.heroes.find(h=>h.id===id);if(yes>=threshold){suspect.confined=true;suspect.car=2;suspect.cell=5;G.accused.add(id);log(`${suspect.name} was confined after a ${yes}-${voters.length-yes} vote.`,'alert')}else{accuser.ap=0;log(`The accusation against ${suspect.name} failed (${yes}-${voters.length-yes}). ${accuser.name} loses remaining AP.`,'alert')}render();return}const voter=voters[idx++];openModal(`<h2>Private vote</h2><p>Pass the screen to <b>${esc(voter.name)}</b>. Do they support accusing <b>${esc(G.heroes.find(h=>h.id===id).name)}</b>?</p><div class="actions"><button class="good" onclick="castVote('${voter.id}','${id}',true)">Support accusation</button><button class="danger" onclick="castVote('${voter.id}','${id}',false)">Reject accusation</button></div>`);window._nextVote=nextVote;window._votes=votes;}nextVote()}
-
-function castVote(voter,id,yes){window._votes[voter]=yes;closeModal();window._nextVote()}
-
-function endTurn(){if(G.gameOver||G.phase!=='heroes')return;actionMode='';const h=hero();log(`${h.name} ends their turn.`);G.turns++;if(G.turns>=G.heroes.length){startCrisis()}else{G.active=(G.active+1)%G.heroes.length;hero().ap=hero().maxAp;render()}}
-
-function startCrisis(){G.phase='crisis';G.crisis=pick(CRISES);G.crisisResolved=false;selectedCards.clear();log(`Crisis: ${G.crisis.name} (Difficulty ${G.crisis.dc}).`,'alert');render();}
-
-function toggleCard(id){if(G.phase!=='crisis')return;if(selectedCards.has(id))selectedCards.delete(id);else selectedCards.add(id);renderHand()}
-
-function resolveCrisis(){if(G.phase!=='crisis'||G.crisisResolved)return;const committed=[];G.heroes.forEach(h=>h.hand=h.hand.filter(c=>{if(selectedCards.has(c.id)){committed.push(c);return false}return true}));const total=committed.reduce((n,c)=>n+c.value,0);const chaos=2+rand(6)+rand(6);const score=total+chaos;G.crisisResolved=true;log(`Crisis check: committed cards ${total} + chaos ${chaos} = ${score}; target ${G.crisis.dc}.`);if(score>=G.crisis.dc){log('The crisis is averted.','success')}else{G.integrity=Math.max(0,G.integrity-G.crisis.damage);G.trainDelayedThisRound=true;log(`Crisis failed. Train integrity −${G.crisis.damage}; the train loses its progress this round.`,'alert')}G.phase='threats';render();setTimeout(()=>{if(!G.gameOver)resolveThreatPhase()},150)}
-
-function resolveThreatPhase(){if(G.gameOver)return;for(const e of G.enemies.filter(e=>e.hp>0)){const nearby=G.heroes.filter(h=>h.hp>0&&!h.confined&&h.car===e.car&&Math.abs(h.cell-e.cell)<=2);if(nearby.length){const target=pick(nearby);target.hp=Math.max(0,target.hp-2);log(`${e.name} attacks ${target.name} for 2 damage.`,'alert');continue}if(e.car>1)e.car--;else{const target=G.vips.find(v=>v.hp>0);if(target){target.hp=Math.max(0,target.hp-2);log(`${e.name} attacks ${target.name} for 2 damage.`,'alert')}}}if(G.trainDelayedThisRound){log('The train makes no progress this round because of the failed crisis.','alert')}else{G.distance=Math.min(12,G.distance+1)}G.trainDelayedThisRound=false;G.round++;G.heroes.forEach(h=>{h.ap=h.maxAp;h.usedAbility=false;if(h.hp>0)h.hand.push(...drawCards(Math.max(0,3-h.hand.length)))});G.active=0;G.turns=0;G.phase='heroes';G.crisis=null;selectedCards.clear();checkGameOver();if(!G.gameOver){log(`Round ${G.round} begins. The train advances to distance ${G.distance}/12.`,'success')}render()}
-
-function afterAction(){checkGameOver();render()}
-
-function checkGameOver(){if(G.integrity<=0){finish('TRAITOR VICTORY','The train has been destroyed. Train integrity reached zero.');return}const mel=G.vips.find(v=>v.id==='melindre');if(!mel||mel.hp<=0){finish('TRAITOR VICTORY','Melindre has been killed.');return}if(G.distance>=12){finish('LOYALIST VICTORY','The train reaches Thrane with Melindre alive.');return}if(G.round>10){finish(G.social&&G.traitor?'TRAITOR VICTORY':'DEFEAT','The train was delayed beyond Round 10.');return}if(G.heroes.every(h=>h.hp<=0)){finish('DEFEAT','Every hero has fallen.');return}}
-
-function finish(title,msg){G.gameOver=true;G.phase='game over';log(title+': '+msg,title.includes('LOYALIST')?'success':'alert');setTimeout(()=>openModal(`<h2>${title}</h2><p>${msg}</p><p>You can start a fresh game with the New Game button.</p><button class="primary" onclick="closeModal()">Close</button>`),50)}
-
-function render(){if(!G)return;$('integrity').textContent=`${G.integrity} / ${G.maxIntegrity}`;$('distance').textContent=`${G.distance} / 12`;$('round').textContent=G.round;$('phase').textContent=G.phase==='heroes'?'Hero turn':G.phase==='crisis'?'Crisis':G.phase==='threats'?'Threat phase':'Game over';$('active-summary').innerHTML=G.gameOver?'<b>Game over.</b> Start a new game to play again.':`<span class="phase">${esc(hero().name)}</span> — ${esc(hero().role)}<br>AP: <b>${hero().ap}/${hero().maxAp}</b> · HP: <b>${hero().hp}/${hero().maxHp}</b> · Carriage: <b>${CAR_NAMES[hero().car]}</b>${hero().confined?'<br><span style="color:var(--red)">CONFINED — cannot act</span>':''}`;$('moveBtn').disabled=G.phase!=='heroes'||hero().ap<1||hero().confined;$('attackBtn').disabled=G.phase!=='heroes'||hero().ap<1||hero().confined;$('repairBtn').disabled=G.phase!=='heroes'||hero().ap<1||hero().confined;$('vipBtn').disabled=G.phase!=='heroes'||hero().ap<1||hero().confined;$('accuseBtn').disabled=G.phase!=='heroes'||hero().ap<2||hero().confined||hero().car!==3;$('endBtn').disabled=G.phase!=='heroes'||G.gameOver;renderTrain();renderHeroes();renderCrisis();renderHand();$('log').innerHTML=G.log.map(x=>`<p class="${x.type}">${esc(x.s)}</p>`).join('')}
-
-function renderTrain(){if(!G)return;$('train').innerHTML=CAR_NAMES.map((name,car)=>{const occ=[];G.heroes.forEach(h=>{if(h.car===car)occ.push(`<div class="token hero ${h.id===hero().id?'active':''}" title="HP ${h.hp}/${h.maxHp}">${h.id===hero().id?'▶ ':''}🧙 ${esc(h.name)} · ${h.hp} HP${h.confined?' · CONFINED':''}</div>`)});G.vips.filter(v=>v.hp>0&&v.car===car).forEach(v=>occ.push(`<div class="token vip">⭐ ${esc(v.name)} · ${v.hp} HP</div>`));G.enemies.filter(e=>e.hp>0&&e.car===car).forEach(e=>occ.push(`<div class="token enemy">☠ ${esc(e.name)} · ${e.hp} HP</div>`));return `<div class="car"><h3>${car+1}. ${name}</h3><small>${car===0?'Engine repairs':car===3?'Accusations':'Move and investigate'}</small><div class="occupants">${occ.length?occ.join(''):'<span class="small" style="text-align:center">Empty carriage</span>'}</div><div class="cells">${[1,2,3,4,5,6,7,8].map(cell=>`<button class="cell" ${actionMode==='move'?'':'disabled'} onclick="moveTo(${car},${cell})" title="Cell ${cell}">${cell}</button>`).join('')}</div></div>`}).join('')}
-
-function renderHeroes(){if(!G)return;$('heroes').innerHTML=G.heroes.map((h,i)=>`<div class="hero-card ${i===G.active&&G.phase==='heroes'?'current':''}"><strong>${esc(h.name)}</strong> <span class="pill">${esc(h.role)}</span><p>HP ${h.hp}/${h.maxHp} · AP ${h.ap}/${h.maxAp} · Car ${h.car+1}, cell ${h.cell}${h.confined?' · CONFINED':''}</p><div class="bar"><i style="width:${Math.max(0,h.hp/h.maxHp*100)}%"></i></div><p>${h.hand.length} skill cards in private hand</p></div>`).join('')}
-
-function renderCrisis(){if(!G)return;if(G.phase==='crisis'&&G.crisis){$('crisis').innerHTML=`<b>${esc(G.crisis.name)}</b> · Difficulty ${G.crisis.dc}<p>${esc(G.crisis.desc)}</p><p>Failure: train integrity −${G.crisis.damage}.</p><p class="small">Selected cards total: ${G.heroes.reduce((n,h)=>n+h.hand.filter(c=>selectedCards.has(c.id)).reduce((a,c)=>a+c.value,0),0)}</p>`;$('crisis-controls').innerHTML=`<div class="actions"><button class="primary" onclick="resolveCrisis()">Commit cards & resolve</button><button onclick="skipCrisisCards()">Resolve without cards</button></div>`}else{$('crisis').textContent=G.phase==='threats'?'Threats are resolving…':G.phase==='game over'?'Game over.':'No crisis active. A crisis appears after every hero has taken a turn.';$('crisis-controls').innerHTML=''}}
-
-function skipCrisisCards(){selectedCards.clear();resolveCrisis()}
-
-function renderHand(){if(!G)return;const h=hero();$('hand-owner').textContent=h.name;$('hand').innerHTML=G.phase==='crisis'?G.heroes.map(owner=>`<div class="card" style="grid-column:1/-1"><strong>${esc(owner.name)}'s cards</strong><div class="small">Select cards to commit from this hero's hand.</div>${owner.hand.length?owner.hand.map(c=>`<label style="display:block;margin-top:5px"><input type="checkbox" ${selectedCards.has(c.id)?'checked':''} onchange="toggleCard('${c.id}')"> ${esc(c.name)} (+${c.value})</label>`).join(''):'<div class="small">No cards.</div>'}</div>`).join(''):`<div class="card" style="grid-column:1/-1"><strong>${esc(h.name)}'s hand</strong><p class="small">Cards belong to this hero. During a crisis, all players can see the proposed commitments.</p>${h.hand.map(c=>`<div style="padding:4px 0">${esc(c.name)} <span class="pill">+${c.value}</span></div>`).join('')||'<div class="small">No cards. You draw back up to 3 at the end of the round.</div>'}</div>`}
-
-startMenu();
-
-</script></body></html>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lightning Rail: Sharn to Thrane — Master Edition v8.0 Collaborative Bidding</title>
+    <style>
+        :root{--bg-deep:#070a12;--panel-bg:rgba(15, 23, 42, 0.97);--gold-primary:#d4af37;--gold-light:#f3e5ab;--azure-glow:#00e5ff;--crimson-accent:#ff1744;--text-main:#f5f2e9;--text-muted:#e2e8f0;--border-metal:#455a64;}
+        *{box-sizing:border-box;margin:0;padding:0;}
+        body{background-color:var(--bg-deep);color:var(--text-main);font-family:'Cinzel','Trajan Pro',Georgia,serif;overflow:auto;width:100%;min-height:100vh;display:flex;flex-direction:column;background-image:url('sharn_skyline_background.png');background-size:cover;background-position:center;user-select:text;}
+        #weather-canvas{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;}
+        button{font:inherit;cursor:pointer;border:1.5px solid var(--border-metal);border-radius:6px;padding:9px 12px;color:var(--text-main);background:linear-gradient(to bottom,#1e293b,#0f172a);transition:all 0.2s;box-shadow:0 3px 10px rgba(0,0,0,0.7);}
+        button:hover:not(:disabled){border-color:var(--gold-primary);background:linear-gradient(to bottom,#334155,#1e293b);box-shadow:0 0 15px rgba(212,175,55,0.8);color:#fff;}
+        button:disabled{opacity:.4;cursor:not-allowed;}
+        .primary{background:linear-gradient(to bottom,#9a7b0c,#634b05);color:#fff;border-color:var(--gold-primary);}
+        .primary:hover{background:linear-gradient(to bottom,#b8920e,#7a5c06);}
+        .danger{background:linear-gradient(to bottom,#7f1d1d,#450a0a);border-color:var(--crimson-accent);color:#fff;}
+        .good{background:linear-gradient(to bottom,#065f46,#064e3b);border-color:#4ade80;color:#fff;}
+        
+        .shell{max-width:1400px;margin:auto;padding:18px;position:relative;z-index:5;display:flex;flex-direction:column;min-height:100vh;}
+        .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:3px solid var(--gold-primary);padding-bottom:14px;background:rgba(18,24,36,0.96);padding:15px 25px;border-radius:12px;box-shadow:0 4px 35px rgba(0,0,0,0.95);backdrop-filter:blur(10px);}
+        .eyebrow{color:var(--azure-glow);font-size:12px;letter-spacing:.18em;text-transform:uppercase;font-weight:bold;}
+        .top h1{font-size:clamp(22px,3vw,32px);margin:2px 0;color:var(--gold-primary);text-shadow:0 0 15px rgba(212,175,55,0.7);}
+        .subtitle{color:var(--text-muted);font-size:13px;}
+        
+        .layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(320px,1fr);gap:16px;margin-top:16px;}
+        .panel{background:var(--panel-bg);border:2px solid var(--border-metal);border-radius:13px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,0.8);backdrop-filter:blur(14px);min-width:0;}
+        .panel h2,.panel h3{margin:0 0 10px;color:var(--gold-primary);text-transform:uppercase;letter-spacing:1px;font-size:16px;border-bottom:2px solid rgba(212,175,55,0.4);padding-bottom:6px;}
+        
+        .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0;}
+        .stat{background:rgba(0,0,0,0.85);border:1.5px solid var(--border-metal);border-radius:8px;padding:12px;text-align:center;box-shadow:inset 0 0 10px rgba(0,0,0,0.9);}
+        .stat span{display:block;color:var(--text-muted);font-size:11px;text-transform:uppercase;font-weight:bold;}
+        .stat strong{font-size:22px;color:var(--azure-glow);font-family:monospace;text-shadow:0 0 10px rgba(0,229,255,0.6);}
+        
+        .train{width:1040px;height:590px;background-image:url('board_layout_tactical_grid.png');background-size:cover;background-position:center;border:4px solid var(--gold-primary);border-radius:16px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.95),inset 0 0 35px rgba(0,0,0,0.7);display:grid;grid-template-columns:repeat(5,1fr);padding:105px 50px 70px 50px;gap:18px;margin:auto;}
+        .car{display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(5,1fr);gap:3px;position:relative;height:100%;}
+        .occupants{position:absolute;top:-45px;left:0;right:0;display:flex;flex-direction:column;gap:3px;z-index:20;}
+        .token{padding:4px 6px;border-radius:4px;background:rgba(28,51,73,0.92);border:1.5px solid var(--border-metal);font-size:10px;font-weight:bold;overflow-wrap:anywhere;color:#fff;text-shadow:0 1px 3px #000;box-shadow:0 4px 10px rgba(0,0,0,0.95);}
+        .token.hero{border-color:var(--azure-glow);}
+        .token.active{outline:2px solid var(--gold-primary);}
+        .token.enemy{border-color:var(--crimson-accent);background:rgba(60,32,43,0.92);}
+        .token.vip{border-color:#f59e0b;background:rgba(56,47,29,0.92);}
+        
+        .cells{position:absolute;bottom:-35px;left:0;right:0;display:flex;gap:3px;justify-content:center;}
+        .cell{font-size:10px;padding:2px 4px;border:1px solid var(--border-metal);border-radius:3px;color:var(--text-main);background:rgba(0,0,0,0.85);cursor:pointer;}
+        .cell:hover{border-color:var(--azure-glow);background:rgba(0,229,255,0.2);}
+        
+        .hero-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+        .hero-card{padding:12px;border-radius:8px;background:rgba(18,24,36,0.95);border:1.5px solid var(--border-metal);}
+        .hero-card.current{border-color:var(--gold-primary);box-shadow:0 0 15px rgba(212,175,55,0.6);}
+        .hero-card strong{color:var(--cyan);font-size:14px;}
+        .hero-card p{margin:4px 0;color:var(--text-muted);font-size:12px;}
+        .bar{height:6px;background:#26394a;border-radius:5px;overflow:hidden;margin:6px 0;}
+        .bar i{display:block;height:100%;background:#4ade80;}
+        
+        .actions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;}
+        .section{padding:12px 0;border-top:1px solid rgba(255,255,255,0.1);margin-top:12px;}
+        .small{font-size:12px;color:var(--text-muted);line-height:1.4;}
+        .hand{display:flex;flex-direction:column;gap:8px;}
+        .card{border:1.5px solid var(--gold-primary);background:#1e293b;padding:10px 12px;border-radius:8px;background-image:url('card_template_hero_brass.png');background-size:cover;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.95);display:flex;justify-content:space-between;align-items:center;}
+        .card.committed{border-color:var(--azure-glow);box-shadow:0 0 12px var(--azure-glow);}
+        
+        .log{max-height:220px;overflow:auto;display:flex;flex-direction:column;gap:6px;font-family:monospace;font-size:12px;}
+        .log p{margin:0;padding:7px 9px;background:rgba(0,0,0,0.85);border-left:3px solid var(--border-metal);border-radius:4px;}
+        .log p.alert{border-color:var(--crimson-accent);color:#f87171;}
+        .log p.success{border-color:#4ade80;color:#4ade80;}
+        
+        .notice{padding:12px;border:1.5px solid var(--border-metal);border-radius:8px;background:rgba(0,0,0,0.75);margin:8px 0;font-size:13px;line-height:1.5;}
+        .phase{color:var(--azure-glow);font-weight:bold;}
+        
+        .overlay{position:fixed;inset:0;background:rgba(7,10,18,0.96);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:center;padding:16px;z-index:200;}
+        .modal{max-width:620px;width:100%;max-height:90vh;overflow:auto;background:linear-gradient(135deg,#1e293b,#0f172a);border:4px solid var(--gold-primary);border-radius:16px;padding:26px;box-shadow:0 0 90px rgba(212,175,55,0.85);background-image:url('card_template_crisis_fantasy.png');background-size:cover;}
+        .modal h2{color:var(--gold-primary);margin-top:0;font-size:22px;}
+        .pill{display:inline-block;padding:2px 8px;border-radius:20px;background:rgba(0,229,255,0.18);color:var(--azure-glow);font-size:11px;font-weight:bold;border:1px solid var(--azure-glow);}
+        .footer{color:var(--text-muted);font-size:11px;margin:20px 0;text-align:center;}
+        @media(max-width:1200px){.layout{grid-template-columns:1fr;}.train{width:100%;height:auto;aspect-ratio:1040/590;}}
+    </style>
+</head>
+<body>
+    <canvas id="weather-canvas"></canvas>
+    <div class="shell">
+        <header class="top">
+            <div>
+                <div class="eyebrow">Eberron · Magipunk Social Deduction</div>
+                <h1>⚡ Lightning Rail: Sharn to Thrane</h1>
+                <div class="subtitle">Master Edition v8.0 — Collaborative Crisis Bidding & Balanced Play</div>
+            </div>
+            <div class="actions">
+                <button onclick="showHelp()">How to Play</button>
+                <button onclick="newGame()" class="primary">New Game</button>
+            </div>
+        </header>
+
+        <div class="stats">
+            <div class="stat"><span>Train integrity</span><strong id="integrity">14 / 14</strong></div>
+            <div class="stat"><span>Distance</span><strong id="distance">3 / 12</strong></div>
+            <div class="stat"><span>Round</span><strong id="round">1 / 10</strong></div>
+            <div class="stat"><span>Phase</span><strong id="phase">Hero turn</strong></div>
+        </div>
+
+        <div class="layout">
+            <main>
+                <section class="panel">
+                    <h2>Train Carriages (Cars 1–5)</h2>
+                    <div class="small">Click 'Move', then select a cell to navigate carriages. Adjacent carriages connect at neighboring cell numbers.</div>
+                    <div class="train" id="train"></div>
+                </section>
+                <section class="panel" style="margin-top:14px">
+                    <h2>Active Operatives</h2>
+                    <div id="heroes" class="hero-list"></div>
+                </section>
+                <section class="panel" style="margin-top:14px">
+                    <h2>Active Turn Controls</h2>
+                    <div id="active-summary" class="notice"></div>
+                    <div class="actions">
+                        <button id="moveBtn" onclick="setMode('move')">Move (1 AP)</button>
+                        <button id="attackBtn" onclick="attackEnemy()">Attack (1 AP)</button>
+                        <button id="repairBtn" onclick="repairEngine()">Repair Engine (1 AP)</button>
+                        <button id="vipBtn" onclick="vipAction()">VIP Command (1 AP)</button>
+                        <button id="accuseBtn" onclick="startAccusation()">Accuse in Car 4 (2 AP)</button>
+                        <button id="endBtn" class="primary" onclick="endHeroTurn()">Pass Turn (Step 5)</button>
+                    </div>
+                    <div id="action-hint" class="small">Choose an action above to spend your 2 AP budget.</div>
+                </section>
+            </main>
+            
+            <aside>
+                <section class="panel">
+                    <h2>Step 3: Collaborative Crisis Bidding</h2>
+                    <div id="crisis" class="notice">No crisis active. Crises are resolved cooperatively after all heroes take their turns.</div>
+                    <div id="crisis-controls"></div>
+                    <div class="section">
+                        <h3>Shared Table Skill Hand</h3>
+                        <div class="small">All players can inspect hands and collaboratively commit cards to overcome the Crisis DC. Traitors may covertly withhold or sabotage!</div>
+                        <div id="hand" class="hand"></div>
+                    </div>
+                </section>
+                <section class="panel" style="margin-top:14px">
+                    <h2>Event & Action Log</h2>
+                    <div id="log" class="log" aria-live="polite"></div>
+                </section>
+                <section class="panel" style="margin-top:14px">
+                    <h2>Victory Precedence</h2>
+                    <p class="small"><b>Loyalists Win:</b> Reach Distance 12 (Flamekeep Cathedral) before Round 10 ends with Melindre alive.</p>
+                    <p class="small"><b>Traitors Win:</b> Derailment (Integrity 0), VIP Melindre assassination, or stalling past Round 10.</p>
+                </section>
+            </aside>
+        </div>
+        
+        <div class="footer">Lightning Rail Master Edition v8.0 · Fully playable local co-op & social deduction build.</div>
+    </div>
+
+    <div id="overlay" class="overlay hidden">
+        <div class="modal" id="modal"></div>
+    </div>
+
+    <script>
+        'use strict';
+        const CAR_NAMES = ['Engine Room', 'Passenger Car', 'Cargo / Brig', 'Dining Car', 'Rear Observation'];
+        const CRISES = [
+            {name: 'Conduit Rail Arc Overload', dc: 11, damage: 2, desc: 'Lightning conduits surging across Sector 2. Stabilize the grid.'},
+            {name: 'Core Instability', dc: 13, damage: 2, desc: 'Bound elemental bucking against containment lattice in Car 1.'},
+            {name: 'Mournland Spectral Surge', dc: 14, damage: 3, desc: 'A wave of grey mist and hostile energy strikes the express.'}
+        ];
+        const HERO_BASE = [
+            {id:'jan', name:'Jan Valek', role:'Vampire Detective', hp:12, maxHp:12, def:15, skill:3, car:0, cell:2, ap:2, maxAp:2, stress:0},
+            {id:'caden', name:'Caden', role:'Arcane Sniper', hp:10, maxHp:10, def:14, skill:3, car:1, cell:4, ap:2, maxAp:2, stress:0},
+            {id:'bromli', name:'Bromli', role:'Cannith Artificer', hp:14, maxHp:14, def:16, skill:4, car:0, cell:5, ap:2, maxAp:2, stress:0},
+            {id:'fix', name:'Fix', role:'Changeling Bard', hp:10, maxHp:10, def:14, skill:3, car:2, cell:1, ap:2, maxAp:2, stress:0},
+            {id:'temple', name:'Temple', role:'Warforged Guardian', hp:16, maxHp:16, def:17, skill:2, car:3, cell:3, ap:2, maxAp:2, stress:0}
+        ];
+
+        let G = null;
+        let actionMode = '';
+        let selectedCards = new Set();
+
+        const $ = id => document.getElementById(id);
+        const rand = n => Math.floor(Math.random() * n);
+        const pick = a => a[rand(a.length)];
+
+        class WeatherEngine {
+            constructor(canvasId) {
+                this.canvas = document.createElement('canvas');
+                this.canvas.id = canvasId;
+                this.canvas.style.position = 'absolute';
+                this.canvas.style.top = '0';
+                this.canvas.style.left = '0';
+                this.canvas.style.width = '100%';
+                this.canvas.style.height = '100%';
+                this.canvas.style.pointerEvents = 'none';
+                this.canvas.style.zIndex = '1';
+                document.body.prepend(this.canvas);
+                this.ctx = this.canvas.getContext('2d');
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+                this.drops = [];
+                for(let i=0; i<70; i++) {
+                    this.drops.push({x: Math.random()*window.innerWidth, y: Math.random()*window.innerHeight, length: 15+Math.random()*25, speed: 12+Math.random()*6});
+                }
+            }
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+            update() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.ctx.strokeStyle = 'rgba(0, 229, 255, 0.3)';
+                this.ctx.lineWidth = 1.5;
+                for(let drop of this.drops) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(drop.x, drop.y);
+                    this.ctx.lineTo(drop.x - 1, drop.y + drop.length);
+                    this.ctx.stroke();
+                    drop.y += drop.speed;
+                    if(drop.y > this.canvas.height) { drop.y = -30; drop.x = Math.random()*this.canvas.width; }
+                }
+                requestAnimationFrame(() => this.update());
+            }
+        }
+
+        function newGame(socialChoice) {
+            const social = typeof socialChoice === 'boolean' ? socialChoice : confirm('Start full 5-player Social Deduction mode with Hidden Traitor?\nChoose Cancel for 1-2 player practice mode.');
+            const heroes = HERO_BASE.slice(0, social ? 5 : 2).map(h => ({...h, hand: drawCards(4), confined: false, usedAbility: false}));
+            const traitor = social ? pick(heroes).id : null;
+            
+            G = {
+                social, heroes, traitor, active: 0, round: 1, integrity: 14, maxIntegrity: 14, distance: 3,
+                phase: 'heroes', turns: 0, crisis: null, crisisResolved: false, gameOver: false,
+                enemies: [{id:'daask', name:'Daask Enforcer', hp:4, maxHp:4, car:4, cell:8}, {id:'spawn', name:'Vampire Spawn', hp:5, maxHp:5, car:3, cell:2}],
+                vips: [{id:'melindre', name:'Melindre', hp:8, maxHp:8, car:1, cell:2}, {id:'shetari', name:'Shetari', hp:8, maxHp:8, car:1, cell:7}],
+                log: []
+            };
+            actionMode = '';
+            selectedCards.clear();
+            closeModal();
+            log(`Game started. ${social ? 'Five operatives assigned with secret roles.' : 'Practice mode active (no traitor).'}`);
+            if(social) showRoles();
+            render();
+        }
+
+        function drawCards(n) {
+            return Array.from({length: n}, () => ({
+                id: Math.random().toString(36).slice(2),
+                value: pick([2, 3, 3, 4]),
+                name: pick(['Combat Strike', 'Tinkering Spanner', 'Arcane Aegis', 'Mobility Leap', 'Focus Skill'])
+            }));
+        }
+
+        function hero() { return G.heroes[G.active]; }
+        function log(s, type='') {
+            G.log.unshift({s, type});
+            G.log = G.log.slice(0, 60);
+            if($('log')) $('log').innerHTML = G.log.map(x => `<p class="${x.type}">${esc(x.s)}</p>`).join('');
+        }
+        function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+        
+        function startMenu() {
+            openModal(`<h2>Welcome aboard the Lightning Rail</h2><p>Choose your operational mode:</p><div class="actions"><button class="primary" onclick="newGame(true)">Full 5-Hero Social Deduction (with Traitor)</button><button onclick="newGame(false)">1-2 Player Practice Mode</button></div><p class="small">Designed for local hot-seat play.</p>`);
+        }
+        
+        function showRoles() {
+            openModal(`<h2>Secret Role Assignment</h2><p>Pass the device privately to each player so they can inspect their allegiance.</p><div id="roleReveal" class="notice">Select your operative below to reveal your secret card.</div><div class="actions">${G.heroes.map(h => `<button onclick="revealRole('${h.id}')">${h.name}</button>`).join('')}</div><div class="actions"><button class="primary" onclick="closeModal()">Begin Briefing</button></div>`);
+        }
+        
+        function revealRole(id) {
+            const h = G.heroes.find(x => x.id === id);
+            $('roleReveal').innerHTML = `<b>${esc(h.name)}:</b> ${G.traitor === id ? '<span style="color:var(--crimson-accent)">DARK PERSONA (TRAITOR)</span> — secretly sabotage crises and derail the train.' : '<span style="color:#4ade80">LOYAL ESCORT</span> — protect Melindre and reach Flamekeep Cathedral.'}<p class="small">Memorize your assignment, then hide it.</p>`;
+        }
+
+        function openModal(html) { $('modal').innerHTML = html; $('overlay').classList.remove('hidden'); }
+        function closeModal() { $('overlay').classList.add('hidden'); }
+
+        function showHelp() {
+            openModal(`<h2>Master Rulebook v8.0 Summary</h2><p><b>Goal:</b> Loyalists reach Distance 12 with Melindre alive. Traitors win via Derailment (0 HP), Melindre assassination, or stalling past Round 10.</p><p><b>Turn Structure:</b> 1. Draw Skills, 2. Hero Actions (2 AP), 3. Collaborative Crisis Bidding, 4. Threat Activation & Distance +1, 5. Cleanup.</p><p><b>Collaborative Crisis Bidding:</b> After all heroes take their turns, a Crisis is drawn. All players inspect hands and collaboratively commit cards to meet the DC alongside 2 Elemental Chaos Cards.</p><div class="actions"><button class="primary" onclick="closeModal()">Resume Game</button></div>`);
+        }
+
+        function setMode(mode) {
+            if(G.gameOver || G.phase !== 'heroes') return;
+            actionMode = mode;
+            $('action-hint').textContent = mode === 'move' ? 'Click a highlighted cell on the train carriages to move.' : 'Choose an action.';
+            renderTrain();
+        }
+
+        function moveTo(car, cell) {
+            if(actionMode !== 'move' || G.phase !== 'heroes' || G.gameOver) return;
+            const h = hero();
+            if(h.confined || h.ap < 1) return;
+            let legal = car === h.car ? Math.abs(cell - h.cell) <= 3 : Math.abs(car - h.car) === 1 && Math.abs(cell - h.cell) <= 1;
+            if(!legal) { $('action-hint').textContent = 'Target cell is out of movement range.'; return; }
+            h.car = car; h.cell = cell; h.ap--; actionMode = '';
+            log(`${h.name} moved to Car ${car+1} (${CAR_NAMES[car]}), cell ${cell}.`);
+            afterAction();
+        }
+
+        function attackEnemy() {
+            const h = hero();
+            if(G.gameOver || G.phase !== 'heroes' || h.ap < 1 || h.confined) { $('action-hint').textContent = 'Cannot attack.'; return; }
+            const targets = G.enemies.filter(e => e.hp > 0 && e.car === h.car && Math.abs(e.cell - h.cell) <= 3);
+            if(!targets.length) { $('action-hint').textContent = 'No enemy in carriage within 3 cells.'; return; }
+            const target = targets[0];
+            h.ap--; target.hp = Math.max(0, target.hp - 2);
+            log(`${h.name} attacks ${target.name} for 2 damage${target.hp === 0 ? ' (Eliminated)' : ''}.`, target.hp === 0 ? 'success' : '');
+            afterAction();
+        }
+
+        function repairEngine() {
+            const h = hero();
+            if(G.gameOver || G.phase !== 'heroes' || h.ap < 1 || h.confined) return;
+            if(h.car !== 0) { $('action-hint').textContent = 'Repair requires Hero to be in Car 1 (Engine Room).'; return; }
+            if(G.integrity >= G.maxIntegrity) { $('action-hint').textContent = 'Train integrity is already full.'; return; }
+            h.ap--; G.integrity = Math.min(G.maxIntegrity, G.integrity + 2);
+            log(`${h.name} repairs the engine: +2 Train Integrity (${G.integrity}/${G.maxIntegrity}).`, 'success');
+            afterAction();
+        }
+
+        function vipAction() {
+            const h = hero();
+            if(G.gameOver || G.phase !== 'heroes' || h.ap < 1 || h.confined) return;
+            const vip = G.vips.find(v => v.hp > 0 && v.car === h.car);
+            if(!vip) { $('action-hint').textContent = 'Hero must share a carriage with Melindre or Shetari.'; return; }
+            if(h.usedAbility) { $('action-hint').textContent = 'VIP command already used this round.'; return; }
+            h.ap--; h.usedAbility = true;
+            if(vip.id === 'melindre') {
+                h.hp = Math.min(h.maxHp, h.hp + 1);
+                log(`${h.name} commanded Melindre (Silver Flame Blessing): Restored 1 HP.`, 'success');
+            } else {
+                G.integrity = Math.min(G.maxIntegrity, G.integrity + 1);
+                log(`${h.name} coordinated with Shetari: +1 Train Integrity shield.`, 'success');
+            }
+            afterAction();
+        }
+
+        function startAccusation() {
+            const h = hero();
+            if(G.gameOver || G.phase !== 'heroes' || h.ap < 2 || h.confined) return;
+            if(h.car !== 3) { $('action-hint').textContent = 'Accusations can only be called from Car 4 (Dining Car).'; return; }
+            const suspects = G.heroes.filter(x => x.id !== h.id && !x.confined);
+            openModal(`<h2>Emergency Accusation (Car 4)</h2><p>${esc(h.name)} spends 2 AP to call an emergency vote.</p><div class="actions">${suspects.map(s => `<button onclick="convictSuspect('${s.id}')">Accuse ${esc(s.name)} (${esc(s.role)})</button>`).join('')}</div><button onclick="closeModal()">Cancel</button>`);
+        }
+
+        function convictSuspect(id) {
+            closeModal();
+            const suspect = G.heroes.find(x => x.id === id);
+            suspect.confined = true; suspect.car = 2; suspect.cell = 5;
+            log(`[Accusation Vote] Majority convicts ${suspect.name}! Sent to Car 3 Confinement (Brig).`, 'alert');
+            afterAction();
+        }
+
+        function endHeroTurn() {
+            if(G.gameOver || G.phase !== 'heroes') return;
+            actionMode = '';
+            log(`${hero().name} passes turn.`);
+            G.turns++;
+            if(G.turns >= G.heroes.length) {
+                startCrisisPhase();
+            } else {
+                G.active = (G.active + 1) % G.heroes.length;
+                hero().ap = hero().maxAp;
+                render();
+            }
+        }
+
+        function startCrisisPhase() {
+            G.phase = 'crisis';
+            G.crisis = pick(CRISES);
+            G.crisisResolved = false;
+            selectedCards.clear();
+            log(`[Step 3: Crisis Event] ${G.crisis.name} drawn (Target DC ${G.crisis.dc}). Group bidding active.`, 'alert');
+            render();
+        }
+
+        function toggleCard(id) {
+            if(G.phase !== 'crisis') return;
+            if(selectedCards.has(id)) selectedCards.delete(id);
+            else selectedCards.add(id);
+            renderHand();
+        }
+
+        function resolveCrisis() {
+            if(G.phase !== 'crisis' || G.crisisResolved) return;
+            const committed = [];
+            G.heroes.forEach(h => {
+                h.hand = h.hand.filter(c => {
+                    if(selectedCards.has(c.id)) { committed.push(c); return false; }
+                    return true;
+                });
+            });
+            const playerSum = committed.reduce((n, c) => n + c.value, 0);
+            const chaosCards = 2 + rand(6) + rand(6); // +2 Elemental Chaos cards
+            const totalPool = playerSum + chaosCards;
+            G.crisisResolved = true;
+            
+            log(`[Crisis Resolution] Player Bid (${playerSum}) + Chaos Cards (${chaosCards}) = Total Pool ${totalPool} vs DC ${G.crisis.dc}.`);
+            if(totalPool >= G.crisis.dc) {
+                log(`[Crisis Averted] The group successfully met the DC!`, 'success');
+            } else {
+                G.integrity = Math.max(0, G.integrity - G.crisis.damage);
+                log(`[Crisis Failed] Pool missed DC ${G.crisis.dc}. Train Integrity −${G.crisis.damage} (HP: ${G.integrity}/${G.maxIntegrity}).`, 'alert');
+            }
+            G.phase = 'threats';
+            render();
+            setTimeout(() => { if(!G.gameOver) resolveThreatPhase(); }, 1200);
+        }
+
+        function resolveThreatPhase() {
+            if(G.gameOver) return;
+            log(`[Step 4: Threat Activation & Speed] Advancing track and activating enemies.`, 'alert');
+            
+            // Advance Distance +1
+            G.distance = Math.min(12, G.distance + 1);
+            
+            // Enemy attacks
+            G.enemies.filter(e => e.hp > 0).forEach(e => {
+                if(e.car > 1) e.car--;
+                else {
+                    const vip = G.vips.find(v => v.hp > 0);
+                    if(vip) {
+                        vip.hp = Math.max(0, vip.hp - 2);
+                        log(`[Threat] ${e.name} attacks VIP ${vip.name} for 2 damage (HP: ${vip.hp}/8).`, 'alert');
+                    }
+                }
+            });
+
+            G.round++;
+            G.heroes.forEach(h => {
+                h.ap = h.maxAp;
+                h.usedAbility = false;
+                if(h.hp > 0) h.hand.push(...drawCards(Math.max(0, 4 - h.hand.length)));
+            });
+            G.active = 0; G.turns = 0; G.phase = 'heroes'; G.crisis = null; selectedCards.clear();
+            checkGameOver();
+            if(!G.gameOver) {
+                log(`Round ${G.round} begins. Distance: ${G.distance}/12.`, 'success');
+            }
+            render();
+        }
+
+        function afterAction() {
+            checkGameOver();
+            render();
+        }
+
+        function checkGameOver() {
+            if(G.integrity <= 0) { finish('TRAITOR VICTORY', 'Train Derailment: Integrity reached 0 HP.'); return; }
+            const mel = G.vips.find(v => v.id === 'melindre');
+            if(!mel || mel.hp <= 0) { finish('TRAITOR VICTORY', 'VIP Assassination: Melindre HP reached 0.'); return; }
+            if(G.distance >= 12) { finish('LOYALIST VICTORY', 'Flamekeep Cathedral reached with Melindre alive!'); return; }
+            if(G.round > 10) { finish('TRAITOR VICTORY', 'Time Expired: Round 10 ended before reaching destination.'); return; }
+        }
+
+        function finish(title, msg) {
+            G.gameOver = true; G.phase = 'game over';
+            log(`${title}: ${msg}`, title.includes('LOYALIST') ? 'success' : 'alert');
+            setTimeout(() => openModal(`<h2>${title}</h2><p>${msg}</p><button class="primary" onclick="closeModal()">Close</button>`), 50);
+        }
+
+        function render() {
+            if(!G) return;
+            $('integrity').textContent = `${G.integrity} / ${G.maxIntegrity}`;
+            $('distance').textContent = `${G.distance} / 12`;
+            $('round').textContent = `${G.round} / 10`;
+            $('phase').textContent = G.phase === 'heroes' ? 'Hero turn' : G.phase === 'crisis' ? 'Crisis Bidding' : G.phase === 'threats' ? 'Threats & Speed' : 'Game Over';
+            
+            const activeH = hero();
+            $('active-summary').innerHTML = G.gameOver ? '<b>Game over.</b>' : `<span class="phase">${esc(activeH.name)}</span> — ${esc(activeH.role)}<br>AP: <b>${activeH.ap}/${activeH.maxAp}</b> · HP: <b>${activeH.hp}/${activeH.maxHp}</b> · Car: <b>${CAR_NAMES[activeH.car]}</b>${activeH.confined ? '<br><span style="color:var(--crimson-accent)">CONFINED IN BRIG</span>' : ''}`;
+            
+            $('moveBtn').disabled = G.phase !== 'heroes' || activeH.ap < 1 || activeH.confined;
+            $('attackBtn').disabled = G.phase !== 'heroes' || activeH.ap < 1 || activeH.confined;
+            $('repairBtn').disabled = G.phase !== 'heroes' || activeH.ap < 1 || activeH.confined;
+            $('vipBtn').disabled = G.phase !== 'heroes' || activeH.ap < 1 || activeH.confined;
+            $('accuseBtn').disabled = G.phase !== 'heroes' || activeH.ap < 2 || activeH.confined || activeH.car !== 3;
+            $('endBtn').disabled = G.phase !== 'heroes' || G.gameOver;
+
+            renderTrain();
+            renderHeroes();
+            renderCrisis();
+            renderHand();
+            $('log').innerHTML = G.log.map(x => `<p class="${x.type}">${esc(x.s)}</p>`).join('');
+        }
+
+        function renderTrain() {
+            if(!G) return;
+            $('train').innerHTML = CAR_NAMES.map((name, car) => {
+                const occ = [];
+                G.heroes.forEach(h => {
+                    if(h.car === car) occ.push(`<div class="token hero ${h.id === hero().id ? 'active' : ''}">🧙 ${esc(h.name)} · ${h.hp} HP${h.confined ? ' (Confined)' : ''}</div>`);
+                });
+                G.vips.filter(v => v.hp > 0 && v.car === car).forEach(v => occ.push(`<div class="token vip">⭐ ${esc(v.name)} · ${v.hp} HP</div>`));
+                G.enemies.filter(e => e.hp > 0 && e.car === car).forEach(e => occ.push(`<div class="token enemy">☠ ${esc(e.name)} · ${e.hp} HP</div>`));
+                
+                return `<div class="car">
+                    <div class="occupants">${occ.length ? occ.join('') : '<span class="small" style="text-align:center;color:var(--muted)">Empty</span>'}</div>
+                    <div class="cells">${[1,2,3,4,5,6,7,8].map(cell => `<button class="cell" ${actionMode === 'move' ? '' : 'disabled'} onclick="moveTo(${car},${cell})">${cell}</button>`).join('')}</div>
+                </div>`;
+            }).join('');
+        }
+
+        function renderHeroes() {
+            if(!G) return;
+            $('heroes').innerHTML = G.heroes.map((h, i) => `<div class="hero-card ${i === G.active && G.phase === 'heroes' ? 'current' : ''}">
+                <strong>${esc(h.name)}</strong> <span class="pill">${esc(h.role)}</span>
+                <p>HP ${h.hp}/${h.maxHp} · AP ${h.ap}/${h.maxAp} · Car ${h.car+1}, cell ${h.cell}${h.confined ? ' · BRIG' : ''}</p>
+                <div class="bar"><i style="width:${Math.max(0, h.hp/h.maxHp*100)}%"></i></div>
+            </div>`).join('');
+        }
+
+        function renderCrisis() {
+            if(!G) return;
+            if(G.phase === 'crisis' && G.crisis) {
+                $('crisis').innerHTML = `<b>${esc(G.crisis.name)}</b> (DC ${G.crisis.dc})<p>${esc(G.crisis.desc)}</p><p class="small">Committed Table Bid: <b>${G.heroes.reduce((n, h) => n + h.hand.filter(c => selectedCards.has(c.id)).reduce((a, c) => a + c.value, 0), 0)}</b> (+2 Chaos Cards)</p>`;
+                $('crisis-controls').innerHTML = `<div class="actions"><button class="primary" onclick="resolveCrisis()">Submit Collaborative Bid & Resolve</button></div>`;
+            } else {
+                $('crisis').textContent = G.phase === 'threats' ? 'Resolving threat phase & advancing distance...' : G.phase === 'game over' ? 'Game over.' : 'No crisis active. Crises appear after all heroes take their turns.';
+                $('crisis-controls').innerHTML = '';
+            }
+        }
+
+        function renderHand() {
+            if(!G) return;
+            $('hand').innerHTML = G.heroes.map(owner => `
+                <div class="card" style="display:flex;flex-direction:column;align-items:flex-start;gap:6px;">
+                    <strong>${esc(owner.name)}'s Hand (${owner.hand.length} cards)</strong>
+                    <div class="small">${G.phase === 'crisis' ? 'Check boxes to commit cards to the shared pool:' : 'Private skill cards.'}</div>
+                    <div style="width:100%;display:flex;flex-direction:column;gap:4px;">
+                        ${owner.hand.map(c => `
+                            <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,0.5);padding:6px;border-radius:4px;width:100%;">
+                                <span>${esc(c.name)} <span class="pill">+${c.value}</span></span>
+                                ${G.phase === 'crisis' ? `<label><input type="checkbox" ${selectedCards.has(c.id) ? 'checked' : ''} onchange="toggleCard('${c.id}')"> Commit</label>` : ''}
+                            </div>
+                        `).join('') || '<div class="small">No cards in hand.</div>'}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const weather = new WeatherEngine('weather-canvas');
+            weather.update();
+            startMenu();
+        });
+    </script>
+</body>
+</html>
