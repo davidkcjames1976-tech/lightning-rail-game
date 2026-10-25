@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Lightning Rail: Sharn to Thrane — Master Edition v10.1</title>
+    <title>Lightning Rail: Sharn to Thrane — Master Edition v11.0 Tactical Overhaul</title>
     <style>
         :root {
             --bg-deep: #070a12;
@@ -77,7 +77,6 @@
         .magipunk-btn.danger { background: linear-gradient(to bottom, #7f1d1d, #450a0a); color: #fff; border-color: var(--crimson-accent); }
         .magipunk-btn.good { background: linear-gradient(to bottom, #065f46, #064e3b); color: #fff; border-color: #4ade80; }
         
-        /* The glowing animation for active steps */
         @keyframes pulse-glow {
             0% { box-shadow: 0 0 5px var(--gold-primary); transform: scale(1); }
             50% { box-shadow: 0 0 20px var(--gold-primary); transform: scale(1.05); border-color: #fff; }
@@ -154,7 +153,7 @@
             <div>
                 <div class="eyebrow">Eberron · Magipunk Social Deduction</div>
                 <h1>⚡ Lightning Rail: Sharn to Thrane</h1>
-                <div class="subtitle">Master Edition v10.1 — Forced Cache Break (play.html)</div>
+                <div class="subtitle">Master Edition v11.0 — Secret Bidding, Enemy AI & Actionable Skills</div>
             </div>
             <div class="actions">
                 <button class="magipunk-btn" onclick="showHelp()">How to Play</button>
@@ -173,8 +172,8 @@
             <aside class="panel">
                 <h2>Active Operatives</h2>
                 <div class="hero-roster" id="hero-roster" style="margin-bottom:12px;"></div>
-                <h2>Skill Hand</h2>
-                <div class="small" style="margin-bottom:6px;">Your private hand cards.</div>
+                <h2>Skill Hand & Actions</h2>
+                <div class="small" style="margin-bottom:6px;">Click a card to play it using 1 AP, or save for secret crisis bids.</div>
                 <div class="hand" id="hand" style="margin-top:6px;"></div>
             </aside>
 
@@ -186,28 +185,25 @@
                 </div>
                 <div class="notice" id="active-summary" style="margin-top:12px;"></div>
                 <div class="actions" style="justify-content:center;">
-                    <!-- THE DRAW CARD BUTTON IS FRONT AND CENTER -->
                     <button class="magipunk-btn primary" id="drawBtn" style="font-size:14px; padding:10px 16px;" onclick="drawCardManual()">1. DRAW CARD</button>
-                    
                     <button class="magipunk-btn" id="moveBtn" onclick="setMode('move')">Move (1 AP)</button>
                     <button class="magipunk-btn" id="attackBtn" onclick="attackEnemy()">Attack (1 AP)</button>
                     <button class="magipunk-btn" id="repairBtn" onclick="repairEngine()">Repair Engine (1 AP)</button>
                     <button class="magipunk-btn" id="vipBtn" onclick="vipAction()">VIP Cmd (1 AP)</button>
-                    
                     <button class="magipunk-btn primary" id="endBtn" style="font-size:14px; padding:10px 16px;" onclick="endHeroTurn()">2. END HERO TURN</button>
                 </div>
                 <div id="action-hint" class="small" style="text-align:center;color:var(--gold-light);">You must Draw a Card first, then spend AP.</div>
             </main>
             
             <aside class="panel">
-                <h2>3. Collaborative Crisis</h2>
+                <h2>3. Secret Crisis Bidding</h2>
                 <div id="crisis" class="notice">No crisis active. Crises appear after all heroes take a turn.</div>
                 <div id="crisis-controls"></div>
                 <h3 style="margin-top:12px;">Event & Action Log</h3>
                 <div id="log" class="log" aria-live="polite" style="margin-top:6px;"></div>
             </aside>
         </div>
-        <div class="footer">Lightning Rail Master Edition v10.1 · Cache Bypass Mode.</div>
+        <div class="footer">Lightning Rail Master Edition v11.0 · Fully Featured.</div>
     </div>
 
     <div id="overlay" class="overlay hidden">
@@ -234,7 +230,7 @@
 
         let G = null;
         let actionMode = '';
-        let selectedCards = new Set();
+        let selectedCards = new Set(); // For secret crisis bidding
 
         const $ = id => document.getElementById(id);
         const rand = n => Math.floor(Math.random() * n);
@@ -296,7 +292,7 @@
                     <button class="magipunk-btn primary" onclick="newGame(true)">Full Game (5-Hero Social Deduction)</button>
                     <button class="magipunk-btn" onclick="newGame(false)">Practice (2-Hero Co-op)</button>
                 </div>
-                <p class="small" style="margin-top:15px;">Designed for local hot-seat play.</p>`);
+                <p class="small" style="margin-top:15px; text-align:center;">Features secret bidding, enemy AI movement, and actionable skills.</p>`);
         }
 
         function newGame(socialChoice) {
@@ -353,28 +349,61 @@
         }
 
         function showHelp() {
-            openModal(`<h2>Master Rulebook v10.1</h2>
+            openModal(`<h2>Master Rulebook v11.0</h2>
                 <p style="text-align:left; line-height:1.6; font-size:13px; color:var(--text-muted);">
-                <b>Goal:</b> Loyalists reach Distance 12 with Melindre alive. Traitors win via Derailment (0 HP), Melindre death, or stalling past Round 10.<br><br>
-                <b>Turn Structure:</b><br>
+                <b>Goal:</b> Loyalists reach Distance 12 with Melindre alive.<br><br>
+                <b>Turn & Skills:</b><br>
                 1. <b>Draw Card:</b> Mandatory first step of every turn.<br>
-                2. <b>Use AP:</b> Spend AP on Move, Attack, Repair, VIP Command.<br>
-                3. <b>Group Crisis:</b> After all heroes act, a Crisis is drawn. Group inspects hands and commits cards.<br>
-                4. <b>Threats & Mid-Point:</b> Threats activate. At Distance 6, the Traitor Event triggers.</p>
+                2. <b>Play Skill / Use AP:</b> Spend 1 AP to play skill cards for tactical effects, or spend AP to Move, Attack, Repair, and Command VIPs.<br>
+                3. <b>Secret Crisis Bidding:</b> Commit cards secretly to the crisis pool.<br>
+                4. <b>Enemy AI & Boss Attacks:</b> Enemies march forward and strike adjacent targets.<br>
+                5. <b>Mid-Point Traitor Event:</b> Triggered secretly at Distance 6.</p>
                 <div class="actions" style="margin-top:15px;"><button class="magipunk-btn primary" onclick="closeModal()">Resume Game</button></div>`);
         }
 
         function drawCardManual() {
             const h = hero();
             if(G.gameOver || G.phase !== 'heroes' || G.heroStep !== 1) { return; }
-            
             const newCard = drawCards(1)[0];
             h.hand.push(newCard);
             log(`[Step 1] ${h.name} drew ${newCard.name} (+${newCard.value}). Actions unlocked.`, "highlight");
-            
-            G.heroStep = 2; // Advance to AP step
-            $('action-hint').textContent = 'Step 2: Spend your AP on the actions below, then click END HERO TURN.';
+            G.heroStep = 2;
+            $('action-hint').textContent = 'Step 2: Spend AP on actions or play skill cards (1 AP), then End Turn.';
             render();
+        }
+
+        function playSkillCard(cardId) {
+            const h = hero();
+            if(G.gameOver || G.phase !== 'heroes' || G.heroStep !== 2 || h.ap < 1) {
+                log("Cannot play skill card: Not in AP phase or insufficient AP.", "alert");
+                return;
+            }
+            const cardIdx = h.hand.findIndex(c => c.id === cardId);
+            if(cardIdx === -1) return;
+            const card = h.hand[cardIdx];
+            
+            h.ap--;
+            h.hand.splice(cardIdx, 1);
+            
+            // Apply tactical effect based on card name
+            if(card.name.includes('Combat')) {
+                const target = G.enemies.find(e => e.hp > 0 && e.car === h.car);
+                if(target) {
+                    target.hp = Math.max(0, target.hp - card.value);
+                    log(`[Skill Play] ${h.name} played ${card.name} for ${card.value} damage to ${target.name}!`, "success");
+                } else {
+                    log(`[Skill Play] ${h.name} played ${card.name}, gaining tactical focus (+1 AP refunded).`, "success");
+                    h.ap = Math.min(h.maxAp, h.ap + 1);
+                }
+            } else if(card.name.includes('Tinkering') || card.name.includes('Elemental')) {
+                G.integrity = Math.min(G.maxIntegrity, G.integrity + card.value);
+                log(`[Skill Play] ${h.name} played ${card.name}: Restored +${card.value} Train Integrity.`, "success");
+            } else {
+                const nearbyEnemies = G.enemies.filter(e => e.hp > 0 && e.car === h.car);
+                nearbyEnemies.forEach(e => e.cell = Math.min(9, e.cell + 2)); // Push back enemies
+                log(`[Skill Play] ${h.name} played ${card.name}: Pushed back enemies in carriage!`, "success");
+            }
+            afterAction();
         }
 
         function spend(n=1) {
@@ -469,7 +498,7 @@
             } else {
                 G.active = (G.active + 1) % G.heroes.length;
                 hero().ap = hero().maxAp;
-                G.heroStep = 1; // Reset to Draw phase for next hero
+                G.heroStep = 1;
                 log(`Turn passed to ${hero().name}.`, "highlight");
                 $('action-hint').textContent = 'Step 1: You must Draw a Card to unlock actions.';
                 render();
@@ -481,7 +510,7 @@
             G.crisis = pick(CRISES);
             G.crisisResolved = false;
             selectedCards.clear();
-            log(`[Step 3: Crisis Event] ${G.crisis.name} drawn (DC ${G.crisis.dc}). Table bidding active.`, 'alert');
+            log(`[Step 3: Crisis Event] ${G.crisis.name} drawn (DC ${G.crisis.dc}). Secret table bidding active.`, 'alert');
             render();
         }
 
@@ -490,7 +519,6 @@
             if(selectedCards.has(id)) selectedCards.delete(id);
             else selectedCards.add(id);
             renderCrisis();
-            renderHand();
         }
 
         function resolveCrisis() {
@@ -502,17 +530,21 @@
                     return true;
                 });
             });
-            const playerSum = committed.reduce((n, c) => n + c.value, 0);
+            const secretPlayerSum = committed.reduce((n, c) => n + c.value, 0);
             const chaosCards = 2 + rand(6) + rand(6);
-            const totalPool = playerSum + chaosCards;
+            const totalPool = secretPlayerSum + chaosCards;
             G.crisisResolved = true;
             
-            log(`[Crisis Resolution] Player Bid (${playerSum}) + Chaos Cards (${chaosCards}) = Pool ${totalPool} vs DC ${G.crisis.dc}.`);
+            log(`[Secret Crisis Resolution] Combined Secret Pool Total: ${totalPool} vs DC ${G.crisis.dc} (Individual contributions kept secret).`);
             if(totalPool >= G.crisis.dc) {
                 log(`[Crisis Averted] The group successfully met the DC!`, 'success');
             } else {
                 G.integrity = Math.max(0, G.integrity - G.crisis.damage);
                 log(`[Crisis Failed] Pool missed DC ${G.crisis.dc}. Train Integrity −${G.crisis.damage}.`, 'alert');
+                
+                // Spawn reinforcement minion on failure
+                G.enemies.push({id:'spawn_' + rand(100), name:'Mournland Stalker', hp:4, maxHp:4, car: rand(3), cell: 4, img:'token_minion_generic.png'});
+                log(`[Reinforcements] A hostile Mournland Stalker boards the train due to the failed crisis!`, 'alert');
             }
             G.phase = 'threats';
             render();
@@ -521,45 +553,60 @@
 
         function resolveThreatPhase() {
             if(G.gameOver) return;
-            log(`[Step 4: Threat Activation] Advancing track and resolving enemies.`, 'alert');
+            log(`[Step 4: Threat AI & Boss Attacks] Enemies marching and attacking.`, 'alert');
             
             G.distance = Math.min(12, G.distance + 1);
             
             for(const e of G.enemies.filter(e => e.hp > 0)) {
+                // Enemy AI movement: march toward front cars
+                if(e.cell > 1) {
+                    e.cell--;
+                } else if(e.car > 0) {
+                    e.car--;
+                    e.cell = 8;
+                }
+
+                // Boss / Minion Attacks on adjacent targets
                 const nearby = G.heroes.filter(h => h.hp > 0 && !h.confined && h.car === e.car && Math.abs(e.cell - e.cell) <= 2);
                 if(nearby.length) {
                     const target = pick(nearby);
-                    target.hp = Math.max(0, target.hp - 2);
-                    log(`${e.name} attacks ${target.name} for 2 damage.`, 'alert');
+                    const strikeDmg = 3; // Enhanced Boss strike damage
+                    target.hp = Math.max(0, target.hp - strikeDmg);
+                    log(`[Boss Strike] ${e.name} brutally attacks ${target.name} for ${strikeDmg} damage!`, 'alert');
                     continue;
                 }
-                if(e.car > 1) e.car--;
-                else {
-                    const target = G.vips.find(v => v.hp > 0);
-                    if(target) {
-                        target.hp = Math.max(0, target.hp - 2);
-                        log(`${e.name} attacks VIP ${target.name} for 2 damage.`, 'alert');
-                    }
+                if(e.car === 0) {
+                    G.integrity = Math.max(0, G.integrity - 2);
+                    log(`[Engine Assault] ${e.name} damages the Engine Room (-2 Integrity)!`, 'alert');
                 }
             }
 
-            // MID-POINT TRAITOR EVENT CHECK
+            // MID-POINT SECRET TRAITOR EVENT
             if (G.distance === 6 && !G.midpointTriggered) {
                 G.midpointTriggered = true;
-                log(`[MID-POINT EVENT] Distance 6 reached. Quori Awakening!`, 'alert');
-                openModal(`<h2>QUORI AWAKENING</h2>
-                    <p style="color:var(--crimson-accent); font-weight:bold; margin-bottom:15px;">The Traitor strikes from the shadows.</p>
-                    <p style="text-align:left; font-size:13px; line-height:1.5;">At the mid-point of the journey (Distance 6), dark magic surges through the Aether-Rail. The Traitor (if one exists) secretly disrupts the train's shielding.<br><br><b>Penalty:</b> Train Integrity suffers an immediate -3 HP blow.</p>
-                    <button class="magipunk-btn primary" onclick="applyMidpointPenalty()" style="margin-top:15px; width:100%;">Brace for Impact</button>`);
-                return; // Stop flow until modal resolved
+                log(`[MID-POINT EVENT] Distance 6 reached. Secret Traitor Subversion!`, 'alert');
+                openModal(`<h2>QUORI AWAKENING: SLEEPER AGENT</h2>
+                    <p style="color:var(--crimson-accent); font-weight:bold; margin-bottom:15px;">Pass the device privately to inspect your revised allegiance.</p>
+                    <p style="text-align:left; font-size:13px; line-height:1.5;">At Distance 6, the sleeper protocols activate. Select your name below to secretly check if your role has shifted or if you remain loyal.</p>
+                    <div class="actions" style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:15px;">
+                        ${G.heroes.map(h => `<button class="magipunk-btn" onclick="secretMidpointInspect('${h.id}')">Inspect ${h.name}</button>`).join('')}
+                    </div>
+                    <div id="midpointResult" class="notice" style="margin-top:12px;">Select your operative to verify.</div>
+                    <button class="magipunk-btn primary" onclick="applyMidpointPenalty()" style="margin-top:15px; width:100%;">Acknowledge & Continue</button>`);
+                return;
             }
 
             advanceRound();
         }
 
+        function secretMidpointInspect(id) {
+            const isTraitor = (G.traitor === id);
+            $('midpointResult').innerHTML = isTraitor ? '<span style="color:var(--crimson-accent);font-weight:bold;">YOUR DIRECTIVE HAS FLIPPED — You are now the active Traitor! Sabotage quietly.</span>' : '<span style="color:#4ade80;font-weight:bold;">YOUR LOYALTY HOLDS — You remain staunchly with the Loyalists.</span>';
+        }
+
         function applyMidpointPenalty() {
             G.integrity = Math.max(0, G.integrity - 3);
-            log(`[Quori Awakening] Train Integrity drops by 3 (HP: ${G.integrity}/${G.maxIntegrity}).`, 'alert');
+            log(`[Sleeper Subversion] Train Integrity suffers -3 sabotage damage.`, 'alert');
             closeModal();
             checkGameOver();
             if(!G.gameOver) advanceRound();
@@ -590,7 +637,7 @@
             const mel = G.vips.find(v => v.id === 'melindre');
             if(!mel || mel.hp <= 0) { finish('TRAITOR VICTORY', 'VIP Assassination: Melindre HP reached 0.'); return; }
             if(G.distance >= 12) { finish('LOYALIST VICTORY', 'Flamekeep Cathedral reached with Melindre alive!'); return; }
-            if(G.round > 10) { finish(G.social && G.traitor ? 'TRAITOR VICTORY' : 'DEFEAT', 'Time Expired: Round 10 ended before reaching destination.'); return; }
+            if(G.round > 10) { finish('TRAITOR VICTORY', 'Time Expired: Round 10 ended before reaching destination.'); return; }
             if(G.heroes.every(h => h.hp <= 0)) { finish('DEFEAT', 'Every hero has fallen.'); return; }
         }
 
@@ -605,12 +652,11 @@
             $('integrity').textContent = `${G.integrity} / ${G.maxIntegrity}`;
             $('distance').textContent = `${G.distance} / 12`;
             $('round').textContent = `${G.round} / 10`;
-            $('phase').textContent = G.phase === 'heroes' ? 'Hero turn' : G.phase === 'crisis' ? 'Crisis Bidding' : G.phase === 'threats' ? 'Threats & Speed' : 'Game Over';
+            $('phase').textContent = G.phase === 'heroes' ? 'Hero turn' : G.phase === 'crisis' ? 'Crisis Bidding' : G.phase === 'threats' ? 'Threats & AI' : 'Game Over';
             
             const activeH = hero();
             $('active-summary').innerHTML = G.gameOver ? '<b>Game over.</b>' : `<span class="phase" style="color:var(--azure-glow)">${esc(activeH.name)}</span> — ${esc(activeH.role)}<br>AP: <b>${activeH.ap}/${activeH.maxAp}</b> · HP: <b>${activeH.hp}/${activeH.maxHp}</b> · Car: <b>${CAR_NAMES[activeH.car]}</b>`;
             
-            // Hardlocked Step Enforcements & Pulsing UI
             const isStep1 = (G.phase === 'heroes' && G.heroStep === 1);
             const isStep2 = (G.phase === 'heroes' && G.heroStep === 2);
 
@@ -621,7 +667,6 @@
             $('vipBtn').disabled = !isStep2 || activeH.ap < 1;
             $('endBtn').disabled = !isStep2 || G.gameOver;
 
-            // Add pulsing animation to exactly what the user needs to click
             if (isStep1) {
                 $('drawBtn').classList.add('pulse');
                 $('endBtn').classList.remove('pulse');
@@ -656,7 +701,7 @@
                         tokens.push(`<div class="token vip" style="background-image:url('${v.img}')" title="${v.name} (HP ${v.hp})"></div>`);
                     });
                     G.enemies.filter(e => e.hp > 0 && e.car === car && e.cell === cell).forEach(e => {
-                        tokens.push(`<div class="token minion" style="background-image:url('${e.img}')" title="${e.name}"></div>`);
+                        tokens.push(`<div class="token minion" style="background-image:url('${e.img}')" title="${e.name} (HP ${e.hp})"></div>`);
                     });
 
                     cols.push(`<div class="grid-cell ${isLegal ? 'legal-move' : ''}" onclick="moveTo(${car}, ${cell})">${tokens.join('')}</div>`);
@@ -683,10 +728,10 @@
         function renderCrisis() {
             if(!G) return;
             if(G.phase === 'crisis' && G.crisis) {
-                $('crisis').innerHTML = `<b>${esc(G.crisis.name)}</b> (DC ${G.crisis.dc})<p style="margin-bottom:6px;font-size:11px;">${esc(G.crisis.desc)}</p><p class="small" style="color:var(--gold-primary);">Committed Bid: <b>${G.heroes.reduce((n, h) => n + h.hand.filter(c => selectedCards.has(c.id)).reduce((a, c) => a + c.value, 0), 0)}</b> (+2 Chaos)</p>`;
-                $('crisis-controls').innerHTML = `<div class="actions" style="margin-top:8px;"><button class="magipunk-btn primary pulse" style="width:100%;padding:12px;font-size:14px;" onclick="resolveCrisis()">3. SUBMIT GROUP BID & RESOLVE</button></div>`;
+                $('crisis').innerHTML = `<b>${esc(G.crisis.name)}</b> (DC ${G.crisis.dc})<p style="margin-bottom:6px;font-size:11px;">${esc(G.crisis.desc)}</p><p class="small" style="color:var(--gold-primary);">Secret Bids Selected: <b>${selectedCards.size} cards</b></p>`;
+                $('crisis-controls').innerHTML = `<div class="actions" style="margin-top:8px;"><button class="magipunk-btn primary pulse" style="width:100%;padding:12px;font-size:14px;" onclick="resolveCrisis()">Submit Secret Bid & Resolve</button></div>`;
             } else {
-                $('crisis').textContent = G.phase === 'threats' ? 'Resolving threats & advancing...' : G.phase === 'game over' ? 'Game over.' : 'No crisis active. Crises appear after all heroes take a turn.';
+                $('crisis').textContent = G.phase === 'threats' ? 'Resolving threat AI & boss strikes...' : G.phase === 'game over' ? 'Game over.' : 'No crisis active. Crises appear after all heroes take a turn.';
                 $('crisis-controls').innerHTML = '';
             }
         }
@@ -694,27 +739,29 @@
         function renderHand() {
             if(!G) return;
             if(G.phase === 'crisis') {
-                $('hand').innerHTML = G.heroes.map(owner => `
-                    <div class="card">
-                        <strong>${esc(owner.name)}'s Hand</strong>
-                        <div style="width:100%;display:flex;flex-direction:column;gap:3px;">
-                            ${owner.hand.map(c => `
-                                <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,0.6);padding:4px 6px;border-radius:4px;width:100%; border:1px solid var(--border-metal);">
-                                    <span style="font-size:10px;">${esc(c.name)} <span class="pill">+${c.value}</span></span>
-                                    <label style="font-size:10px; cursor:pointer;"><input type="checkbox" ${selectedCards.has(c.id) ? 'checked' : ''} onchange="toggleCard('${c.id}')"> Commit</label>
+                const h = hero();
+                $('hand').innerHTML = `
+                    <div class="card" style="border-color:var(--azure-glow);">
+                        <strong>${esc(h.name)}'s Secret Hand</strong>
+                        <div class="small">Select cards secretly to commit. Your choices are hidden.</div>
+                        <div style="width:100%;display:flex;flex-direction:column;gap:4px;margin-top:6px;">
+                            ${h.hand.map(c => `
+                                <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,0.7);padding:6px;border-radius:4px;width:100%; border:1px solid var(--border-metal);">
+                                    <span style="font-size:11px;">${esc(c.name)} <span class="pill">+${c.value}</span></span>
+                                    <label style="font-size:11px; cursor:pointer;"><input type="checkbox" ${selectedCards.has(c.id) ? 'checked' : ''} onchange="toggleCard('${c.id}')"> Secret Bid</label>
                                 </div>
                             `).join('') || '<div class="small">No cards.</div>'}
                         </div>
-                    </div>
-                `).join('');
+                    </div>`;
             } else {
                 const h = hero();
                 $('hand').innerHTML = h.hand.map(c => `
-                    <div class="card">
+                    <div class="card" onclick="playSkillCard('${c.id}')" title="Click to play card for 1 AP">
                         <div style="display:flex;justify-content:space-between;align-items:center;">
-                            <span>${esc(c.name)}</span>
-                            <span class="pill">+${c.value}</span>
+                            <span>⚡ ${esc(c.name)}</span>
+                            <span class="pill">+${c.value} AP Skill</span>
                         </div>
+                        <div style="font-size:10px; color:var(--azure-glow);">Click to Play (Costs 1 AP)</div>
                     </div>
                 `).join('') || '<div class="small">Hand empty.</div>';
             }
