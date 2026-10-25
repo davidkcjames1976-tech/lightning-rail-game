@@ -3,76 +3,137 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Lightning Rail: Sharn to Thrane — Master Edition v8.1 Visual Asset Restoration</title>
+    <title>Lightning Rail: Sharn to Thrane — Master Edition v8.2 Visuals & Group Mechanics</title>
     <style>
-        :root{--bg-deep:#070a12;--panel-bg:rgba(15, 23, 42, 0.97);--gold-primary:#d4af37;--gold-light:#f3e5ab;--azure-glow:#00e5ff;--crimson-accent:#ff1744;--text-main:#f5f2e9;--text-muted:#e2e8f0;--border-metal:#455a64;}
-        *{box-sizing:border-box;margin:0;padding:0;}
-        body{background-color:var(--bg-deep);color:var(--text-main);font-family:'Cinzel','Trajan Pro',Georgia,serif;overflow:auto;width:100%;min-height:100vh;display:flex;flex-direction:column;background-image:url('sharn_skyline_background.png');background-size:cover;background-position:center;user-select:text;}
-        #weather-canvas{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;}
-        button{font:inherit;cursor:pointer;border:1.5px solid var(--border-metal);border-radius:6px;padding:9px 12px;color:var(--text-main);background:linear-gradient(to bottom,#1e293b,#0f172a);transition:all 0.2s;box-shadow:0 3px 10px rgba(0,0,0,0.7);}
-        button:hover:not(:disabled){border-color:var(--gold-primary);background:linear-gradient(to bottom,#334155,#1e293b);box-shadow:0 0 15px rgba(212,175,55,0.8);color:#fff;}
-        button:disabled{opacity:.4;cursor:not-allowed;}
-        .primary{background:linear-gradient(to bottom,#9a7b0c,#634b05);color:#fff;border-color:var(--gold-primary);}
-        .primary:hover{background:linear-gradient(to bottom,#b8920e,#7a5c06);}
-        .danger{background:linear-gradient(to bottom,#7f1d1d,#450a0a);border-color:var(--crimson-accent);color:#fff;}
-        .good{background:linear-gradient(to bottom,#065f46,#064e3b);border-color:#4ade80;color:#fff;}
-        
-        .shell{max-width:1400px;margin:auto;padding:18px;position:relative;z-index:5;display:flex;flex-direction:column;min-height:100vh;}
-        .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:3px solid var(--gold-primary);padding-bottom:14px;background:rgba(18,24,36,0.96);padding:15px 25px;border-radius:12px;box-shadow:0 4px 35px rgba(0,0,0,0.95);backdrop-filter:blur(10px);}
-        .eyebrow{color:var(--azure-glow);font-size:12px;letter-spacing:.18em;text-transform:uppercase;font-weight:bold;}
-        .top h1{font-size:clamp(22px,3vw,32px);margin:2px 0;color:var(--gold-primary);text-shadow:0 0 15px rgba(212,175,55,0.7);}
-        .subtitle{color:var(--text-muted);font-size:13px;}
-        
-        .layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(320px,1fr);gap:16px;margin-top:16px;}
-        .panel{background:var(--panel-bg);border:2px solid var(--border-metal);border-radius:13px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,0.8);backdrop-filter:blur(14px);min-width:0;}
-        .panel h2,.panel h3{margin:0 0 10px;color:var(--gold-primary);text-transform:uppercase;letter-spacing:1px;font-size:16px;border-bottom:2px solid rgba(212,175,55,0.4);padding-bottom:6px;}
-        
-        .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0;}
-        .stat{background:rgba(0,0,0,0.85);border:1.5px solid var(--border-metal);border-radius:8px;padding:12px;text-align:center;box-shadow:inset 0 0 10px rgba(0,0,0,0.9);}
-        .stat span{display:block;color:var(--text-muted);font-size:11px;text-transform:uppercase;font-weight:bold;}
-        .stat strong{font-size:22px;color:var(--azure-glow);font-family:monospace;text-shadow:0 0 10px rgba(0,229,255,0.6);}
-        
-        /* Restored Visual Tactical Train Board */
-        .train{width:1040px;height:590px;background-image:url('board_layout_tactical_grid.png');background-size:cover;background-position:center;border:4px solid var(--gold-primary);border-radius:16px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.95),inset 0 0 35px rgba(0,0,0,0.7);display:grid;grid-template-columns:repeat(5,1fr);padding:105px 50px 70px 50px;gap:18px;margin:auto;}
-        .car{display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(5,1fr);gap:3px;position:relative;height:100%;}
-        
-        .grid-cell{min-width:0;min-height:0;background:rgba(0,229,255,0.03);border:1px solid rgba(0,229,255,0.3);border-radius:3px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
-        .grid-cell.legal-move{background:rgba(74,222,128,0.25);border:2px solid rgba(74,222,128,0.95);cursor:pointer;}
+        :root {
+            --bg-deep: #070a12;
+            --panel-bg: rgba(15, 23, 42, 0.97);
+            --gold-primary: #d4af37;
+            --gold-light: #f3e5ab;
+            --azure-glow: #00e5ff;
+            --crimson-accent: #ff1744;
+            --text-main: #f5f2e9;
+            --text-muted: #e2e8f0;
+            --border-metal: #455a64;
+        }
 
-        /* Restored Custom Avatar Tokens */
-        .token{width:75%;height:75%;max-width:24px;max-height:24px;margin:auto;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:bold;box-shadow:0 4px 10px rgba(0,0,0,0.95);position:relative;z-index:25;background-size:cover;background-position:center;border:2px solid var(--gold-primary);}
-        .token.hero{border-color:var(--azure-glow);}
-        .token.minion{border-color:var(--crimson-accent);}
-        .token.vip{border-color:#f59e0b;}
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .hero-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
-        .hero-card{padding:12px;border-radius:8px;background:rgba(18,24,36,0.95);border:1.5px solid var(--border-metal);}
-        .hero-card.current{border-color:var(--gold-primary);box-shadow:0 0 15px rgba(212,175,55,0.6);}
-        .hero-card strong{color:var(--cyan);font-size:14px;}
-        .hero-card p{margin:4px 0;color:var(--text-muted);font-size:12px;}
-        .bar{height:6px;background:#26394a;border-radius:5px;overflow:hidden;margin:6px 0;}
-        .bar i{display:block;height:100%;background:#4ade80;}
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: 'Cinzel', 'Trajan Pro', Georgia, serif;
+            overflow: auto;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: url('sharn_skyline_background.png');
+            background-size: cover;
+            background-position: center;
+            user-select: text;
+        }
+
+        #weather-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        button.magipunk-btn {
+            font: inherit;
+            cursor: pointer;
+            border: 1.5px solid var(--border-metal);
+            border-radius: 6px;
+            padding: 9px 12px;
+            color: var(--text-main);
+            background: linear-gradient(to bottom, #1e293b, #0f172a);
+            transition: all 0.2s;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.7);
+            font-size: 13px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        button.magipunk-btn:hover:not(:disabled) {
+            border-color: var(--gold-primary);
+            background: linear-gradient(to bottom, #334155, #1e293b);
+            box-shadow: 0 0 15px rgba(212,175,55,0.8);
+            color: #fff;
+        }
+
+        button.magipunk-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            border-color: var(--border-metal);
+        }
+
+        .magipunk-btn.primary { background: linear-gradient(to bottom, #9a7b0c, #634b05); color: #fff; border-color: var(--gold-primary); }
+        .magipunk-btn.primary:hover { background: linear-gradient(to bottom, #b8920e, #7a5c06); }
+        .magipunk-btn.danger { background: linear-gradient(to bottom, #7f1d1d, #450a0a); border-color: var(--crimson-accent); color: #fff; }
+        .magipunk-btn.good { background: linear-gradient(to bottom, #065f46, #064e3b); border-color: #4ade80; color: #fff; }
         
-        .actions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;}
-        .section{padding:12px 0;border-top:1px solid rgba(255,255,255,0.1);margin-top:12px;}
-        .small{font-size:12px;color:var(--text-muted);line-height:1.4;}
-        .hand{display:flex;flex-direction:column;gap:8px;}
-        .card{border:1.5px solid var(--gold-primary);background:#1e293b;padding:10px 12px;border-radius:8px;background-image:url('card_template_hero_brass.png');background-size:cover;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.95);display:flex;justify-content:space-between;align-items:center;}
+        .shell { max-width: 1400px; margin: auto; padding: 18px; position: relative; z-index: 5; display: flex; flex-direction: column; min-height: 100vh; }
+        .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; border-bottom: 3px solid var(--gold-primary); padding-bottom: 14px; background: rgba(18, 24, 36, 0.96); padding: 15px 25px; border-radius: 12px; box-shadow: 0 4px 35px rgba(0,0,0,0.95); backdrop-filter: blur(10px); }
+        .eyebrow { color: var(--azure-glow); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; font-weight: bold; }
+        .top h1 { font-size: clamp(22px, 3vw, 32px); margin: 2px 0; color: var(--gold-primary); text-shadow: 0 0 15px rgba(212,175,55,0.7); }
+        .subtitle { color: var(--text-muted); font-size: 13px; }
         
-        .log{max-height:220px;overflow:auto;display:flex;flex-direction:column;gap:6px;font-family:monospace;font-size:12px;}
-        .log p{margin:0;padding:7px 9px;background:rgba(0,0,0,0.85);border-left:3px solid var(--border-metal);border-radius:4px;}
-        .log p.alert{border-color:var(--crimson-accent);color:#f87171;}
-        .log p.success{border-color:#4ade80;color:#4ade80;}
+        .layout { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(320px, 1fr); gap: 16px; margin-top: 16px; }
+        .panel { background: var(--panel-bg); border: 2px solid var(--border-metal); border-radius: 13px; padding: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); backdrop-filter: blur(14px); min-width: 0; }
+        .panel h2, .panel h3 { margin: 0 0 10px; color: var(--gold-primary); text-transform: uppercase; letter-spacing: 1px; font-size: 16px; border-bottom: 2px solid rgba(212,175,55,0.4); padding-bottom: 6px; }
         
-        .notice{padding:12px;border:1.5px solid var(--border-metal);border-radius:8px;background:rgba(0,0,0,0.75);margin:8px 0;font-size:13px;line-height:1.5;}
-        .phase{color:var(--azure-glow);font-weight:bold;}
+        .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 12px 0; }
+        .stat { background: rgba(0,0,0,0.85); border: 1.5px solid var(--border-metal); border-radius: 8px; padding: 12px; text-align: center; box-shadow: inset 0 0 10px rgba(0,0,0,0.9); }
+        .stat span { display: block; color: var(--text-muted); font-size: 11px; text-transform: uppercase; font-weight: bold; }
+        .stat strong { font-size: 22px; color: var(--azure-glow); font-family: monospace; text-shadow: 0 0 10px rgba(0,229,255,0.6); }
         
-        .overlay{position:fixed;inset:0;background:rgba(7,10,18,0.96);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:center;padding:16px;z-index:200;}
-        .modal{max-width:620px;width:100%;max-height:90vh;overflow:auto;background:linear-gradient(135deg,#1e293b,#0f172a);border:4px solid var(--gold-primary);border-radius:16px;padding:26px;box-shadow:0 0 90px rgba(212,175,55,0.85);background-image:url('card_template_crisis_fantasy.png');background-size:cover;}
-        .modal h2{color:var(--gold-primary);margin-top:0;font-size:22px;}
-        .pill{display:inline-block;padding:2px 8px;border-radius:20px;background:rgba(0,229,255,0.18);color:var(--azure-glow);font-size:11px;font-weight:bold;border:1px solid var(--azure-glow);}
-        .footer{color:var(--text-muted);font-size:11px;margin:20px 0;text-align:center;}
-        @media(max-width:1200px){.layout{grid-template-columns:1fr;}.train{width:100%;height:auto;aspect-ratio:1040/590;}}
+        /* Tactical Train Board using precision image alignment */
+        .train { width: 1040px; height: 590px; background-image: url('board_layout_tactical_grid.png'); background-size: cover; background-position: center; border: 4px solid var(--gold-primary); border-radius: 16px; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.95), inset 0 0 35px rgba(0,0,0,0.7); display: grid; grid-template-columns: repeat(5, 1fr); padding: 105px 50px 70px 50px; gap: 18px; margin: auto; }
+        .car { display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(5, 1fr); gap: 3px; position: relative; height: 100%; }
+        
+        .grid-cell { min-width: 0; min-height: 0; background: rgba(0, 229, 255, 0.03); border: 1px solid rgba(0, 229, 255, 0.3); border-radius: 3px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        .grid-cell.legal-move { background: rgba(74, 222, 128, 0.25); border: 2px solid rgba(74, 222, 128, 0.95); cursor: pointer; box-shadow: inset 0 0 10px rgba(74,222,128,0.4); }
+
+        /* Custom Tokens restoring the original image links */
+        .token { width: 75%; height: 75%; max-width: 24px; max-height: 24px; margin: auto; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 6px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.95); position: relative; z-index: 25; background-size: cover; background-position: center; border: 2px solid var(--gold-primary); }
+        .token.hero { border-color: var(--azure-glow); }
+        .token.active { outline: 2px solid var(--gold-primary); transform: scale(1.1); box-shadow: 0 0 15px rgba(212,175,55,0.8); }
+        .token.minion { border-color: var(--crimson-accent); }
+        .token.vip { border-color: #f59e0b; }
+
+        .hero-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+        .hero-card { padding: 12px; border-radius: 8px; background: rgba(18, 24, 36, 0.95); border: 1.5px solid var(--border-metal); }
+        .hero-card.current { border-color: var(--gold-primary); box-shadow: 0 0 15px rgba(212,175,55,0.6); }
+        .hero-card strong { color: var(--azure-glow); font-size: 14px; }
+        .hero-card p { margin: 4px 0; color: var(--text-muted); font-size: 12px; }
+        .bar { height: 6px; background: #26394a; border-radius: 5px; overflow: hidden; margin: 6px 0; }
+        .bar i { display: block; height: 100%; background: #4ade80; }
+        
+        .actions { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+        .small { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+        .hand { display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; padding-right: 5px; }
+        .card { border: 1.5px solid var(--gold-primary); background: #1e293b; padding: 10px 12px; border-radius: 8px; background-image: url('card_template_hero_brass.png'); background-size: cover; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,0.95); display: flex; flex-direction: column; gap: 6px; }
+        
+        .log { max-height: 220px; overflow: auto; display: flex; flex-direction: column; gap: 6px; font-family: monospace; font-size: 12px; }
+        .log p { margin: 0; padding: 7px 9px; background: rgba(0,0,0,0.85); border-left: 3px solid var(--border-metal); border-radius: 4px; }
+        .log p.alert { border-color: var(--crimson-accent); color: #f87171; }
+        .log p.success { border-color: #4ade80; color: #4ade80; }
+        
+        .notice { padding: 12px; border: 1.5px solid var(--border-metal); border-radius: 8px; background: rgba(0,0,0,0.75); margin: 8px 0; font-size: 13px; line-height: 1.5; }
+        .phase { color: var(--azure-glow); font-weight: bold; }
+        
+        .overlay { position: fixed; inset: 0; background: rgba(7, 10, 18, 0.96); backdrop-filter: blur(14px); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 200; }
+        .modal { max-width: 620px; width: 100%; max-height: 90vh; overflow: auto; background: linear-gradient(135deg, #1e293b, #0f172a); border: 4px solid var(--gold-primary); border-radius: 16px; padding: 26px; box-shadow: 0 0 90px rgba(212,175,55,0.85); background-image: url('card_template_crisis_fantasy.png'); background-size: cover; text-align: center; }
+        .modal h2 { color: var(--gold-primary); margin-top: 0; font-size: 22px; margin-bottom: 12px; }
+        .pill { display: inline-block; padding: 2px 8px; border-radius: 20px; background: rgba(0, 229, 255, 0.18); color: var(--azure-glow); font-size: 11px; font-weight: bold; border: 1px solid var(--azure-glow); }
+        .footer { color: var(--text-muted); font-size: 11px; margin: 20px 0; text-align: center; }
+
+        @media(max-width: 1200px) { .layout { grid-template-columns: 1fr; } .train { width: 100%; height: auto; aspect-ratio: 1040/590; padding: 10% 4.8% 6.7% 4.8%; gap: 1.7%; } .token { font-size: 0; } }
     </style>
 </head>
 <body>
@@ -82,11 +143,11 @@
             <div>
                 <div class="eyebrow">Eberron · Magipunk Social Deduction</div>
                 <h1>⚡ Lightning Rail: Sharn to Thrane</h1>
-                <div class="subtitle">Master Edition v8.1 — Visual Asset Restoration & Collaborative Play</div>
+                <div class="subtitle">Master Edition v8.2 — Visual Restoration & Table Bidding</div>
             </div>
             <div class="actions">
-                <button onclick="showHelp()">How to Play</button>
-                <button onclick="newGame()" class="primary">New Game</button>
+                <button class="magipunk-btn" onclick="showHelp()">How to Play</button>
+                <button class="magipunk-btn primary" onclick="newGame()">New Game</button>
             </div>
         </header>
 
@@ -101,7 +162,7 @@
             <main>
                 <section class="panel">
                     <h2>Train Carriages (Cars 1–5)</h2>
-                    <div class="small">Click 'Move', then select a tactical grid cell to navigate carriages.</div>
+                    <div class="small">Click 'Move', then select a highlighted cell on the tactical grid.</div>
                     <div class="train" id="train"></div>
                 </section>
                 <section class="panel" style="margin-top:14px">
@@ -112,25 +173,25 @@
                     <h2>Active Turn Controls</h2>
                     <div id="active-summary" class="notice"></div>
                     <div class="actions">
-                        <button id="moveBtn" onclick="setMode('move')">Move (1 AP)</button>
-                        <button id="attackBtn" onclick="attackEnemy()">Attack (1 AP)</button>
-                        <button id="repairBtn" onclick="repairEngine()">Repair Engine (1 AP)</button>
-                        <button id="vipBtn" onclick="vipAction()">VIP Command (1 AP)</button>
-                        <button id="accuseBtn" onclick="startAccusation()">Accuse in Car 4 (2 AP)</button>
-                        <button id="endBtn" class="primary" onclick="endHeroTurn()">Pass Turn (Step 5)</button>
+                        <button class="magipunk-btn" id="moveBtn" onclick="setMode('move')">Move (1 AP)</button>
+                        <button class="magipunk-btn" id="attackBtn" onclick="attackEnemy()">Attack (1 AP)</button>
+                        <button class="magipunk-btn" id="repairBtn" onclick="repairEngine()">Repair Engine (1 AP)</button>
+                        <button class="magipunk-btn" id="vipBtn" onclick="vipAction()">VIP Command (1 AP)</button>
+                        <button class="magipunk-btn" id="accuseBtn" onclick="startAccusation()">Accuse in Car 4 (2 AP)</button>
+                        <button class="magipunk-btn primary" id="endBtn" onclick="endHeroTurn()">End Hero Turn</button>
                     </div>
-                    <div id="action-hint" class="small">Choose an action above to spend your 2 AP budget.</div>
+                    <div id="action-hint" class="small">Choose an action above to spend your AP budget.</div>
                 </section>
             </main>
             
             <aside>
                 <section class="panel">
-                    <h2>Step 3: Collaborative Crisis Bidding</h2>
-                    <div id="crisis" class="notice">No crisis active. Crises are resolved cooperatively after all heroes take their turns.</div>
+                    <h2>Step 3: Collaborative Crisis</h2>
+                    <div id="crisis" class="notice">No crisis active. Crises appear after all heroes take a turn.</div>
                     <div id="crisis-controls"></div>
                     <div class="section">
-                        <h3>Shared Table Skill Hand</h3>
-                        <div class="small">All players can inspect hands and collaboratively commit cards to overcome the Crisis DC.</div>
+                        <h3>Shared Table Skill Hands</h3>
+                        <div class="small" style="margin-bottom:8px;">All players' hands are visible during crises for collaborative group bidding.</div>
                         <div id="hand" class="hand"></div>
                     </div>
                 </section>
@@ -140,13 +201,12 @@
                 </section>
                 <section class="panel" style="margin-top:14px">
                     <h2>Victory Precedence</h2>
-                    <p class="small"><b>Loyalists Win:</b> Reach Distance 12 (Flamekeep Cathedral) before Round 10 ends with Melindre alive.</p>
-                    <p class="small"><b>Traitors Win:</b> Derailment (Integrity 0), VIP Melindre assassination, or stalling past Round 10.</p>
+                    <p class="small"><b>Loyalists Win:</b> Reach Distance 12 (Flamekeep) before Round 10 ends with Melindre alive.</p>
+                    <p class="small"><b>Traitors Win:</b> Derailment (0 Integrity), VIP Melindre assassination, or stalling past Round 10.</p>
                 </section>
             </aside>
         </div>
-        
-        <div class="footer">Lightning Rail Master Edition v8.1 · Visual Assets Restored.</div>
+        <div class="footer">Lightning Rail Master Edition v8.2 · Visuals & Hot-Seat Roles Restored.</div>
     </div>
 
     <div id="overlay" class="overlay hidden">
@@ -161,6 +221,8 @@
             {name: 'Core Instability', dc: 13, damage: 2, desc: 'Bound elemental bucking against containment lattice in Car 1.'},
             {name: 'Mournland Spectral Surge', dc: 14, damage: 3, desc: 'A wave of grey mist and hostile energy strikes the express.'}
         ];
+        
+        // Restored image links to the proper avatar tokens
         const HERO_BASE = [
             {id:'jan', name:'Jan Valek', role:'Vampire Detective', hp:12, maxHp:12, def:15, skill:3, car:0, cell:2, ap:2, maxAp:2, stress:0, img:'token_hero_jan_valek.png'},
             {id:'caden', name:'Caden', role:'Arcane Sniper', hp:10, maxHp:10, def:14, skill:3, car:1, cell:4, ap:2, maxAp:2, stress:0, img:'token_hero_caden.png'},
@@ -179,16 +241,7 @@
 
         class WeatherEngine {
             constructor(canvasId) {
-                this.canvas = document.createElement('canvas');
-                this.canvas.id = canvasId;
-                this.canvas.style.position = 'absolute';
-                this.canvas.style.top = '0';
-                this.canvas.style.left = '0';
-                this.canvas.style.width = '100%';
-                this.canvas.style.height = '100%';
-                this.canvas.style.pointerEvents = 'none';
-                this.canvas.style.zIndex = '1';
-                document.body.prepend(this.canvas);
+                this.canvas = document.getElementById(canvasId);
                 this.ctx = this.canvas.getContext('2d');
                 this.resize();
                 window.addEventListener('resize', () => this.resize());
@@ -217,22 +270,33 @@
             }
         }
 
+        function startMenu() {
+            openModal(`<h2>Welcome aboard the Lightning Rail</h2><p style="margin-bottom:15px; color:var(--text-muted)">Choose your operational mode:</p><div class="actions" style="display:flex; gap:10px; justify-content:center;"><button class="magipunk-btn primary" onclick="newGame(true)">Full Game (5-Hero Social Deduction)</button><button class="magipunk-btn" onclick="newGame(false)">Practice (2-Hero Co-op)</button></div><p class="small" style="margin-top:15px;">Designed for local hot-seat play.</p>`);
+        }
+
         function newGame(socialChoice) {
-            const social = typeof socialChoice === 'boolean' ? socialChoice : confirm('Start full 5-player Social Deduction mode with Hidden Traitor?\nChoose Cancel for 1-2 player practice mode.');
-            const heroes = HERO_BASE.slice(0, social ? 5 : 2).map(h => ({...h, hand: drawCards(4), confined: false, usedAbility: false}));
+            const social = typeof socialChoice === 'boolean' ? socialChoice : confirm('Start Full Social Deduction mode with Hidden Traitor?');
+            const heroes = HERO_BASE.slice(0, social ? 5 : 2).map(h => ({...h, hand: drawCards(3), confined: false, usedAbility: false}));
             const traitor = social ? pick(heroes).id : null;
             
             G = {
                 social, heroes, traitor, active: 0, round: 1, integrity: 14, maxIntegrity: 14, distance: 3,
                 phase: 'heroes', turns: 0, crisis: null, crisisResolved: false, gameOver: false,
-                enemies: [{id:'daask', name:'Daask Enforcer', hp:4, maxHp:4, car:4, cell:8, img:'token_minion_generic.png'}, {id:'spawn', name:'Vampire Spawn', hp:5, maxHp:5, car:3, cell:2, img:'token_minion_generic.png'}],
-                vips: [{id:'melindre', name:'Melindre', hp:8, maxHp:8, car:1, cell:2, img:'token_vip_melindre.png'}, {id:'shetari', name:'Shetari', hp:8, maxHp:8, car:1, cell:7, img:'token_vip_melindre.png'}],
+                accused: new Set(),
+                enemies: [
+                    {id:'daask', name:'Daask Enforcer', hp:4, maxHp:4, car:4, cell:8, img:'token_minion_generic.png'}, 
+                    {id:'spawn', name:'Vampire Spawn', hp:5, maxHp:5, car:3, cell:2, img:'token_minion_generic.png'}
+                ],
+                vips: [
+                    {id:'melindre', name:'Melindre', hp:8, maxHp:8, car:1, cell:2, img:'token_vip_melindre.png'}, 
+                    {id:'shetari', name:'Shetari', hp:8, maxHp:8, car:1, cell:7, img:'token_vip_melindre.png'}
+                ],
                 log: []
             };
             actionMode = '';
             selectedCards.clear();
             closeModal();
-            log(`Game started. ${social ? 'Five operatives assigned with secret roles.' : 'Practice mode active (no traitor).'}`);
+            log(`Game initialized. ${social ? 'Five operatives assigned with secret roles.' : 'Practice mode active.'}`, 'success');
             if(social) showRoles();
             render();
         }
@@ -240,8 +304,8 @@
         function drawCards(n) {
             return Array.from({length: n}, () => ({
                 id: Math.random().toString(36).slice(2),
-                value: pick([2, 3, 3, 4]),
-                name: pick(['Combat Strike', 'Tinkering Spanner', 'Arcane Aegis', 'Mobility Leap', 'Focus Skill'])
+                value: pick([2, 2, 3, 3, 4]),
+                name: pick(['Combat Strike', 'Tinkering Spanner', 'Arcane Aegis', 'Mobility Leap', 'Elemental Theory'])
             }));
         }
 
@@ -252,25 +316,28 @@
             if($('log')) $('log').innerHTML = G.log.map(x => `<p class="${x.type}">${esc(x.s)}</p>`).join('');
         }
         function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-        
-        function startMenu() {
-            openModal(`<h2>Welcome aboard the Lightning Rail</h2><p>Choose your operational mode:</p><div class="actions"><button class="primary" onclick="newGame(true)">Full 5-Hero Social Deduction (with Traitor)</button><button onclick="newGame(false)">1-2 Player Practice Mode</button></div><p class="small">Designed for local hot-seat play.</p>`);
-        }
-        
-        function showRoles() {
-            openModal(`<h2>Secret Role Assignment</h2><p>Pass the device privately to each player so they can inspect their allegiance.</p><div id="roleReveal" class="notice">Select your operative below to reveal your secret card.</div><div class="actions">${G.heroes.map(h => `<button onclick="revealRole('${h.id}')">${h.name}</button>`).join('')}</div><div class="actions"><button class="primary" onclick="closeModal()">Begin Briefing</button></div>`);
-        }
-        
-        function revealRole(id) {
-            const h = G.heroes.find(x => x.id === id);
-            $('roleReveal').innerHTML = `<b>${esc(h.name)}:</b> ${G.traitor === id ? '<span style="color:var(--crimson-accent)">DARK PERSONA (TRAITOR)</span> — secretly sabotage crises and derail the train.' : '<span style="color:#4ade80">LOYAL ESCORT</span> — protect Melindre and reach Flamekeep Cathedral.'}<p class="small">Memorize your assignment, then hide it.</p>`;
-        }
 
         function openModal(html) { $('modal').innerHTML = html; $('overlay').classList.remove('hidden'); }
         function closeModal() { $('overlay').classList.add('hidden'); }
 
+        function showRoles() {
+            openModal(`<h2>Secret Role Assignment</h2><p style="margin-bottom:15px; color:var(--text-muted)">Pass the device privately to each player so they can inspect their allegiance.</p><div id="roleReveal" class="notice">Select your operative below to reveal your secret card.</div><div class="actions" style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:15px;">${G.heroes.map(h => `<button class="magipunk-btn" onclick="revealRole('${h.id}')">Inspect ${h.name}</button>`).join('')}</div><div class="actions"><button class="magipunk-btn primary" onclick="closeModal()">Begin Briefing</button></div>`);
+        }
+        
+        function revealRole(id) {
+            const h = G.heroes.find(x => x.id === id);
+            $('roleReveal').innerHTML = `<b>${esc(h.name)}:</b> ${G.traitor === id ? '<span style="color:var(--crimson-accent);font-weight:bold;">DARK PERSONA (TRAITOR)</span> — secretly sabotage crises and derail the train.' : '<span style="color:#4ade80;font-weight:bold;">LOYAL ESCORT</span> — protect Melindre and reach Flamekeep.'}<p class="small" style="margin-top:6px;">Memorize your assignment, then hide it before passing.</p>`;
+        }
+
         function showHelp() {
-            openModal(`<h2>Master Rulebook v8.1 Summary</h2><p><b>Goal:</b> Loyalists reach Distance 12 with Melindre alive. Traitors win via Derailment (0 HP), Melindre assassination, or stalling past Round 10.</p><p><b>Turn Structure:</b> 1. Draw Skills, 2. Hero Actions (2 AP), 3. Collaborative Crisis Bidding, 4. Threat Activation & Distance +1, 5. Cleanup.</p><div class="actions"><button class="primary" onclick="closeModal()">Resume Game</button></div>`);
+            openModal(`<h2>Master Rulebook v8.2</h2><p style="text-align:left; line-height:1.6; font-size:13px; color:var(--text-muted);"><b>Goal:</b> Loyalists reach Distance 12 with Melindre alive. Traitors win via Derailment (0 HP), Melindre death, or stalling past Round 10.<br><br><b>Turn Structure:</b><br>1. Spend 2 AP (Move, Attack, Repair, VIP Command).<br>2. Click End Hero Turn.<br>3. After all heroes act, a Crisis is drawn. Group inspects hands and commits cards.<br>4. Threats activate and Distance increases.<br>5. Next round begins.</p><div class="actions" style="margin-top:15px;"><button class="magipunk-btn primary" onclick="closeModal()">Resume Game</button></div>`);
+        }
+
+        function spend(n=1) {
+            const h = hero();
+            if(G.gameOver || G.phase !== 'heroes' || h.ap < n || h.confined) return false;
+            h.ap -= n;
+            return true;
         }
 
         function setMode(mode) {
@@ -282,7 +349,7 @@
 
         function canMoveTo(h, targetCar, targetCell) {
             const car = Number(targetCar), cell = Number(targetCell);
-            if (!Number.isInteger(car) || car < 0 || car > 4 || !Number.isInteger(cell) || cell < 0 || cell > 7) return false;
+            if (!Number.isInteger(car) || car < 0 || car > 4 || !Number.isInteger(cell) || cell < 0 || cell > 9) return false;
             const carDiff = Math.abs(h.car - car);
             const cellDiff = Math.abs(h.cell - cell);
             if (carDiff === 0) return cellDiff > 0 && cellDiff <= 3;
@@ -294,7 +361,8 @@
             const h = hero();
             if(h.confined || h.ap < 1) return;
             if(!canMoveTo(h, car, cell)) { $('action-hint').textContent = 'Target cell is out of movement range.'; return; }
-            h.car = car; h.cell = cell; h.ap--; actionMode = '';
+            if(!spend(1)) return;
+            h.car = car; h.cell = cell; actionMode = '';
             log(`${h.name} moved to Car ${car+1} (${CAR_NAMES[car]}), cell ${cell+1}.`);
             afterAction();
         }
@@ -304,8 +372,9 @@
             if(G.gameOver || G.phase !== 'heroes' || h.ap < 1 || h.confined) { $('action-hint').textContent = 'Cannot attack.'; return; }
             const targets = G.enemies.filter(e => e.hp > 0 && e.car === h.car && Math.abs(e.cell - h.cell) <= 3);
             if(!targets.length) { $('action-hint').textContent = 'No enemy in carriage within 3 cells.'; return; }
-            const target = targets[0];
-            h.ap--; target.hp = Math.max(0, target.hp - 2);
+            const target = targets.sort((a,b) => Math.abs(a.cell - h.cell) - Math.abs(b.cell - h.cell))[0];
+            spend(1);
+            target.hp = Math.max(0, target.hp - 2);
             log(`${h.name} attacks ${target.name} for 2 damage${target.hp === 0 ? ' (Eliminated)' : ''}.`, target.hp === 0 ? 'success' : '');
             afterAction();
         }
@@ -315,7 +384,8 @@
             if(G.gameOver || G.phase !== 'heroes' || h.ap < 1 || h.confined) return;
             if(h.car !== 0) { $('action-hint').textContent = 'Repair requires Hero to be in Car 1 (Engine Room).'; return; }
             if(G.integrity >= G.maxIntegrity) { $('action-hint').textContent = 'Train integrity is already full.'; return; }
-            h.ap--; G.integrity = Math.min(G.maxIntegrity, G.integrity + 2);
+            spend(1);
+            G.integrity = Math.min(G.maxIntegrity, G.integrity + 2);
             log(`${h.name} repairs the engine: +2 Train Integrity (${G.integrity}/${G.maxIntegrity}).`, 'success');
             afterAction();
         }
@@ -323,16 +393,24 @@
         function vipAction() {
             const h = hero();
             if(G.gameOver || G.phase !== 'heroes' || h.ap < 1 || h.confined) return;
-            const vip = G.vips.find(v => v.hp > 0 && v.car === h.car);
-            if(!vip) { $('action-hint').textContent = 'Hero must share a carriage with Melindre or Shetari.'; return; }
+            const vip = G.vips.find(v => v.hp > 0 && v.car === h.car && Math.abs(v.cell - h.cell) <= 2);
+            if(!vip) { $('action-hint').textContent = 'Move within 2 cells of Melindre or Shetari to help.'; return; }
             if(h.usedAbility) { $('action-hint').textContent = 'VIP command already used this round.'; return; }
-            h.ap--; h.usedAbility = true;
+            spend(1);
+            h.usedAbility = true;
             if(vip.id === 'melindre') {
-                h.hp = Math.min(h.maxHp, h.hp + 1);
-                log(`${h.name} commanded Melindre (Silver Flame Blessing): Restored 1 HP.`, 'success');
+                h.hp = Math.min(h.maxHp, h.hp + 2);
+                h.stress = Math.max(0, h.stress - 1);
+                log(`${h.name} steadied Melindre; recovered up to 2 HP.`, 'success');
             } else {
-                G.integrity = Math.min(G.maxIntegrity, G.integrity + 1);
-                log(`${h.name} coordinated with Shetari: +1 Train Integrity shield.`, 'success');
+                const e = G.enemies.find(e => e.hp > 0 && e.car === vip.car);
+                if(e) {
+                    e.hp = Math.max(0, e.hp - 2);
+                    log(`${h.name} coordinated with Shetari: 2 damage to ${e.name}.`, 'success');
+                } else {
+                    G.integrity = Math.min(G.maxIntegrity, G.integrity + 1);
+                    log(`${h.name} coordinated with Shetari: +1 Train Integrity shield.`, 'success');
+                }
             }
             afterAction();
         }
@@ -340,23 +418,58 @@
         function startAccusation() {
             const h = hero();
             if(G.gameOver || G.phase !== 'heroes' || h.ap < 2 || h.confined) return;
-            if(h.car !== 3) { $('action-hint').textContent = 'Accusations can only be called from Car 4 (Dining Car).'; return; }
-            const suspects = G.heroes.filter(x => x.id !== h.id && !x.confined);
-            openModal(`<h2>Emergency Accusation (Car 4)</h2><p>${esc(h.name)} spends 2 AP to call an emergency vote.</p><div class="actions">${suspects.map(s => `<button onclick="convictSuspect('${s.id}')">Accuse ${esc(s.name)} (${esc(s.role)})</button>`).join('')}</div><button onclick="closeModal()">Cancel</button>`);
+            if(h.car !== 3) { $('action-hint').textContent = 'Accusations must be made from Car 4 (Dining Car).'; return; }
+            const candidates = G.heroes.filter(x => x.id !== h.id && !x.confined && !G.accused.has(x.id));
+            if(!candidates.length) { $('action-hint').textContent = 'No eligible suspect remains.'; return; }
+            
+            openModal(`<h2>Emergency Accusation (Car 4)</h2><p style="font-size:13px; color:var(--text-muted); margin-bottom:15px;">${esc(h.name)} spends 2 AP to call a vote. A majority of living, unconfined heroes must support the accusation.</p><div class="actions" style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">${candidates.map(x=>`<button class="magipunk-btn primary" onclick="voteAccusation('${x.id}')">Accuse ${esc(x.name)}</button>`).join('')}</div><button class="magipunk-btn" onclick="closeModal()" style="margin-top:15px;">Cancel</button>`);
         }
 
-        function convictSuspect(id) {
+        function voteAccusation(id) {
+            const accuser = hero();
+            accuser.ap -= 2; // Dedicate the 2 AP
             closeModal();
-            const suspect = G.heroes.find(x => x.id === id);
-            suspect.confined = true; suspect.car = 2; suspect.cell = 5;
-            log(`[Accusation Vote] Majority convicts ${suspect.name}! Sent to Car 3 Confinement (Brig).`, 'alert');
-            afterAction();
+            const voters = G.heroes.filter(h => h.hp > 0 && !h.confined);
+            const votes = {};
+            let idx = 0;
+            
+            function nextVote() {
+                if(idx >= voters.length) {
+                    const yes = Object.values(votes).filter(v => v).length;
+                    const threshold = Math.floor(voters.length / 2) + 1;
+                    const suspect = G.heroes.find(h => h.id === id);
+                    if(yes >= threshold) {
+                        suspect.confined = true;
+                        suspect.car = 2; // Brig
+                        suspect.cell = 5;
+                        G.accused.add(id);
+                        log(`[Accusation Passed] ${suspect.name} confined after a ${yes}-${voters.length-yes} vote!`, 'alert');
+                    } else {
+                        accuser.ap = 0;
+                        log(`[Accusation Failed] Against ${suspect.name} (${yes}-${voters.length-yes}). ${accuser.name} loses remaining AP.`, 'alert');
+                    }
+                    afterAction();
+                    return;
+                }
+                const voter = voters[idx++];
+                openModal(`<h2>Private Vote</h2><p style="font-size:14px; margin-bottom:15px;">Pass the device to <b>${esc(voter.name)}</b>. Do you support accusing <b>${esc(G.heroes.find(h=>h.id===id).name)}</b>?</p><div class="actions" style="display:flex;gap:15px;justify-content:center;"><button class="magipunk-btn good" onclick="castVote('${voter.id}','${id}',true)">Support (Guilty)</button><button class="magipunk-btn danger" onclick="castVote('${voter.id}','${id}',false)">Reject (Innocent)</button></div>`);
+                
+                window._nextVote = nextVote;
+                window._votes = votes;
+            }
+            nextVote();
+        }
+
+        function castVote(voter, id, yes) {
+            window._votes[voter] = yes;
+            closeModal();
+            window._nextVote();
         }
 
         function endHeroTurn() {
             if(G.gameOver || G.phase !== 'heroes') return;
             actionMode = '';
-            log(`${hero().name} passes turn.`);
+            log(`${hero().name} finishes actions.`);
             G.turns++;
             if(G.turns >= G.heroes.length) {
                 startCrisisPhase();
@@ -372,7 +485,7 @@
             G.crisis = pick(CRISES);
             G.crisisResolved = false;
             selectedCards.clear();
-            log(`[Step 3: Crisis Event] ${G.crisis.name} drawn (Target DC ${G.crisis.dc}). Group bidding active.`, 'alert');
+            log(`[Step 3: Crisis Event] ${G.crisis.name} drawn (DC ${G.crisis.dc}). Table bidding active.`, 'alert');
             render();
         }
 
@@ -381,6 +494,7 @@
             if(selectedCards.has(id)) selectedCards.delete(id);
             else selectedCards.add(id);
             renderHand();
+            renderCrisis();
         }
 
         function resolveCrisis() {
@@ -393,11 +507,11 @@
                 });
             });
             const playerSum = committed.reduce((n, c) => n + c.value, 0);
-            const chaosCards = 2 + rand(6) + rand(6);
+            const chaosCards = 2 + rand(6) + rand(6); // Elemental chaos
             const totalPool = playerSum + chaosCards;
             G.crisisResolved = true;
             
-            log(`[Crisis Resolution] Player Bid (${playerSum}) + Chaos Cards (${chaosCards}) = Total Pool ${totalPool} vs DC ${G.crisis.dc}.`);
+            log(`[Crisis Resolution] Player Bid (${playerSum}) + Chaos Cards (${chaosCards}) = Pool ${totalPool} vs DC ${G.crisis.dc}.`);
             if(totalPool >= G.crisis.dc) {
                 log(`[Crisis Averted] The group successfully met the DC!`, 'success');
             } else {
@@ -406,31 +520,39 @@
             }
             G.phase = 'threats';
             render();
-            setTimeout(() => { if(!G.gameOver) resolveThreatPhase(); }, 1200);
+            setTimeout(() => { if(!G.gameOver) resolveThreatPhase(); }, 1500);
         }
 
         function resolveThreatPhase() {
             if(G.gameOver) return;
-            log(`[Step 4: Threat Activation & Speed] Advancing track and activating enemies.`, 'alert');
+            log(`[Step 4: Threat Activation] Advancing track and resolving enemies.`, 'alert');
             
             G.distance = Math.min(12, G.distance + 1);
             
-            G.enemies.filter(e => e.hp > 0).forEach(e => {
+            // Enemies activate
+            for(const e of G.enemies.filter(e => e.hp > 0)) {
+                const nearby = G.heroes.filter(h => h.hp > 0 && !h.confined && h.car === e.car && Math.abs(h.cell - e.cell) <= 2);
+                if(nearby.length) {
+                    const target = pick(nearby);
+                    target.hp = Math.max(0, target.hp - 2);
+                    log(`${e.name} attacks ${target.name} for 2 damage.`, 'alert');
+                    continue;
+                }
                 if(e.car > 1) e.car--;
                 else {
-                    const vip = G.vips.find(v => v.hp > 0);
-                    if(vip) {
-                        vip.hp = Math.max(0, vip.hp - 2);
-                        log(`[Threat] ${e.name} attacks VIP ${vip.name} for 2 damage (HP: ${vip.hp}/8).`, 'alert');
+                    const target = G.vips.find(v => v.hp > 0);
+                    if(target) {
+                        target.hp = Math.max(0, target.hp - 2);
+                        log(`${e.name} attacks VIP ${target.name} for 2 damage.`, 'alert');
                     }
                 }
-            });
+            }
 
             G.round++;
             G.heroes.forEach(h => {
                 h.ap = h.maxAp;
                 h.usedAbility = false;
-                if(h.hp > 0) h.hand.push(...drawCards(Math.max(0, 4 - h.hand.length)));
+                if(h.hp > 0) h.hand.push(...drawCards(Math.max(0, 3 - h.hand.length))); // Draw back up to 3
             });
             G.active = 0; G.turns = 0; G.phase = 'heroes'; G.crisis = null; selectedCards.clear();
             checkGameOver();
@@ -450,13 +572,14 @@
             const mel = G.vips.find(v => v.id === 'melindre');
             if(!mel || mel.hp <= 0) { finish('TRAITOR VICTORY', 'VIP Assassination: Melindre HP reached 0.'); return; }
             if(G.distance >= 12) { finish('LOYALIST VICTORY', 'Flamekeep Cathedral reached with Melindre alive!'); return; }
-            if(G.round > 10) { finish('TRAITOR VICTORY', 'Time Expired: Round 10 ended before reaching destination.'); return; }
+            if(G.round > 10) { finish(G.social && G.traitor ? 'TRAITOR VICTORY' : 'DEFEAT', 'Time Expired: Round 10 ended before reaching destination.'); return; }
+            if(G.heroes.every(h => h.hp <= 0)) { finish('DEFEAT', 'Every hero has fallen.'); return; }
         }
 
         function finish(title, msg) {
             G.gameOver = true; G.phase = 'game over';
             log(`${title}: ${msg}`, title.includes('LOYALIST') ? 'success' : 'alert');
-            setTimeout(() => openModal(`<h2>${title}</h2><p>${msg}</p><button class="primary" onclick="closeModal()">Close</button>`), 50);
+            setTimeout(() => openModal(`<h2>${title}</h2><p style="margin-bottom:15px;">${msg}</p><button class="magipunk-btn primary" onclick="closeModal()">Close</button>`), 50);
         }
 
         function render() {
@@ -480,14 +603,13 @@
             renderHeroes();
             renderCrisis();
             renderHand();
-            $('log').innerHTML = G.log.map(x => `<p class="${x.type}">${esc(x.s)}</p>`).join('');
         }
 
         function renderTrain() {
             if(!G) return;
             $('train').innerHTML = CAR_NAMES.map((name, car) => {
                 const cols = [];
-                for(let cell=0; cell<10; cell++) {
+                for(let cell=0; cell<10; cell++) { // 10 physical cells to match the image grid
                     const isLegal = actionMode === 'move' && canMoveTo(hero(), car, cell);
                     const tokens = [];
                     
@@ -521,35 +643,50 @@
         function renderCrisis() {
             if(!G) return;
             if(G.phase === 'crisis' && G.crisis) {
-                $('crisis').innerHTML = `<b>${esc(G.crisis.name)}</b> (DC ${G.crisis.dc})<p>${esc(G.crisis.desc)}</p><p class="small">Committed Table Bid: <b>${G.heroes.reduce((n, h) => n + h.hand.filter(c => selectedCards.has(c.id)).reduce((a, c) => a + c.value, 0), 0)}</b> (+2 Chaos Cards)</p>`;
-                $('crisis-controls').innerHTML = `<div class="actions"><button class="primary" onclick="resolveCrisis()">Submit Collaborative Bid & Resolve</button></div>`;
+                $('crisis').innerHTML = `<b>${esc(G.crisis.name)}</b> (DC ${G.crisis.dc})<p style="margin-bottom:8px;font-size:12px;">${esc(G.crisis.desc)}</p><p class="small" style="color:var(--gold-primary);">Committed Table Bid: <b>${G.heroes.reduce((n, h) => n + h.hand.filter(c => selectedCards.has(c.id)).reduce((a, c) => a + c.value, 0), 0)}</b> (+2 Chaos Cards)</p>`;
+                $('crisis-controls').innerHTML = `<div class="actions"><button class="magipunk-btn primary" onclick="resolveCrisis()">Commit Cards & Resolve</button></div>`;
             } else {
-                $('crisis').textContent = G.phase === 'threats' ? 'Resolving threat phase & advancing distance...' : G.phase === 'game over' ? 'Game over.' : 'No crisis active. Crises appear after all heroes take their turns.';
+                $('crisis').textContent = G.phase === 'threats' ? 'Resolving threats & advancing...' : G.phase === 'game over' ? 'Game over.' : 'No crisis active. Crises appear after all heroes take their turns.';
                 $('crisis-controls').innerHTML = '';
             }
         }
 
         function renderHand() {
             if(!G) return;
-            $('hand').innerHTML = G.heroes.map(owner => `
-                <div class="card" style="display:flex;flex-direction:column;align-items:flex-start;gap:6px;">
-                    <strong>${esc(owner.name)}'s Hand (${owner.hand.length} cards)</strong>
-                    <div class="small">${G.phase === 'crisis' ? 'Check boxes to commit cards to the shared pool:' : 'Private skill cards.'}</div>
-                    <div style="width:100%;display:flex;flex-direction:column;gap:4px;">
-                        ${owner.hand.map(c => `
-                            <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,0.5);padding:6px;border-radius:4px;width:100%;">
-                                <span>${esc(c.name)} <span class="pill">+${c.value}</span></span>
-                                ${G.phase === 'crisis' ? `<label><input type="checkbox" ${selectedCards.has(c.id) ? 'checked' : ''} onchange="toggleCard('${c.id}')"> Commit</label>` : ''}
-                            </div>
-                        `).join('') || '<div class="small">No cards in hand.</div>'}
+            if(G.phase === 'crisis') {
+                $('hand').innerHTML = G.heroes.map(owner => `
+                    <div class="card">
+                        <strong>${esc(owner.name)}'s Hand</strong>
+                        <div style="width:100%;display:flex;flex-direction:column;gap:4px;">
+                            ${owner.hand.map(c => `
+                                <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,0.6);padding:6px;border-radius:4px;width:100%; border:1px solid var(--border-metal);">
+                                    <span style="font-size:11px;">${esc(c.name)} <span class="pill">+${c.value}</span></span>
+                                    <label style="font-size:11px; cursor:pointer;"><input type="checkbox" ${selectedCards.has(c.id) ? 'checked' : ''} onchange="toggleCard('${c.id}')"> Commit</label>
+                                </div>
+                            `).join('') || '<div class="small">No cards.</div>'}
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
+            } else {
+                const h = hero();
+                $('hand').innerHTML = `
+                    <div class="card">
+                        <strong>${esc(h.name)}'s Hand</strong>
+                        <div class="small">Private skill cards (drawn back up to 3 at end of round).</div>
+                        <div style="width:100%;display:flex;flex-direction:column;gap:4px;margin-top:6px;">
+                            ${h.hand.map(c => `
+                                <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,0.6);padding:6px;border-radius:4px;width:100%; border:1px solid var(--border-metal);">
+                                    <span style="font-size:11px;">${esc(c.name)} <span class="pill">+${c.value}</span></span>
+                                </div>
+                            `).join('') || '<div class="small">No cards.</div>'}
+                        </div>
+                    </div>
+                `;
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             const weather = new WeatherEngine('weather-canvas');
-            weather.update();
             startMenu();
         });
     </script>
