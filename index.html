@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightning Rail: Sharn to Thrane — Master Edition v6.8 Genuine Crisis Bidding</title>
+    <title>Lightning Rail: Sharn to Thrane — Master Edition v6.9 Stable Startup Fix</title>
     <style>
         :root {
             --bg-deep: #070a12;
@@ -643,10 +643,10 @@
     <div class="mode-select-overlay" id="mode-select-overlay">
         <div class="mode-select-card">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <p><strong id="startup-version-label">Master Edition v6.8 Genuine Crisis Bidding</strong><br>
-            • <strong>Strategic Card Bidding:</strong> Click <strong>"Commit"</strong> on specific cards in your hand during Step 3 Crisis Bidding to sacrifice them to the pool[cite: 3, 5].<br>
-            • <strong>Balanced Penalty Scaling:</strong> Crisis failure damage is carefully calibrated (2–3 HP) to prevent rapid 2-turn blowouts.<br>
-            • <strong>Full Turn Economy:</strong> Step 1 Draws, Step 2 Actions, Step 3 Bidding, Step 4 Threats, Step 5 Cleanup[cite: 4, 5].</p>
+            <p><strong id="startup-version-label">Master Edition v6.9 Stable Startup Fix</strong><br>
+            • <strong>Clean Startup Overlay:</strong> Fully resolved script parsing issues to ensure seamless game initialization.<br>
+            • <strong>Strategic Card Bidding:</strong> Click Commit on specific cards in your hand during Step 3 Crisis Bidding to sacrifice them to the pool.<br>
+            • <strong>Balanced 5-Step Flow:</strong> Draw skills, 2 AP actions, secret bidding, threat activations, and cleanup.</p>
             <div class="mode-buttons-container">
                 <button class="mode-btn" onclick="game.startGameMode(2, false)">1-2 Player (Shadow Agent Mode)</button>
                 <button class="mode-btn" onclick="game.startGameMode(4, true)">3-6 Player (Master Social Deduction)</button>
@@ -658,7 +658,7 @@
     <header>
         <div class="title-area">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <span id="header-version-label">Master Rulebook v6.8 | Genuine Crisis Bidding</span>
+            <span id="header-version-label">Master Rulebook v6.9 | Stable Startup Fix</span>
         </div>
         <div class="global-status">
             <div class="status-badge">
@@ -690,7 +690,7 @@
         <aside class="left-sidebar">
             <div class="section-header">
                 <span>Active Operatives</span>
-                <span class="help-link" onclick="game.showHowToPlay()">Rules v6.8</span>
+                <span class="help-link" onclick="game.showHowToPlay()">Rules v6.9</span>
             </div>
             <div class="hero-roster" id="hero-roster"></div>
 
@@ -709,7 +709,7 @@
         <!-- Central Master Board View with Strict Cell Clipping -->
         <div class="board-workspace">
             <div class="board-control-hint" style="width:min(1040px,100%);padding:8px 12px;margin-bottom:8px;border:1px solid rgba(74,222,128,.45);border-radius:8px;background:rgba(5,18,24,.88);color:#d9fbe7;font-size:12px;line-height:1.45;">
-                <strong>Turn Flow:</strong> Click <strong>Draw Skill</strong> (Step 1) → Spend AP in Step 2 (click <strong>Pass Turn</strong> when finished) → In Step 3, click <strong>Commit</strong> on specific cards in your hand to bid them into the crisis pool alongside 2 Elemental Chaos Cards[cite: 3, 4, 5].
+                <strong>Turn Flow:</strong> Click <strong>1. Draw Skill</strong> (Step 1) → Spend AP in Step 2 (click <strong>Pass Turn</strong> when finished) → In Step 3, click <strong>Commit</strong> on cards in your hand to bid them into the crisis pool alongside 2 Elemental Chaos Cards.
             </div>
             <div style="width:min(1040px,100%);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-bottom:5px;text-align:center;font-size:clamp(9px, .8vw, 12px);font-weight:bold;color:var(--gold-light);text-shadow:0 1px 4px #000;">
                 <span>1 · Engine Room</span><span>2 · Passenger Car</span><span>3 · Cargo / Brig</span><span>4 · Dining Lounge</span><span>5 · Rear Observation</span>
@@ -727,18 +727,18 @@
         <aside class="right-sidebar">
             <div class="round-control-box">
                 <h3 id="current-phase-title">Step 1: Receive Skills (Draw Step)</h3>
-                <p id="current-phase-desc">Click 'Draw Skill' in the left panel to begin your turn[cite: 4, 5].</p>
+                <p id="current-phase-desc">Click 'Draw Skill' in the left panel to begin your turn.</p>
                 <div class="ap-tracker">
                     <span id="active-hero-label">Active: Jan Valek</span>
                     <span id="active-ap-label">AP: 2 / 2</span>
                 </div>
                 <div class="deck-buttons">
-                    <button class="magipunk-btn primary" id="btn-end-turn" onclick="game.endHeroTurn()">Pass Turn (Step 2→3)[cite: 5]</button>
-                    <button class="magipunk-btn" onclick="game.attackNearestEnemy()">Attack Enemy (1 AP)[cite: 5]</button>
-                    <button class="magipunk-btn" onclick="game.performRepairAction()">Repair Train (1 AP)[cite: 5]</button>
-                    <button class="magipunk-btn" onclick="game.openAccusationModal()">Accuse in Car 4 (2 AP)[cite: 3, 5]</button>
-                    <button class="magipunk-btn" onclick="game.useShetariStrike()" style="background:linear-gradient(to bottom,#78350f,#451a03)">Shetari Command (1 AP)[cite: 6]</button>
-                    <button class="magipunk-btn" onclick="game.useMelindreHeal()" style="background:linear-gradient(to bottom,#065f46,#064e3b)">Melindre Command (1 AP)[cite: 6]</button>
+                    <button class="magipunk-btn primary" id="btn-end-turn" onclick="game.endHeroTurn()">Pass Turn (Step 2→3)</button>
+                    <button class="magipunk-btn" onclick="game.attackNearestEnemy()">Attack Enemy (1 AP)</button>
+                    <button class="magipunk-btn" onclick="game.performRepairAction()">Repair Train (1 AP)</button>
+                    <button class="magipunk-btn" onclick="game.openAccusationModal()">Accuse in Car 4 (2 AP)</button>
+                    <button class="magipunk-btn" onclick="game.useShetariStrike()" style="background:linear-gradient(to bottom,#78350f,#451a03)">Shetari Command (1 AP)</button>
+                    <button class="magipunk-btn" onclick="game.useMelindreHeal()" style="background:linear-gradient(to bottom,#065f46,#064e3b)">Melindre Command (1 AP)</button>
                 </div>
             </div>
 
@@ -749,17 +749,17 @@
                     <span id="bidding-status" style="color: var(--azure-glow);">Ready</span>
                 </div>
                 <div class="bidding-tray" id="bidding-tray">
-                    <span>Draw a Crisis in Step 3, then click 'Commit' on cards in your hand to add them to the pool[cite: 3, 5].</span>
+                    <span>Draw a Crisis in Step 3, then click 'Commit' on cards in your hand to add them to the pool.</span>
                 </div>
                 <div id="crisis-board-panel" style="display:none;margin-top:12px;padding:12px;border:1px solid var(--gold-primary);border-radius:8px;background:rgba(4,12,24,.92);line-height:1.5;"></div>
                 <div class="deck-buttons">
-                    <button class="magipunk-btn primary" onclick="game.resolveCrisisBidding()">Submit Bid & Resolve[cite: 5]</button>
+                    <button class="magipunk-btn primary" onclick="game.resolveCrisisBidding()">Submit Bid & Resolve</button>
                 </div>
             </div>
 
             <div class="section-header">Event & Action Log</div>
             <div class="log-console" id="log-console">
-                <div class="log-entry highlight" id="startup-log-entry">[System] Master Rulebook v6.8 loaded successfully.</div>
+                <div class="log-entry highlight" id="startup-log-entry">[System] Master Rulebook v6.9 loaded successfully.</div>
             </div>
         </aside>
     </main>
@@ -775,14 +775,14 @@
     <!-- Script Engine -->
     <script>
         const GAME_RELEASE = Object.freeze({
-            version: '6.8',
-            edition: 'Genuine Crisis Bidding Master Edition',
-            buildId: 'LR-2026-10-23-GENUINE-BID',
+            version: '6.9',
+            edition: 'Stable Startup Fix',
+            buildId: 'LR-2026-10-23-STABLE',
             releaseDate: '2026-10-23',
             changes: [
-                'Implemented genuine individual card commitment and sacrifice for Step 3 Crisis Bidding.',
-                'Calibrated crisis failure damage to 2-3 HP to prevent rapid 2-turn campaign blowouts.',
-                'Maintained 14 HP Train Integrity and 5-step flow.'
+                'Cleaned up string formatting and modal templates for bug-free startup navigation.',
+                'Maintained genuine individual card commitment and sacrifice for Step 3 Crisis Bidding.',
+                'Enforced 14 HP Train Integrity and 5-step flow.'
             ]
         });
 
@@ -791,9 +791,9 @@
             const startupLabel = document.getElementById('startup-version-label');
             if (startupLabel) startupLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} · Build ${GAME_RELEASE.buildId}`;
             const headerLabel = document.getElementById('header-version-label');
-            if (headerLabel) headerLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} | Genuine Crisis Bidding`;
+            if (headerLabel) headerLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} | Stable Startup Fix`;
             const startupLog = document.getElementById('startup-log-entry');
-            if (startupLog) startupLog.textContent = `[System] Master Rulebook v6.8 loaded successfully[cite: 4].`;
+            if (startupLog) startupLog.textContent = `[System] Master Rulebook v6.9 loaded successfully.`;
         }
 
         class SoundEngine {
@@ -870,7 +870,7 @@
         class LightningRailGame {
             constructor() {
                 this.sound = new SoundEngine();
-                this.step = 1; // 1: Draw, 2: Actions, 3: Crisis, 4: Threats, 5: Cleanup
+                this.step = 1;
                 this.distance = 3;
                 this.round = 1;
                 this.integrity = 14;
@@ -902,7 +902,6 @@
                 ];
 
                 this.hand = [];
-                this.committedCards = [];
                 this.activeCrisis = null;
                 this.gameOver = false;
             }
@@ -916,7 +915,7 @@
                 if(this.hasTraitorMode && this.heroes.length > 0) {
                     const traitorCandidate = this.heroes[Math.floor(Math.random() * this.heroes.length)];
                     traitorCandidate.traitor = true;
-                    this.log(`[Act 1 Setup] Secret loyalty assigned. Quori Awakening scheduled for Distance 6 / Round 5[cite: 4, 5].`, "alert");
+                    this.log(`[Act 1 Setup] Secret loyalty assigned. Quori Awakening scheduled for Distance 6 / Round 5.`, "alert");
                 }
 
                 this.refreshHandToLimit();
@@ -934,7 +933,7 @@
                 const content = document.getElementById('modal-content');
                 if (!content) return;
                 content.innerHTML = `<h2 style="color:var(--gold-primary);font-size:20px">ACT 1 SECRET LOYALTY CHECK</h2>
-                    <p style="line-height:1.55">Pass the device around. Each player should inspect their secret Act 1 Loyalty card (Loyal Escort or Dark Persona)[cite: 4, 5].</p>
+                    <p style="line-height:1.55">Pass the device around. Each player should inspect their secret Act 1 Loyalty card (Loyal Escort or Dark Persona).</p>
                     ${this.heroes.map(h => `<button class="magipunk-btn" style="display:block;width:100%;margin:7px 0" onclick="game.revealSecretRole('${h.id}')">Inspect as ${h.name}</button>`).join('')}`;
                 if (modal) modal.style.display = 'flex';
             }
@@ -946,14 +945,14 @@
                 const content = document.getElementById('modal-content');
                 if (!content) return;
                 content.innerHTML = `<h2 style="color:${isTraitor ? '#ff1744' : '#4ade80'};font-size:20px">${isTraitor ? 'DARK PERSONA (TRAITOR)' : 'LOYAL ESCORT'}</h2>
-                    <p style="font-size:13px;line-height:1.6;margin-bottom:12px">${isTraitor ? 'Derail the train (Integrity 0) or stall past Round 10[cite: 4].' : 'Escort Melindre & Shetari to Flamekeep Cathedral (Distance 12)[cite: 4].'}</p>
+                    <p style="font-size:13px;line-height:1.6;margin-bottom:12px">${isTraitor ? 'Derail the train (Integrity 0) or stall past Round 10.' : 'Escort Melindre & Shetari to Flamekeep Cathedral (Distance 12).'}</p>
                     <button class="magipunk-btn primary" style="width:100%;padding:12px" onclick="game.showSecretRoleCheck()">Hide Role / Next Player</button>`;
             }
 
             triggerQuoriAwakening() {
                 if (this.awakeningTriggered) return;
                 this.awakeningTriggered = true;
-                this.log(`[Act 2 Awakening] Quori Awakening active at Distance ${this.distance} / Round ${this.round}[cite: 4, 5]!`, "alert");
+                this.log(`[Act 2 Awakening] Quori Awakening active at Distance ${this.distance} / Round ${this.round}!`, "alert");
             }
 
             refreshHandToLimit() {
@@ -997,7 +996,7 @@
 
             toggleCommitCard(idx) {
                 if (this.step !== 3) {
-                    this.log("Cards can only be committed to the pool during Step 3 Crisis Bidding[cite: 3, 5].", "alert");
+                    this.log("Cards can only be committed to the pool during Step 3 Crisis Bidding.", "alert");
                     return;
                 }
                 this.sound.playClick();
@@ -1012,7 +1011,7 @@
                 if (!tray || !this.activeCrisis) return;
                 const committedSum = this.hand.filter(c => c.committed).reduce((acc, c) => acc + c.value, 0);
                 tray.innerHTML = `<strong>Crisis:</strong> ${this.activeCrisis.title} (Target DC ${this.activeCrisis.dc})<br>
-                    <strong>Committed Bid Value:</strong> ${committedSum} (+2 Chaos Cards)[cite: 3, 5]<br>
+                    <strong>Committed Bid Value:</strong> ${committedSum} (+2 Chaos Cards)<br>
                     <em>Click 'Commit' on cards in your hand, then click Submit Bid.</em>`;
             }
 
@@ -1031,7 +1030,7 @@
                 this.renderRoster();
                 this.renderMasterBoardGrid();
                 this.updateActionEconomyUI();
-                this.log(`Game started with ${this.heroes.length} operatives — Click '1. Draw Skill'[cite: 4, 5].`, "highlight");
+                this.log(`Game started with ${this.heroes.length} operatives — Click '1. Draw Skill'.`, "highlight");
             }
 
             log(msg, type='') {
@@ -1069,32 +1068,32 @@
 
             useShetariStrike() {
                 if (this.step !== 2) {
-                    this.log("VIP commands can only be issued during Step 2 Hero Actions[cite: 5].", "alert");
+                    this.log("VIP commands can only be issued during Step 2 Hero Actions.", "alert");
                     return;
                 }
                 const hero = this.getActiveHero();
                 const shetari = this.vips.find(v => v.id === 'shetari');
                 if (!shetari || shetari.usedAbility || shetari.hp <= 0) {
-                    this.log("Shetari has already used her command this turn or is down[cite: 5, 6].", "alert");
+                    this.log("Shetari has already used her command this turn or is down.", "alert");
                     return;
                 }
                 if (hero.car !== shetari.car) {
-                    this.log(`${hero.name} must share Carriage ${shetari.car} with Shetari to issue a command[cite: 5, 6].`, "alert");
+                    this.log(`${hero.name} must share Carriage ${shetari.car} with Shetari to issue a command.`, "alert");
                     return;
                 }
                 if (hero.ap < 1) {
-                    this.log("Not enough AP for VIP Command (costs 1 AP)[cite: 5, 6].", "alert");
+                    this.log("Not enough AP for VIP Command (costs 1 AP).", "alert");
                     return;
                 }
                 hero.ap--;
                 shetari.usedAbility = true;
                 const enemies = [...this.minions, ...this.bosses].filter(e => e.hp > 0 && e.car === shetari.car);
                 if (enemies.length === 0) {
-                    this.log("No minion in Shetari's car for Shadow Crossbow Strike (command wasted)[cite: 6].", "alert");
+                    this.log("No minion in Shetari's car for Shadow Crossbow Strike (command wasted).", "alert");
                 } else {
                     const target = enemies[0];
                     target.hp = Math.max(0, target.hp - 2);
-                    this.log(`[VIP Command] Shetari executes Shadow Crossbow Strike on ${target.name} for 2 damage[cite: 6]!`, "highlight");
+                    this.log(`[VIP Command] Shetari executes Shadow Crossbow Strike on ${target.name} for 2 damage!`, "highlight");
                     if (target.hp <= 0) {
                         this.minions = this.minions.filter(e => e.hp > 0);
                         this.bosses = this.bosses.filter(e => e.hp > 0);
@@ -1105,28 +1104,28 @@
 
             useMelindreHeal() {
                 if (this.step !== 2) {
-                    this.log("VIP commands can only be issued during Step 2 Hero Actions[cite: 5].", "alert");
+                    this.log("VIP commands can only be issued during Step 2 Hero Actions.", "alert");
                     return;
                 }
                 const hero = this.getActiveHero();
                 const melindre = this.vips.find(v => v.id === 'melindre');
                 if (!melindre || melindre.usedAbility || melindre.hp <= 0) {
-                    this.log("Melindre has already used her command this turn or is down[cite: 5, 6].", "alert");
+                    this.log("Melindre has already used her command this turn or is down.", "alert");
                     return;
                 }
                 if (hero.car !== melindre.car) {
-                    this.log(`${hero.name} must share Carriage ${melindre.car} with Melindre to issue a command[cite: 5, 6].`, "alert");
+                    this.log(`${hero.name} must share Carriage ${melindre.car} with Melindre to issue a command.`, "alert");
                     return;
                 }
                 if (hero.ap < 1) {
-                    this.log("Not enough AP for VIP Command (costs 1 AP)[cite: 5, 6].", "alert");
+                    this.log("Not enough AP for VIP Command (costs 1 AP).", "alert");
                     return;
                 }
                 hero.ap--;
                 melindre.usedAbility = true;
                 hero.hp = Math.min(hero.maxHp, hero.hp + 1);
                 hero.stress = Math.max(0, (hero.stress || 0) - 1);
-                this.log(`[VIP Command] Melindre channels Silver Flame Blessing on ${hero.name}: Restored 1 HP & cleared 1 Stress[cite: 6].`, "highlight");
+                this.log(`[VIP Command] Melindre channels Silver Flame Blessing on ${hero.name}: Restored 1 HP & cleared 1 Stress.`, "highlight");
                 this.renderTokens(); this.updateVIPPowersHUD(); this.renderRoster(); this.updateActionEconomyUI(); this.checkActionEconomyExhaustion();
             }
 
@@ -1249,12 +1248,12 @@
                     .sort((a,b) => Math.abs(a.cell-hero.cell)-Math.abs(b.cell-hero.cell));
                 const target = enemies.find(e => Math.abs(e.cell-hero.cell) <= 3);
                 if (!target) {
-                    this.log("No enemy in range for Attack (1 AP)[cite: 4, 5].", "alert");
+                    this.log("No enemy in range for Attack (1 AP).", "alert");
                     return;
                 }
                 hero.ap--;
                 target.hp = Math.max(0, target.hp - 2);
-                this.log(`${hero.name} attacks ${target.name} for 2 damage[cite: 5]. Target HP: ${target.hp}.`, "highlight");
+                this.log(`${hero.name} attacks ${target.name} for 2 damage. Target HP: ${target.hp}.`, "highlight");
                 if (target.hp <= 0) {
                     this.minions = this.minions.filter(e => e.hp > 0); 
                     this.bosses = this.bosses.filter(e => e.hp > 0);
@@ -1268,7 +1267,7 @@
                 const hero = this.getActiveHero();
                 if (!hero || hero.ap < 1 || hero.confined) return;
                 if (hero.car !== 1) {
-                    this.log("Repair Train action requires Hero to be in Car 1 (Engine Room)[cite: 5].", "alert");
+                    this.log("Repair Train action requires Hero to be in Car 1 (Engine Room).", "alert");
                     return;
                 }
                 hero.ap--;
@@ -1276,7 +1275,7 @@
                 this.engineState = 'Operational';
                 document.getElementById('hud-engine').innerText = this.engineState;
                 document.getElementById('hud-integrity').innerText = `${this.integrity} / 14 HP`;
-                this.log(`${hero.name} repairs the engine in Car 1: Restored +2 Integrity[cite: 5] (Total: ${this.integrity}/14).`, "highlight");
+                this.log(`${hero.name} repairs the engine in Car 1: Restored +2 Integrity (Total: ${this.integrity}/14).`, "highlight");
                 this.renderRoster(); this.updateActionEconomyUI(); this.checkGameOverConditions();
                 this.checkActionEconomyExhaustion();
             }
@@ -1285,11 +1284,11 @@
                 if (this.step !== 2 || this.gameOver) return;
                 const hero = this.getActiveHero();
                 if (hero.car !== 4) {
-                    this.log("Accusation vote requires Operative to be in Car 4 (Dining Lounge)[cite: 5].", "alert");
+                    this.log("Accusation vote requires Operative to be in Car 4 (Dining Lounge).", "alert");
                     return;
                 }
                 if (hero.ap < 2) {
-                    this.log("Accusation vote costs 2 AP[cite: 3, 5].", "alert");
+                    this.log("Accusation vote costs 2 AP.", "alert");
                     return;
                 }
                 hero.ap -= 2;
@@ -1297,8 +1296,8 @@
                 const modal = document.getElementById('modal-overlay');
                 const content = document.getElementById('modal-content');
                 if (!content) return;
-                content.innerHTML = `<h2 style="color:var(--gold-primary);font-size:20px">EMERGENCY ACCUSATION VOTE (CAR 4)[cite: 5]</h2>
-                    <p style="line-height:1.5">Select a suspect to send to Car 3 Confinement (Brig)[cite: 5]. Majority vote required[cite: 3, 5].</p>
+                content.innerHTML = `<h2 style="color:var(--gold-primary);font-size:20px">EMERGENCY ACCUSATION VOTE (CAR 4)</h2>
+                    <p style="line-height:1.5">Select a suspect to send to Car 3 Confinement (Brig). Majority vote required.</p>
                     ${suspects.map(s => `<button class="magipunk-btn" style="display:block;width:100%;margin:7px 0" onclick="game.executeAccusationVote('${s.id}')">Accuse ${s.name} (${s.role})</button>`).join('')}`;
                 if (modal) modal.style.display = 'flex';
                 this.updateActionEconomyUI();
@@ -1312,14 +1311,14 @@
                 suspect.confined = true;
                 suspect.car = 3;
                 suspect.cell = 5;
-                this.log(`[Accusation Success] Majority vote convicts ${suspect.name}! Sent to Car 3 Confinement (Brig)[cite: 3, 5].`, "highlight");
+                this.log(`[Accusation Success] Majority vote convicts ${suspect.name}! Sent to Car 3 Confinement (Brig).`, "highlight");
                 this.renderTokens(); this.renderRoster();
             }
 
             checkActionEconomyExhaustion() {
                 const hero = this.getActiveHero();
                 if (hero && hero.ap <= 0) {
-                    this.log(`${hero.name} has exhausted AP budget. Automatically advancing to Step 3 Crisis Event[cite: 4, 5].`, "highlight");
+                    this.log(`${hero.name} has exhausted AP budget. Automatically advancing to Step 3 Crisis Event.`, "highlight");
                     this.drawCrisisCard();
                 }
             }
@@ -1328,29 +1327,29 @@
                 const hero = this.getActiveHero();
                 if (!hero) return;
                 document.getElementById('active-hero-label').innerText = `Active: ${hero.name} — Car ${hero.car}, space ${hero.cell}`;
-                document.getElementById('active-ap-label').innerText = `AP: ${hero.ap} / ${hero.maxAp}[cite: 4]`;
+                document.getElementById('active-ap-label').innerText = `AP: ${hero.ap} / ${hero.maxAp}`;
                 this.refreshLegalMoves();
             }
 
             drawSkillCardManual() {
                 if(this.step !== 1) {
-                    this.log("Skill draw is already completed for this turn. Proceed to Step 2 Actions[cite: 4, 5].", "alert");
+                    this.log("Skill draw is already completed for this turn. Proceed to Step 2 Actions.", "alert");
                     return;
                 }
                 const hero = this.getActiveHero();
                 this.sound.playClick();
                 this.refreshHandToLimit();
-                this.log(`${hero.name} completes Step 1: Receive Skills[cite: 4, 5]. Advancing to Step 2 Hero Actions.`);
+                this.log(`${hero.name} completes Step 1: Receive Skills. Advancing to Step 2 Hero Actions.`);
                 
                 this.step = 2; // Advance to Step 2
                 document.getElementById('current-phase-title').innerText = 'Step 2: Hero Action Step (2 AP)';
-                document.getElementById('current-phase-desc').innerText = 'Spend AP to Move, Attack, Repair Train, or issue VIP Commands[cite: 4, 5].';
+                document.getElementById('current-phase-desc').innerText = 'Spend AP to Move, Attack, Repair Train, or issue VIP Commands.';
                 this.renderRoster(); this.updateActionEconomyUI();
             }
 
             drawCrisisCard() {
                 if(this.step !== 2) {
-                    this.log("Complete Step 1 (Draw Skills) and Step 2 (Hero Actions) before drawing a Crisis in Step 3[cite: 4, 5].", "alert");
+                    this.log("Complete Step 1 (Draw Skills) and Step 2 (Hero Actions) before drawing a Crisis in Step 3.", "alert");
                     return;
                 }
                 this.sound.playClick();
@@ -1363,44 +1362,42 @@
                 this.activeCrisis = crises[Math.floor(Math.random() * crises.length)];
                 
                 document.getElementById('current-phase-title').innerText = 'Step 3: Crisis Event & Secret Bidding';
-                document.getElementById('current-phase-desc').innerText = 'Click 'Commit' on cards in your hand to bid them into the pool[cite: 3, 5].';
+                document.getElementById('current-phase-desc').innerText = 'Click Commit on cards in your hand to bid them into the pool.';
 
                 this.updateBiddingTray();
                 this.renderHand(); // Render commit buttons
-                this.log(`[Step 3: Crisis Event] ${this.activeCrisis.title} drawn (Target DC ${this.activeCrisis.dc})[cite: 3, 5]. Select cards to commit.`, "alert");
+                this.log(`[Step 3: Crisis Event] ${this.activeCrisis.title} drawn (Target DC ${this.activeCrisis.dc}). Select cards to commit.`, "alert");
             }
 
             resolveCrisisBidding() {
                 if (this.step !== 3 || !this.activeCrisis) {
-                    this.log("Draw a Crisis card in Step 3 before resolving the bidding pool[cite: 3, 5].", "alert");
+                    this.log("Draw a Crisis card in Step 3 before resolving the bidding pool.", "alert");
                     return;
                 }
                 this.sound.playClick();
                 const crisis = this.activeCrisis;
                 
-                // Calculate sum of committed cards and remove them from hand (sacrifice)
                 const committedCardsList = this.hand.filter(c => c.committed);
                 const playerBidSum = committedCardsList.reduce((acc, c) => acc + c.value, 0);
                 
-                // Remove committed cards from hand permanently
                 this.hand = this.hand.filter(c => !c.committed);
                 this.renderHand();
 
-                const chaosCardSum = Math.floor(Math.random() * 6) + Math.floor(Math.random() * 6) + 2; // Elemental Chaos Cards
+                const chaosCardSum = Math.floor(Math.random() * 6) + Math.floor(Math.random() * 6) + 2;
                 const totalPool = playerBidSum + chaosCardSum;
 
                 const success = totalPool >= crisis.dc;
                 if (success) {
                     this.sound.playSuccess();
-                    this.log(`[Crisis Resolved] Committed bid (${playerBidSum}) + Chaos (${chaosCardSum}) = ${totalPool} met DC ${crisis.dc}! Crisis averted[cite: 3, 5].`, "highlight");
+                    this.log(`[Crisis Resolved] Committed bid (${playerBidSum}) + Chaos (${chaosCardSum}) = ${totalPool} met DC ${crisis.dc}! Crisis averted.`, "highlight");
                 } else {
                     const dmg = crisis.dc === 10 ? 2 : 3;
                     this.integrity = Math.max(0, this.integrity - dmg);
                     document.getElementById('hud-integrity').innerText = `${this.integrity} / 14 HP`;
-                    this.log(`[Crisis Failed] Committed bid (${playerBidSum}) + Chaos (${chaosCardSum}) = ${totalPool} missed DC ${crisis.dc}[cite: 3, 5]. Train Integrity −${dmg} (HP: ${this.integrity}).`, "alert");
+                    this.log(`[Crisis Failed] Committed bid (${playerBidSum}) + Chaos (${chaosCardSum}) = ${totalPool} missed DC ${crisis.dc}. Train Integrity −${dmg} (HP: ${this.integrity}).`, "alert");
                     
                     if (crisis.dc - totalPool >= 3) {
-                        this.log(`[Suspicion Trigger] Crisis failed by 3+ points! Suspicion Marker placed on contributor[cite: 4, 5].`, "alert");
+                        this.log(`[Suspicion Trigger] Crisis failed by 3+ points! Suspicion Marker placed on contributor.`, "alert");
                     }
                     this.checkGameOverConditions();
                 }
@@ -1411,14 +1408,14 @@
 
                 this.step = 4; // Advance to Step 4: Threat & Speed
                 document.getElementById('current-phase-title').innerText = 'Step 4: Threat & Speed Progress';
-                document.getElementById('current-phase-desc').innerText = 'Activating enemies and advancing distance track [+1][cite: 5].';
+                document.getElementById('current-phase-desc').innerText = 'Activating enemies and advancing distance track [+1].';
                 this.executeThreatAndSpeedStep();
             }
 
             executeThreatAndSpeedStep() {
                 this.distance++;
                 document.getElementById('hud-speed').innerText = `${this.distance} / 12`;
-                this.log(`[Step 4: Threat & Speed] Distance track advanced to ${this.distance} / 12[cite: 4, 5].`, "highlight");
+                this.log(`[Step 4: Threat & Speed] Distance track advanced to ${this.distance} / 12.`, "highlight");
 
                 if (this.distance >= 6 || this.round >= 5) {
                     this.triggerQuoriAwakening();
@@ -1431,7 +1428,7 @@
                         const targetVip = this.vips.find(v => v.hp > 0);
                         if (targetVip) {
                             targetVip.hp = Math.max(0, targetVip.hp - 2);
-                            this.log(`[Threat Activation] Minion attacks VIP ${targetVip.name} for 2 damage (HP: ${targetVip.hp})[cite: 5].`, "alert");
+                            this.log(`[Threat Activation] Minion attacks VIP ${targetVip.name} for 2 damage (HP: ${targetVip.hp}).`, "alert");
                         }
                     }
                 });
@@ -1439,7 +1436,7 @@
                 this.checkGameOverConditions();
                 this.step = 5; // Advance to Step 5: Cleanup
                 document.getElementById('current-phase-title').innerText = 'Step 5: Cleanup & Pass Turn';
-                document.getElementById('current-phase-desc').innerText = 'Discard down to max 10 cards and pass Conductor token[cite: 5]. Click Pass Turn.';
+                document.getElementById('current-phase-desc').innerText = 'Discard down to max 10 cards and pass Conductor token. Click Pass Turn.';
             }
 
             endHeroTurn() {
@@ -1448,7 +1445,7 @@
                     return;
                 }
                 if (this.step !== 5) {
-                    this.log("Complete Step 2 (Actions), Step 3 (Crisis Bidding), and Step 4 (Threats) before passing your turn[cite: 5].", "alert");
+                    this.log("Complete Step 2 (Actions), Step 3 (Crisis Bidding), and Step 4 (Threats) before passing your turn.", "alert");
                     return;
                 }
                 
@@ -1459,10 +1456,10 @@
                     this.heroTurnsCompleted = 0;
                     this.round++;
                     document.getElementById('hud-round').innerText = `${this.round} / 10`;
-                    this.log(`[Round Advance] Round ${this.round} begins[cite: 4, 5].`, "highlight");
+                    this.log(`[Round Advance] Round ${this.round} begins.`, "highlight");
                     
                     if (this.round > 10 && this.distance < 12) {
-                        this.triggerGameOver(false, "Time Expired: Round 10 ended before reaching Flamekeep Cathedral[cite: 4].");
+                        this.triggerGameOver(false, "Time Expired: Round 10 ended before reaching Flamekeep Cathedral.");
                         return;
                     }
                     this.vips.forEach(v => v.usedAbility = false);
@@ -1473,8 +1470,8 @@
                 this.heroes.forEach(h => h.ap = h.maxAp);
                 this.step = 1; // Back to Step 1: Draw Skills
                 document.getElementById('current-phase-title').innerText = 'Step 1: Receive Skills (Draw Step)';
-                document.getElementById('current-phase-desc').innerText = 'Click "Draw Skill" in the left panel to begin your turn[cite: 4, 5].';
-                document.getElementById('bidding-tray').innerHTML = `<span>Draw a Crisis in Step 3, then click 'Commit' on cards in your hand to add them to the pool[cite: 3, 5].</span>`;
+                document.getElementById('current-phase-desc').innerText = 'Click "Draw Skill" in the left panel to begin your turn.';
+                document.getElementById('bidding-tray').innerHTML = `<span>Draw a Crisis in Step 3, then click 'Commit' on cards in your hand to add them to the pool.</span>`;
                 this.renderTokens(); this.renderRoster(); this.updateActionEconomyUI();
             }
 
@@ -1486,7 +1483,7 @@
                 } else if (this.distance >= 12) {
                     const melAlive = this.vips.find(v => v.id === 'melindre').hp > 0;
                     if (melAlive) {
-                        this.triggerGameOver(true, "Loyalist Victory: Reached Flamekeep Cathedral (Distance 12) with Melindre alive[cite: 4]!");
+                        this.triggerGameOver(true, "Loyalist Victory: Reached Flamekeep Cathedral (Distance 12) with Melindre alive!");
                     } else {
                         this.triggerGameOver(false, "Defeat: Reached Distance 12, but Melindre did not survive.");
                     }
@@ -1514,11 +1511,11 @@
                 if (!content) return;
                 content.innerHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
-                    <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">MASTER RULEBOOK v6.8 RULES</h2>
+                    <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">MASTER RULEBOOK v6.9 RULES</h2>
                     <p style="font-size:13px;line-height:1.6;text-align:left">
-                    <strong>1. Genuine Crisis Bidding:</strong> During Step 3, click 'Commit' on individual cards in your hand to sacrifice them to the pool[cite: 3, 5].<br><br>
-                    <strong>2. Calibrated Penalties:</strong> Failure damage is scaled to 2-3 HP to prevent rapid 2-turn game over loops.<br><br>
-                    <strong>3. Victory:</strong> Reach Distance 12 before Round 10 with Melindre alive[cite: 4].
+                    <strong>1. Stable Startup:</strong> Startup modal overlays initialize smoothly without script parsing errors.<br><br>
+                    <strong>2. Genuine Crisis Bidding:</strong> During Step 3, click 'Commit' on individual cards in your hand to sacrifice them to the pool.<br><br>
+                    <strong>3. Victory:</strong> Reach Distance 12 before Round 10 with Melindre alive.
                     </p>
                     <button class="magipunk-btn primary" style="width:100%;padding:12px;margin-top:14px" onclick="game.closeModal(null)">Got It</button>`;
                 if (modal) modal.style.display = 'flex';
@@ -1533,7 +1530,7 @@
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
                     <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">${hero.name}</h2>
                     <div style="color: var(--text-muted); font-size: 14px; margin-bottom: 8px;">${hero.role}</div>
-                    <div style="font-size: 14px;">HP: <span style="color:#4ade80">${hero.hp}/${hero.maxHp}</span> | AP: <span style="color:var(--gold-light)">${hero.ap}/${hero.maxAp}</span>[cite: 4]</div>
+                    <div style="font-size: 14px;">HP: <span style="color:#4ade80">${hero.hp}/${hero.maxHp}</span> | AP: <span style="color:var(--gold-light)">${hero.ap}/${hero.maxAp}</span></div>
                 `;
                 if (modal) modal.style.display = 'flex';
             }
