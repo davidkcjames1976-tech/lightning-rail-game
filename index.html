@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Lightning Rail: Sharn to Thrane — Master Edition v12.1 Final Tactical Update</title>
+    <title>Lightning Rail: Sharn to Thrane — Master Edition v14.0</title>
     <style>
         :root {
             --bg-deep: #070a12;
@@ -110,6 +110,7 @@
         .token.hero { border-color: var(--azure-glow); }
         .token.active { outline: 2px solid var(--gold-primary); transform: scale(1.15); box-shadow: 0 0 12px rgba(212,175,55,0.9); }
         .token.minion { border-color: var(--crimson-accent); }
+        .token.boss { border-color: #ff5722; box-shadow: 0 0 15px rgba(255,87,34,0.8); width: 95%; height: 95%; max-width: 28px; max-height: 28px; }
         .token.vip { border-color: #f59e0b; }
 
         .hero-list { display: flex; flex-direction: column; gap: 8px; }
@@ -118,16 +119,14 @@
         .hero-info h4 { font-size: 13px; color: var(--text-main); font-weight: bold; }
         .hero-info span { font-size: 11px; color: var(--text-muted); }
         .hero-stats-mini { display: flex; gap: 8px; font-size: 11px; font-family: monospace; font-weight: bold; }
-
-        .bar { height: 5px; background: #26394a; border-radius: 5px; overflow: hidden; margin-top: 4px; }
-        .bar i { display: block; height: 100%; background: #4ade80; }
         
         .actions { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
         .small { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
         
-        .hand { display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto; }
+        .hand { display: flex; flex-direction: column; gap: 6px; max-height: 300px; overflow-y: auto; padding-right: 5px; }
         .card { border: 1.5px solid var(--gold-primary); background: #1e293b; padding: 8px 10px; border-radius: 6px; background-image: url('card_template_hero_brass.png'); background-size: cover; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,0.95); display: flex; flex-direction: column; gap: 4px; font-size: 11px; cursor: pointer; transition: transform 0.1s; }
         .card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(212,175,55,0.4); }
+        .card.sabotage { border-color: var(--crimson-accent); box-shadow: inset 0 0 15px rgba(255,0,0,0.3); }
 
         .log { max-height: 180px; overflow: auto; display: flex; flex-direction: column; gap: 5px; font-family: monospace; font-size: 11px; }
         .log p { margin: 0; padding: 5px 7px; background: rgba(0,0,0,0.85); border-left: 3px solid var(--border-metal); border-radius: 4px; }
@@ -142,7 +141,7 @@
         .modal { max-width: 620px; width: 100%; max-height: 90vh; overflow: auto; background: linear-gradient(135deg, #1e293b, #0f172a); border: 4px solid var(--gold-primary); border-radius: 16px; padding: 24px; box-shadow: 0 0 90px rgba(212,175,55,0.85); background-image: url('card_template_crisis_fantasy.png'); background-size: cover; text-align: center; }
         .modal h2 { color: var(--gold-primary); margin-top: 0; font-size: 20px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
         .pill { display: inline-block; padding: 2px 6px; border-radius: 20px; background: rgba(0, 229, 255, 0.18); color: var(--azure-glow); font-size: 10px; font-weight: bold; border: 1px solid var(--azure-glow); }
-        .footer { color: var(--text-muted); font-size: 11px; margin: 10px 0; text-align: center; }
+        .pill.negative { background: rgba(255, 23, 68, 0.2); color: #fff; border-color: var(--crimson-accent); }
 
         @media(max-width: 1350px) { .layout { grid-template-columns: 1fr; } }
     </style>
@@ -154,7 +153,7 @@
             <div>
                 <div class="eyebrow">Eberron · Magipunk Social Deduction</div>
                 <h1>⚡ Lightning Rail: Sharn to Thrane</h1>
-                <div class="subtitle">Master Edition v12.1 — Final Tactical Update</div>
+                <div class="subtitle">Master Edition v14.0 — Boss Spawns & Traitor Subversion</div>
             </div>
             <div class="actions">
                 <button class="magipunk-btn" onclick="showHelp()">How to Play</button>
@@ -204,7 +203,7 @@
                 <div id="log" class="log" aria-live="polite" style="margin-top:6px;"></div>
             </aside>
         </div>
-        <div class="footer">Lightning Rail Master Edition v12.1 · Fully Featured.</div>
+        <div class="footer">Lightning Rail Master Edition v14.0 · Boss Spawns Active.</div>
     </div>
 
     <div id="overlay" class="overlay hidden">
@@ -215,10 +214,13 @@
         'use strict';
         
         const CAR_NAMES = ['Engine Room', 'Passenger Car', 'Cargo / Brig', 'Dining Car', 'Rear Observation'];
+        
+        // Crises now include integrated Boss spawns
         const CRISES = [
-            {name: 'Conduit Rail Arc Overload', dc: 11, damage: 2, desc: 'Lightning conduits surging across Sector 2. Stabilize the grid.'},
-            {name: 'Core Instability', dc: 13, damage: 2, desc: 'Bound elemental bucking against containment lattice in Car 1.'},
-            {name: 'Mournland Spectral Surge', dc: 14, damage: 3, desc: 'A wave of grey mist and hostile energy strikes the express.'}
+            {name: 'Conduit Rail Arc Overload', dc: 11, damage: 2, desc: 'Lightning conduits surging across Sector 2. Stabilize the grid.', boss: null},
+            {name: 'Daask Airship Ambush', dc: 13, damage: 2, desc: 'Daask mercenaries board the train from above!', boss: {id:'daask_boss', name:'Daask Warlord', hp:8, maxHp:8, car:4, cell:8, img:'token_minion_generic.png', isBoss:true}},
+            {name: 'Core Instability', dc: 13, damage: 2, desc: 'Bound elemental bucking against containment lattice in Car 1.', boss: null},
+            {name: 'Mournland Spectral Surge', dc: 15, damage: 3, desc: 'A massive wave of grey mist and hostile energy strikes.', boss: {id:'mourn_boss', name:'Mournland Wraith', hp:10, maxHp:10, car:4, cell:5, img:'token_minion_generic.png', isBoss:true}}
         ];
         
         const HERO_BASE = [
@@ -293,7 +295,7 @@
                     <button class="magipunk-btn primary" onclick="newGame(true)">Full Game (5-Hero Social Deduction)</button>
                     <button class="magipunk-btn" onclick="newGame(false)">Practice (2-Hero Co-op)</button>
                 </div>
-                <p class="small" style="margin-top:15px; text-align:center;">Features true secret bidding, enemy AI movement, and actionable skills.</p>`);
+                <p class="small" style="margin-top:15px; text-align:center;">Features Traitor Sabotage, Active Skills, and Boss Spawns.</p>`);
         }
 
         function newGame(socialChoice) {
@@ -324,11 +326,13 @@
         }
 
         function drawCards(n) {
-            return Array.from({length: n}, () => ({
-                id: Math.random().toString(36).slice(2),
-                value: pick([2, 2, 3, 3, 4]),
-                name: pick(['Combat Strike', 'Tinkering Spanner', 'Arcane Aegis', 'Mobility Leap', 'Elemental Theory'])
-            }));
+            return Array.from({length: n}, () => {
+                if (Math.random() < 0.2) {
+                    return { id: Math.random().toString(36).slice(2), value: pick([-2, -3]), name: 'Sabotage: System Glitch', isSabotage: true };
+                } else {
+                    return { id: Math.random().toString(36).slice(2), value: pick([2, 2, 3, 3, 4]), name: pick(['Combat Strike', 'Tinkering Spanner', 'Arcane Aegis', 'Mobility Leap', 'Elemental Theory']), isSabotage: false };
+                }
+            });
         }
 
         function hero() { return G.heroes[G.active]; }
@@ -345,20 +349,20 @@
         
         function revealRole(id) {
             const h = G.heroes.find(x => x.id === id);
-            $('roleReveal').innerHTML = `<b>${esc(h.name)}:</b> ${G.traitor === id ? '<span style="color:var(--crimson-accent);font-weight:bold;">DARK PERSONA (TRAITOR)</span> — secretly sabotage crises and derail the train.' : '<span style="color:#4ade80;font-weight:bold;">LOYAL ESCORT</span> — protect Melindre and reach Flamekeep.'}
+            $('roleReveal').innerHTML = `<b>${esc(h.name)}:</b> ${G.traitor === id ? '<span style="color:var(--crimson-accent);font-weight:bold;">DARK PERSONA (TRAITOR)</span> — secretly sabotage crises with negative cards and derail the train.' : '<span style="color:#4ade80;font-weight:bold;">LOYAL ESCORT</span> — protect Melindre and reach Flamekeep.'}
                 <p class="small" style="margin-top:6px;">Memorize your assignment, then hide it before passing.</p>`;
         }
 
         function showHelp() {
-            openModal(`<h2>Master Rulebook v12.1</h2>
+            openModal(`<h2>Master Rulebook v14.0</h2>
                 <p style="text-align:left; line-height:1.6; font-size:13px; color:var(--text-muted);">
                 <b>Goal:</b> Loyalists reach Distance 12 with Melindre alive.<br><br>
                 <b>Turn & Skills:</b><br>
-                1. <b>Draw Card:</b> Mandatory first step of every turn.<br>
-                2. <b>Play Skill / Use AP:</b> Click a card to spend 1 AP to trigger its effect, or spend AP to Move, Attack, Repair, and Command VIPs.<br>
-                3. <b>Secret Crisis Bidding:</b> Device is passed to each player to secretly commit cards to the crisis pool.<br>
-                4. <b>Enemy AI & Boss Attacks:</b> Enemies march forward and strike adjacent targets.<br>
-                5. <b>Mid-Point Traitor Event:</b> Triggered secretly at Distance 6 via hot-seat passing.</p>
+                1. <b>Draw Card:</b> Mandatory first step. Watch out for negative Sabotage cards!<br>
+                2. <b>Play Skill / Use AP:</b> Click a positive card to spend 1 AP for tactical effects, or spend 1 AP to purge a Sabotage card. Move, Attack, Repair, and Command VIPs.<br>
+                3. <b>Secret Crisis Bidding:</b> Device is passed to each player to secretly commit cards. Traitors can slip in Sabotage cards to lower the score.<br>
+                4. <b>Boss Spawns & Threat AI:</b> Certain crises spawn elite Bosses that march forward and strike.<br>
+                5. <b>Mid-Point Traitor Event:</b> Triggered secretly at Distance 6.</p>
                 <div class="actions" style="margin-top:15px;"><button class="magipunk-btn primary" onclick="closeModal()">Resume Game</button></div>`);
         }
 
@@ -367,12 +371,21 @@
             if(G.gameOver || G.phase !== 'heroes' || G.heroStep !== 1) { return; }
             const newCard = drawCards(1)[0];
             h.hand.push(newCard);
-            log(`[Step 1] ${h.name} drew ${newCard.name} (+${newCard.value}). Actions unlocked.`, "highlight");
+            
+            if (newCard.isSabotage) {
+                log(`[Step 1] ${h.name} drew a dark sabotage card... Actions unlocked.`, "alert");
+            } else {
+                log(`[Step 1] ${h.name} drew ${newCard.name} (+${newCard.value}). Actions unlocked.`, "highlight");
+            }
+            
             G.heroStep = 2;
-            $('action-hint').textContent = 'Step 2: Spend AP on actions or click skill cards to play them (1 AP).';
+            $('action-hint').textContent = 'Step 2: Spend AP on actions or click skill cards to play/purge them (1 AP).';
             render();
         }
 
+        // ==========================================
+        // ACTIONABLE SKILL CARDS (CLICK TO PLAY)
+        // ==========================================
         function playSkillCard(cardId) {
             const h = hero();
             if(G.gameOver || G.phase !== 'heroes' || G.heroStep !== 2 || h.ap < 1) {
@@ -386,7 +399,9 @@
             h.ap--;
             h.hand.splice(cardIdx, 1);
             
-            if(card.name.includes('Combat')) {
+            if (card.isSabotage) {
+                log(`[Skill Play] ${h.name} spent 1 AP to purge a Sabotage card from their hand.`, "success");
+            } else if(card.name.includes('Combat')) {
                 const target = G.enemies.find(e => e.hp > 0 && e.car === h.car);
                 if(target) {
                     target.hp = Math.max(0, target.hp - card.value);
@@ -463,31 +478,6 @@
             afterAction();
         }
 
-        function vipAction() {
-            const h = hero();
-            if(G.gameOver || G.phase !== 'heroes' || h.ap < 1 || h.confined) return;
-            const vip = G.vips.find(v => v.hp > 0 && v.car === h.car && Math.abs(v.cell - h.cell) <= 2);
-            if(!vip) { log("No VIP in range.", "alert"); return; }
-            if(h.usedAbility) { log("VIP command spent this round.", "alert"); return; }
-            spend(1);
-            h.usedAbility = true;
-            if(vip.id === 'melindre') {
-                h.hp = Math.min(h.maxHp, h.hp + 2);
-                h.stress = Math.max(0, h.stress - 1);
-                log(`[Step 2] ${h.name} steadied Melindre; recovered up to 2 HP.`, 'success');
-            } else {
-                const e = G.enemies.find(e => e.hp > 0 && e.car === vip.car);
-                if(e) {
-                    e.hp = Math.max(0, e.hp - 2);
-                    log(`[Step 2] ${h.name} coordinated with Shetari: 2 damage to ${e.name}.`, 'success');
-                } else {
-                    G.integrity = Math.min(G.maxIntegrity, G.integrity + 1);
-                    log(`[Step 2] ${h.name} coordinated with Shetari: +1 Integrity.`, 'success');
-                }
-            }
-            afterAction();
-        }
-
         function endHeroTurn() {
             if(G.gameOver || G.phase !== 'heroes' || G.heroStep !== 2) return;
             actionMode = '';
@@ -506,7 +496,7 @@
         }
 
         // ==========================================
-        // TRUE SECRET CRISIS BIDDING SYSTEM
+        // EPIC BOSS SPAWNS IN CRISIS PHASE
         // ==========================================
         function startCrisisPhase() {
             G.phase = 'crisis';
@@ -514,7 +504,15 @@
             G.crisisResolved = false;
             selectedCards.clear();
             G.crisisBidderIndex = 0;
-            log(`[Step 3: Crisis Event] ${G.crisis.name} drawn (DC ${G.crisis.dc}). Commencing secret bids.`, 'alert');
+            log(`[Step 3: Crisis Event] ${G.crisis.name} drawn (DC ${G.crisis.dc}).`, 'alert');
+            
+            // Check for explicit boss spawns tied to the crisis
+            if (G.crisis.boss) {
+                let newBoss = {...G.crisis.boss, id: G.crisis.boss.id + '_' + rand(1000)};
+                G.enemies.push(newBoss);
+                log(`[CRITICAL THREAT] ${newBoss.name} has boarded the train in Car 5!`, 'alert');
+            }
+            
             promptSecretBidder();
         }
 
@@ -535,7 +533,7 @@
             render(); 
             openModal(`<h2>Secret Bidding Phase</h2>
                 <p style="margin-bottom:15px; color:var(--text-muted)">Pass the device privately to <b>${esc(h.name)}</b>.</p>
-                <p style="text-align:left; font-size:13px; margin-bottom:15px;">When ready, click below to view your private hand. You may secretly select cards to commit to the crisis pool before passing the device to the next player.</p>
+                <p style="text-align:left; font-size:13px; margin-bottom:15px;">When ready, click below to view your private hand. You may secretly select cards to commit to the crisis pool before passing the device to the next player. <span style="color:var(--crimson-accent)">Traitors can commit Sabotage cards to subtract points!</span></p>
                 <div class="actions" style="justify-content:center;">
                     <button class="magipunk-btn primary" onclick="closeModal(); render();">I am ${esc(h.name)} - Reveal My Hand</button>
                 </div>`);
@@ -571,9 +569,6 @@
             } else {
                 G.integrity = Math.max(0, G.integrity - G.crisis.damage);
                 log(`[Crisis Failed] Pool missed DC ${G.crisis.dc}. Train Integrity −${G.crisis.damage}.`, 'alert');
-                
-                G.enemies.push({id:'spawn_' + rand(100), name:'Mournland Stalker', hp:4, maxHp:4, car: rand(3), cell: 4, img:'token_minion_generic.png'});
-                log(`[Reinforcements] A hostile Mournland Stalker boards the train due to the failed crisis!`, 'alert');
             }
             G.phase = 'threats';
             render();
@@ -597,9 +592,9 @@
                 const nearby = G.heroes.filter(h => h.hp > 0 && !h.confined && h.car === e.car && Math.abs(e.cell - e.cell) <= 2);
                 if(nearby.length) {
                     const target = pick(nearby);
-                    const strikeDmg = 3; 
+                    const strikeDmg = e.isBoss ? 4 : 2; // Bosses deal 4 damage!
                     target.hp = Math.max(0, target.hp - strikeDmg);
-                    log(`[Boss Strike] ${e.name} attacks ${target.name} for ${strikeDmg} damage!`, 'alert');
+                    log(`[Strike] ${e.name} attacks ${target.name} for ${strikeDmg} damage!`, 'alert');
                     continue;
                 }
                 
@@ -609,7 +604,6 @@
                 }
             }
 
-            // MID-POINT SECRET TRAITOR EVENT
             if (G.distance === 6 && !G.midpointTriggered) {
                 G.midpointTriggered = true;
                 log(`[MID-POINT EVENT] Distance 6 reached. Secret Traitor Subversion!`, 'alert');
@@ -642,10 +636,7 @@
 
         function advanceRound() {
             G.round++;
-            G.heroes.forEach(h => {
-                h.ap = h.maxAp;
-                h.usedAbility = false;
-            });
+            G.heroes.forEach(h => { h.ap = h.maxAp; h.usedAbility = false; });
             G.active = 0; G.turns = 0; G.phase = 'heroes'; G.heroStep = 1; G.crisis = null; selectedCards.clear();
             checkGameOver();
             if(!G.gameOver) {
@@ -729,7 +720,7 @@
                         tokens.push(`<div class="token vip" style="background-image:url('${v.img}')" title="${v.name} (HP ${v.hp})"></div>`);
                     });
                     G.enemies.filter(e => e.hp > 0 && e.car === car && e.cell === cell).forEach(e => {
-                        tokens.push(`<div class="token minion" style="background-image:url('${e.img}')" title="${e.name} (HP ${e.hp})"></div>`);
+                        tokens.push(`<div class="token minion ${e.isBoss ? 'boss' : ''}" style="background-image:url('${e.img}')" title="${e.name} (HP ${e.hp})"></div>`);
                     });
 
                     cols.push(`<div class="grid-cell ${isLegal ? 'legal-move' : ''}" onclick="moveTo(${car}, ${cell})">${tokens.join('')}</div>`);
@@ -775,7 +766,7 @@
                         <div style="width:100%;display:flex;flex-direction:column;gap:4px;margin-top:6px;">
                             ${h.hand.map(c => `
                                 <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,0.7);padding:6px;border-radius:4px;width:100%; border:1px solid var(--border-metal);">
-                                    <span style="font-size:11px;">${esc(c.name)} <span class="pill">Power: ${c.value}</span></span>
+                                    <span style="font-size:11px;">${esc(c.name)} <span class="pill ${c.value < 0 ? 'negative' : ''}">Power: ${c.value > 0 ? '+' : ''}${c.value}</span></span>
                                     <label style="font-size:11px; cursor:pointer;"><input type="checkbox" ${selectedCards.has(c.id) ? 'checked' : ''} onchange="toggleCard('${c.id}')"> Secret Bid</label>
                                 </div>
                             `).join('') || '<div class="small">No cards.</div>'}
@@ -784,12 +775,14 @@
             } else {
                 const h = hero();
                 $('hand').innerHTML = h.hand.map(c => `
-                    <div class="card" onclick="playSkillCard('${c.id}')" title="Click to play card for 1 AP" style="cursor:pointer; border-color:var(--azure-glow);">
+                    <div class="card ${c.isSabotage ? 'sabotage' : ''}" onclick="playSkillCard('${c.id}')" title="Click to play card for 1 AP" style="cursor:pointer; border-color:var(--azure-glow);">
                         <div style="display:flex;justify-content:space-between;align-items:center;">
                             <span>⚡ ${esc(c.name)}</span>
-                            <span class="pill">Power: ${c.value}</span>
+                            <span class="pill ${c.value < 0 ? 'negative' : ''}">Power: ${c.value > 0 ? '+' : ''}${c.value}</span>
                         </div>
-                        <div style="font-size:10px; color:var(--azure-glow); margin-top:4px;">Click to Play Effect (Costs 1 AP)</div>
+                        <div style="font-size:10px; color:${c.isSabotage ? 'var(--crimson-accent)' : 'var(--azure-glow)'}; margin-top:4px;">
+                            ${c.isSabotage ? 'Click to Purge (Costs 1 AP)' : 'Click to Play Effect (Costs 1 AP)'}
+                        </div>
                     </div>
                 `).join('') || '<div class="small">Hand empty.</div>';
             }
