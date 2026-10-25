@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Lightning Rail: Sharn to Thrane — Master Edition v9.5 Action Feedback & Fix</title>
+    <title>Lightning Rail: Sharn to Thrane — Master Edition v12.1 Final Tactical Update</title>
     <style>
         :root {
             --bg-deep: #070a12;
@@ -49,7 +49,7 @@
             cursor: pointer;
             border: 1.5px solid var(--border-metal);
             border-radius: 6px;
-            padding: 8px 10px;
+            padding: 9px 12px;
             color: var(--text-main);
             background: linear-gradient(to bottom, #1e293b, #0f172a);
             transition: all 0.2s;
@@ -77,6 +77,13 @@
         .magipunk-btn.danger { background: linear-gradient(to bottom, #7f1d1d, #450a0a); color: #fff; border-color: var(--crimson-accent); }
         .magipunk-btn.good { background: linear-gradient(to bottom, #065f46, #064e3b); color: #fff; border-color: #4ade80; }
         
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 5px var(--gold-primary); transform: scale(1); }
+            50% { box-shadow: 0 0 20px var(--gold-primary); transform: scale(1.05); border-color: #fff; }
+            100% { box-shadow: 0 0 5px var(--gold-primary); transform: scale(1); }
+        }
+        .pulse { animation: pulse-glow 1.5s infinite; border-color: var(--gold-primary); }
+
         .shell { width: 100%; max-width: 1650px; margin: auto; padding: 12px; position: relative; z-index: 5; display: flex; flex-direction: column; min-height: 100vh; gap: 12px; }
         .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; border-bottom: 3px solid var(--gold-primary); background: rgba(18, 24, 36, 0.96); padding: 12px 20px; border-radius: 12px; box-shadow: 0 4px 35px rgba(0,0,0,0.95); backdrop-filter: blur(10px); }
         .eyebrow { color: var(--azure-glow); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; font-weight: bold; }
@@ -92,7 +99,6 @@
         .stat span { display: block; color: var(--text-muted); font-size: 10px; text-transform: uppercase; font-weight: bold; }
         .stat strong { font-size: 18px; color: var(--azure-glow); font-family: monospace; text-shadow: 0 0 10px rgba(0,229,255,0.6); }
         
-        /* Fully Visible Train Board Container */
         .board-workspace { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
         .train { width: 100%; max-width: 1040px; height: auto; aspect-ratio: 1040 / 590; background-image: url('board_layout_tactical_grid.png'); background-size: cover; background-position: center; border: 4px solid var(--gold-primary); border-radius: 14px; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.95), inset 0 0 35px rgba(0,0,0,0.7); display: grid; grid-template-columns: repeat(5, 1fr); padding: 16.1% 4.8% 10.1%; gap: 1.7%; margin: auto; z-index: 5; }
         .car { display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(5, 1fr); gap: 2px; position: relative; height: 100%; z-index: 6; }
@@ -120,19 +126,21 @@
         .small { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
         
         .hand { display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto; }
-        .card { border: 1.5px solid var(--gold-primary); background: #1e293b; padding: 8px 10px; border-radius: 6px; background-image: url('card_template_hero_brass.png'); background-size: cover; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,0.95); display: flex; flex-direction: column; gap: 4px; font-size: 11px; }
-        
+        .card { border: 1.5px solid var(--gold-primary); background: #1e293b; padding: 8px 10px; border-radius: 6px; background-image: url('card_template_hero_brass.png'); background-size: cover; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,0.95); display: flex; flex-direction: column; gap: 4px; font-size: 11px; cursor: pointer; transition: transform 0.1s; }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(212,175,55,0.4); }
+
         .log { max-height: 180px; overflow: auto; display: flex; flex-direction: column; gap: 5px; font-family: monospace; font-size: 11px; }
         .log p { margin: 0; padding: 5px 7px; background: rgba(0,0,0,0.85); border-left: 3px solid var(--border-metal); border-radius: 4px; }
         .log p.alert { border-color: var(--crimson-accent); color: #f87171; }
         .log p.success { border-color: #4ade80; color: #4ade80; }
+        .log p.highlight { border-color: var(--azure-glow); color: var(--azure-glow); }
         
-        .notice { padding: 10px; border: 1.5px solid var(--border-metal); border-radius: 8px; background: rgba(0,0,0,0.75); margin: 6px 0; font-size: 12px; line-height: 1.4; }
+        .notice { padding: 10px; border: 1.5px solid var(--border-metal); border-radius: 8px; background: rgba(0,0,0,0.75); margin: 6px 0; font-size: 12px; line-height: 1.4; text-align: center; }
         
         .hidden { display: none !important; }
-        .overlay { position: fixed; inset: 0; background: rgba(7, 10, 18, 0.96); backdrop-filter: blur(14px); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 1000; }
+        .overlay { position: fixed; inset: 0; background: rgba(7, 10, 18, 0.98); backdrop-filter: blur(16px); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 1000; }
         .modal { max-width: 620px; width: 100%; max-height: 90vh; overflow: auto; background: linear-gradient(135deg, #1e293b, #0f172a); border: 4px solid var(--gold-primary); border-radius: 16px; padding: 24px; box-shadow: 0 0 90px rgba(212,175,55,0.85); background-image: url('card_template_crisis_fantasy.png'); background-size: cover; text-align: center; }
-        .modal h2 { color: var(--gold-primary); margin-top: 0; font-size: 20px; margin-bottom: 10px; }
+        .modal h2 { color: var(--gold-primary); margin-top: 0; font-size: 20px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
         .pill { display: inline-block; padding: 2px 6px; border-radius: 20px; background: rgba(0, 229, 255, 0.18); color: var(--azure-glow); font-size: 10px; font-weight: bold; border: 1px solid var(--azure-glow); }
         .footer { color: var(--text-muted); font-size: 11px; margin: 10px 0; text-align: center; }
 
@@ -146,7 +154,7 @@
             <div>
                 <div class="eyebrow">Eberron · Magipunk Social Deduction</div>
                 <h1>⚡ Lightning Rail: Sharn to Thrane</h1>
-                <div class="subtitle">Master Edition v9.5 — Action Feedback & Stability</div>
+                <div class="subtitle">Master Edition v12.1 — Final Tactical Update</div>
             </div>
             <div class="actions">
                 <button class="magipunk-btn" onclick="showHelp()">How to Play</button>
@@ -162,16 +170,14 @@
         </div>
 
         <div class="layout">
-            <!-- Left Sidebar -->
             <aside class="panel">
                 <h2>Active Operatives</h2>
                 <div class="hero-roster" id="hero-roster" style="margin-bottom:12px;"></div>
-                <h2>Skill Hand</h2>
-                <div class="small" style="margin-bottom:6px;">Private hand (drawn back up to 3 at end of round).</div>
+                <h2>Skill Hand & Actions</h2>
+                <div class="small" style="margin-bottom:6px;">Click a card to play it using 1 AP, or save for secret crisis bids.</div>
                 <div class="hand" id="hand" style="margin-top:6px;"></div>
             </aside>
 
-            <!-- Center Board -->
             <main class="panel">
                 <h2>Train Carriages (Cars 1–5)</h2>
                 <div class="small" style="margin-bottom:8px;">Click 'Move', then select a highlighted grid cell.</div>
@@ -180,29 +186,27 @@
                 </div>
                 <div class="notice" id="active-summary" style="margin-top:12px;"></div>
                 <div class="actions" style="justify-content:center;">
+                    <button class="magipunk-btn primary" id="drawBtn" style="font-size:14px; padding:10px 16px;" onclick="drawCardManual()">1. DRAW CARD</button>
                     <button class="magipunk-btn" id="moveBtn" onclick="setMode('move')">Move (1 AP)</button>
                     <button class="magipunk-btn" id="attackBtn" onclick="attackEnemy()">Attack (1 AP)</button>
                     <button class="magipunk-btn" id="repairBtn" onclick="repairEngine()">Repair Engine (1 AP)</button>
-                    <button class="magipunk-btn" id="vipBtn" onclick="vipAction()">VIP Command (1 AP)</button>
-                    <button class="magipunk-btn" id="accuseBtn" onclick="startAccusation()">Accuse Car 4 (2 AP)</button>
-                    <button class="magipunk-btn primary" id="endBtn" onclick="endHeroTurn()">End Hero Turn</button>
+                    <button class="magipunk-btn" id="vipBtn" onclick="vipAction()">VIP Cmd (1 AP)</button>
+                    <button class="magipunk-btn primary" id="endBtn" style="font-size:14px; padding:10px 16px;" onclick="endHeroTurn()">2. END HERO TURN</button>
                 </div>
-                <div id="action-hint" class="small" style="text-align:center;color:var(--gold-light);">Choose an action above to spend your AP budget.</div>
+                <div id="action-hint" class="small" style="text-align:center;color:var(--gold-light);">You must Draw a Card first, then spend AP.</div>
             </main>
             
-            <!-- Right Sidebar -->
             <aside class="panel">
-                <h2>Collaborative Crisis</h2>
+                <h2>3. Secret Crisis Bidding</h2>
                 <div id="crisis" class="notice">No crisis active. Crises appear after all heroes take a turn.</div>
                 <div id="crisis-controls"></div>
                 <h3 style="margin-top:12px;">Event & Action Log</h3>
                 <div id="log" class="log" aria-live="polite" style="margin-top:6px;"></div>
             </aside>
         </div>
-        <div class="footer">Lightning Rail Master Edition v9.5 · Action Feedback & Fix.</div>
+        <div class="footer">Lightning Rail Master Edition v12.1 · Fully Featured.</div>
     </div>
 
-    <!-- Modal Initialization Overlay -->
     <div id="overlay" class="overlay hidden">
         <div class="modal" id="modal"></div>
     </div>
@@ -227,7 +231,7 @@
 
         let G = null;
         let actionMode = '';
-        let selectedCards = new Set();
+        let selectedCards = new Set(); 
 
         const $ = id => document.getElementById(id);
         const rand = n => Math.floor(Math.random() * n);
@@ -279,7 +283,7 @@
             if(!G) return;
             G.log.unshift({s, type});
             G.log = G.log.slice(0, 60);
-            if($('log')) $('log').innerHTML = G.log.map(x => `<p class="${x.type}">${esc(x.s)}</p>`).join('');
+            if($('log')) $('log').innerHTML = G.log.map(x => `<p class="${x.type}">> ${esc(x.s)}</p>`).join('');
         }
 
         function startMenu() {
@@ -289,7 +293,7 @@
                     <button class="magipunk-btn primary" onclick="newGame(true)">Full Game (5-Hero Social Deduction)</button>
                     <button class="magipunk-btn" onclick="newGame(false)">Practice (2-Hero Co-op)</button>
                 </div>
-                <p class="small" style="margin-top:15px;">Designed for local hot-seat play.</p>`);
+                <p class="small" style="margin-top:15px; text-align:center;">Features true secret bidding, enemy AI movement, and actionable skills.</p>`);
         }
 
         function newGame(socialChoice) {
@@ -299,8 +303,8 @@
             
             G = {
                 social, heroes, traitor, active: 0, round: 1, integrity: 14, maxIntegrity: 14, distance: 3,
-                phase: 'heroes', turns: 0, crisis: null, crisisResolved: false, gameOver: false,
-                accused: new Set(),
+                phase: 'heroes', heroStep: 1, turns: 0, crisis: null, crisisResolved: false, gameOver: false,
+                midpointTriggered: false, accused: new Set(), crisisBidderIndex: 0,
                 enemies: [
                     {id:'daask', name:'Daask Enforcer', hp:4, maxHp:4, car:4, cell:8, img:'token_minion_generic.png'}, 
                     {id:'spawn', name:'Vampire Spawn', hp:5, maxHp:5, car:3, cell:2, img:'token_minion_generic.png'}
@@ -346,30 +350,73 @@
         }
 
         function showHelp() {
-            openModal(`<h2>Master Rulebook v9.5</h2>
+            openModal(`<h2>Master Rulebook v12.1</h2>
                 <p style="text-align:left; line-height:1.6; font-size:13px; color:var(--text-muted);">
-                <b>Goal:</b> Loyalists reach Distance 12 with Melindre alive. Traitors win via Derailment (0 HP), Melindre death, or stalling past Round 10.<br><br>
-                <b>Turn Structure:</b><br>
-                1. Spend 2 AP (Move, Attack, Repair, VIP Command).<br>
-                2. Click End Hero Turn.<br>
-                3. After all heroes act, a Crisis is drawn. Group inspects hands and commits cards.<br>
-                4. Threats activate and Distance increases.<br>
-                5. Next round begins.</p>
+                <b>Goal:</b> Loyalists reach Distance 12 with Melindre alive.<br><br>
+                <b>Turn & Skills:</b><br>
+                1. <b>Draw Card:</b> Mandatory first step of every turn.<br>
+                2. <b>Play Skill / Use AP:</b> Click a card to spend 1 AP to trigger its effect, or spend AP to Move, Attack, Repair, and Command VIPs.<br>
+                3. <b>Secret Crisis Bidding:</b> Device is passed to each player to secretly commit cards to the crisis pool.<br>
+                4. <b>Enemy AI & Boss Attacks:</b> Enemies march forward and strike adjacent targets.<br>
+                5. <b>Mid-Point Traitor Event:</b> Triggered secretly at Distance 6 via hot-seat passing.</p>
                 <div class="actions" style="margin-top:15px;"><button class="magipunk-btn primary" onclick="closeModal()">Resume Game</button></div>`);
+        }
+
+        function drawCardManual() {
+            const h = hero();
+            if(G.gameOver || G.phase !== 'heroes' || G.heroStep !== 1) { return; }
+            const newCard = drawCards(1)[0];
+            h.hand.push(newCard);
+            log(`[Step 1] ${h.name} drew ${newCard.name} (+${newCard.value}). Actions unlocked.`, "highlight");
+            G.heroStep = 2;
+            $('action-hint').textContent = 'Step 2: Spend AP on actions or click skill cards to play them (1 AP).';
+            render();
+        }
+
+        function playSkillCard(cardId) {
+            const h = hero();
+            if(G.gameOver || G.phase !== 'heroes' || G.heroStep !== 2 || h.ap < 1) {
+                log("Cannot play skill card: Not in AP phase or insufficient AP.", "alert");
+                return;
+            }
+            const cardIdx = h.hand.findIndex(c => c.id === cardId);
+            if(cardIdx === -1) return;
+            const card = h.hand[cardIdx];
+            
+            h.ap--;
+            h.hand.splice(cardIdx, 1);
+            
+            if(card.name.includes('Combat')) {
+                const target = G.enemies.find(e => e.hp > 0 && e.car === h.car);
+                if(target) {
+                    target.hp = Math.max(0, target.hp - card.value);
+                    log(`[Skill Play] ${h.name} spent 1 AP to play ${card.name} for ${card.value} damage to ${target.name}!`, "success");
+                } else {
+                    log(`[Skill Play] ${h.name} played ${card.name}, gaining tactical focus (+1 AP refunded).`, "success");
+                    h.ap = Math.min(h.maxAp, h.ap + 1);
+                }
+            } else if(card.name.includes('Tinkering') || card.name.includes('Elemental')) {
+                G.integrity = Math.min(G.maxIntegrity, G.integrity + card.value);
+                log(`[Skill Play] ${h.name} spent 1 AP to play ${card.name}: Restored +${card.value} Train Integrity.`, "success");
+            } else {
+                const nearbyEnemies = G.enemies.filter(e => e.hp > 0 && e.car === h.car);
+                nearbyEnemies.forEach(e => e.cell = Math.min(9, e.cell + 2));
+                log(`[Skill Play] ${h.name} spent 1 AP to play ${card.name}: Pushed back enemies in carriage!`, "success");
+            }
+            afterAction();
         }
 
         function spend(n=1) {
             const h = hero();
-            if(G.gameOver || G.phase !== 'heroes' || h.ap < n || h.confined) return false;
+            if(G.gameOver || G.phase !== 'heroes' || G.heroStep !== 2 || h.ap < n || h.confined) return false;
             h.ap -= n;
             return true;
         }
 
         function setMode(mode) {
-            if(G.gameOver || G.phase !== 'heroes') return;
+            if(G.gameOver || G.phase !== 'heroes' || G.heroStep !== 2) return;
             actionMode = mode;
             $('action-hint').textContent = mode === 'move' ? 'Click a highlighted cell on the tactical grid to move.' : 'Choose an action.';
-            log(`Action mode set: ${mode}. Click a green grid cell to move.`);
             renderTrain();
         }
 
@@ -386,33 +433,33 @@
             if(actionMode !== 'move' || G.phase !== 'heroes' || G.gameOver) return;
             const h = hero();
             if(h.confined || h.ap < 1) { log("Cannot move: AP exhausted or confined.", "alert"); return; }
-            if(!canMoveTo(h, car, cell)) { $('action-hint').textContent = 'Target cell is out of movement range.'; log("Invalid movement range.", "alert"); return; }
+            if(!canMoveTo(h, car, cell)) { $('action-hint').textContent = 'Target cell is out of movement range.'; return; }
             if(!spend(1)) return;
             h.car = car; h.cell = cell; actionMode = '';
-            log(`${h.name} moved to Car ${car+1} (${CAR_NAMES[car]}), cell ${cell+1}.`, "success");
+            log(`[Step 2] ${h.name} moved to Car ${car+1}, cell ${cell+1}.`);
             afterAction();
         }
 
         function attackEnemy() {
             const h = hero();
-            if(G.gameOver || G.phase !== 'heroes' || h.ap < 1 || h.confined) { $('action-hint').textContent = 'Cannot attack.'; log("Attack failed: No AP.", "alert"); return; }
+            if(G.gameOver || G.phase !== 'heroes' || h.ap < 1 || h.confined) { log("Attack failed: No AP.", "alert"); return; }
             const targets = G.enemies.filter(e => e.hp > 0 && e.car === h.car && Math.abs(e.cell - h.cell) <= 3);
-            if(!targets.length) { $('action-hint').textContent = 'No enemy in carriage within 3 cells.'; log("No enemy in range.", "alert"); return; }
+            if(!targets.length) { log("No enemy in range.", "alert"); return; }
             const target = targets.sort((a,b) => Math.abs(a.cell - h.cell) - Math.abs(b.cell - h.cell))[0];
             spend(1);
             target.hp = Math.max(0, target.hp - 2);
-            log(`${h.name} attacks ${target.name} for 2 damage${target.hp === 0 ? ' (Eliminated)' : ''}.`, target.hp === 0 ? 'success' : '');
+            log(`[Step 2] ${h.name} attacks ${target.name} for 2 damage${target.hp === 0 ? ' (Eliminated)' : ''}.`, target.hp === 0 ? 'success' : '');
             afterAction();
         }
 
         function repairEngine() {
             const h = hero();
             if(G.gameOver || G.phase !== 'heroes' || h.ap < 1 || h.confined) return;
-            if(h.car !== 0) { $('action-hint').textContent = 'Repair requires Hero to be in Car 1 (Engine Room).'; log("Must be in Car 1 to repair.", "alert"); return; }
-            if(G.integrity >= G.maxIntegrity) { $('action-hint').textContent = 'Train integrity is already full.'; log("Integrity is full.", "alert"); return; }
+            if(h.car !== 0) { log("Must be in Car 1 to repair.", "alert"); return; }
+            if(G.integrity >= G.maxIntegrity) { log("Integrity is full.", "alert"); return; }
             spend(1);
             G.integrity = Math.min(G.maxIntegrity, G.integrity + 2);
-            log(`${h.name} repairs the engine: +2 Train Integrity (${G.integrity}/${G.maxIntegrity}).`, 'success');
+            log(`[Step 2] ${h.name} repairs the engine: +2 Train Integrity.`, 'success');
             afterAction();
         }
 
@@ -420,110 +467,83 @@
             const h = hero();
             if(G.gameOver || G.phase !== 'heroes' || h.ap < 1 || h.confined) return;
             const vip = G.vips.find(v => v.hp > 0 && v.car === h.car && Math.abs(v.cell - h.cell) <= 2);
-            if(!vip) { $('action-hint').textContent = 'Move within 2 cells of Melindre or Shetari to help.'; log("No VIP in range.", "alert"); return; }
-            if(h.usedAbility) { $('action-hint').textContent = 'VIP command already used this round.'; log("VIP command spent this round.", "alert"); return; }
+            if(!vip) { log("No VIP in range.", "alert"); return; }
+            if(h.usedAbility) { log("VIP command spent this round.", "alert"); return; }
             spend(1);
             h.usedAbility = true;
             if(vip.id === 'melindre') {
                 h.hp = Math.min(h.maxHp, h.hp + 2);
                 h.stress = Math.max(0, h.stress - 1);
-                log(`${h.name} steadied Melindre; recovered up to 2 HP.`, 'success');
+                log(`[Step 2] ${h.name} steadied Melindre; recovered up to 2 HP.`, 'success');
             } else {
                 const e = G.enemies.find(e => e.hp > 0 && e.car === vip.car);
                 if(e) {
                     e.hp = Math.max(0, e.hp - 2);
-                    log(`${h.name} coordinated with Shetari: 2 damage to ${e.name}.`, 'success');
+                    log(`[Step 2] ${h.name} coordinated with Shetari: 2 damage to ${e.name}.`, 'success');
                 } else {
                     G.integrity = Math.min(G.maxIntegrity, G.integrity + 1);
-                    log(`${h.name} coordinated with Shetari: +1 Train Integrity shield.`, 'success');
+                    log(`[Step 2] ${h.name} coordinated with Shetari: +1 Integrity.`, 'success');
                 }
             }
             afterAction();
         }
 
-        function startAccusation() {
-            const h = hero();
-            if(G.gameOver || G.phase !== 'heroes' || h.ap < 2 || h.confined) return;
-            if(h.car !== 3) { $('action-hint').textContent = 'Accusations must be made from Car 4 (Dining Car).'; log("Must be in Car 4 to accuse.", "alert"); return; }
-            const candidates = G.heroes.filter(x => x.id !== h.id && !x.confined && !G.accused.has(x.id));
-            if(!candidates.length) { $('action-hint').textContent = 'No eligible suspect remains.'; log("No suspects.", "alert"); return; }
-            
-            openModal(`<h2>Emergency Accusation (Car 4)</h2>
-                <p style="font-size:13px; color:var(--text-muted); margin-bottom:15px;">${esc(h.name)} spends 2 AP to call a vote. A majority of living, unconfined heroes must support the accusation.</p>
-                <div class="actions" style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-                    ${candidates.map(x=>`<button class="magipunk-btn primary" onclick="voteAccusation('${x.id}')">Accuse ${esc(x.name)}</button>`).join('')}
-                </div>
-                <button class="magipunk-btn" onclick="closeModal()" style="margin-top:15px;">Cancel</button>`);
-        }
-
-        function voteAccusation(id) {
-            const accuser = hero();
-            accuser.ap -= 2;
-            closeModal();
-            const voters = G.heroes.filter(h => h.hp > 0 && !h.confined);
-            const votes = {};
-            let idx = 0;
-            
-            function nextVote() {
-                if(idx >= voters.length) {
-                    const yes = Object.values(votes).filter(v => v).length;
-                    const threshold = Math.floor(voters.length / 2) + 1;
-                    const suspect = G.heroes.find(h => h.id === id);
-                    if(yes >= threshold) {
-                        suspect.confined = true;
-                        suspect.car = 2; // Brig
-                        suspect.cell = 5;
-                        G.accused.add(id);
-                        log(`[Accusation Passed] ${suspect.name} confined after a ${yes}-${voters.length-yes} vote!`, 'alert');
-                    } else {
-                        accuser.ap = 0;
-                        log(`[Accusation Failed] Against ${suspect.name} (${yes}-${voters.length-yes}). ${accuser.name} loses remaining AP.`, 'alert');
-                    }
-                    afterAction();
-                    return;
-                }
-                const voter = voters[idx++];
-                openModal(`<h2>Private Vote</h2>
-                    <p style="font-size:14px; margin-bottom:15px;">Pass the device to <b>${esc(voter.name)}</b>. Do you support accusing <b>${esc(G.heroes.find(h=>h.id===id).name)}</b>?</p>
-                    <div class="actions" style="display:flex;gap:15px;justify-content:center;">
-                        <button class="magipunk-btn good" onclick="castVote('${voter.id}','${id}',true)">Support (Guilty)</button>
-                        <button class="magipunk-btn danger" onclick="castVote('${voter.id}','${id}',false)">Reject (Innocent)</button>
-                    </div>`);
-                
-                window._nextVote = nextVote;
-                window._votes = votes;
-            }
-            nextVote();
-        }
-
-        function castVote(voter, id, yes) {
-            window._votes[voter] = yes;
-            closeModal();
-            window._nextVote();
-        }
-
         function endHeroTurn() {
-            if(G.gameOver || G.phase !== 'heroes') return;
+            if(G.gameOver || G.phase !== 'heroes' || G.heroStep !== 2) return;
             actionMode = '';
-            log(`${hero().name} finishes actions.`);
+            log(`${hero().name} finished turn.`);
             G.turns++;
             if(G.turns >= G.heroes.length) {
                 startCrisisPhase();
             } else {
                 G.active = (G.active + 1) % G.heroes.length;
                 hero().ap = hero().maxAp;
+                G.heroStep = 1; 
                 log(`Turn passed to ${hero().name}.`, "highlight");
+                $('action-hint').textContent = 'Step 1: You must Draw a Card to unlock actions.';
                 render();
             }
         }
 
+        // ==========================================
+        // TRUE SECRET CRISIS BIDDING SYSTEM
+        // ==========================================
         function startCrisisPhase() {
             G.phase = 'crisis';
             G.crisis = pick(CRISES);
             G.crisisResolved = false;
             selectedCards.clear();
-            log(`[Step 3: Crisis Event] ${G.crisis.name} drawn (DC ${G.crisis.dc}). Table bidding active.`, 'alert');
-            render();
+            G.crisisBidderIndex = 0;
+            log(`[Step 3: Crisis Event] ${G.crisis.name} drawn (DC ${G.crisis.dc}). Commencing secret bids.`, 'alert');
+            promptSecretBidder();
+        }
+
+        function promptSecretBidder() {
+            if (G.crisisBidderIndex >= G.heroes.length) {
+                resolveCrisis();
+                return;
+            }
+            G.active = G.crisisBidderIndex;
+            const h = hero();
+            
+            if (h.hp <= 0 || h.confined) {
+                G.crisisBidderIndex++;
+                promptSecretBidder();
+                return;
+            }
+            
+            render(); 
+            openModal(`<h2>Secret Bidding Phase</h2>
+                <p style="margin-bottom:15px; color:var(--text-muted)">Pass the device privately to <b>${esc(h.name)}</b>.</p>
+                <p style="text-align:left; font-size:13px; margin-bottom:15px;">When ready, click below to view your private hand. You may secretly select cards to commit to the crisis pool before passing the device to the next player.</p>
+                <div class="actions" style="justify-content:center;">
+                    <button class="magipunk-btn primary" onclick="closeModal(); render();">I am ${esc(h.name)} - Reveal My Hand</button>
+                </div>`);
+        }
+
+        function lockSecretBid() {
+            G.crisisBidderIndex++;
+            promptSecretBidder();
         }
 
         function toggleCard(id) {
@@ -531,69 +551,106 @@
             if(selectedCards.has(id)) selectedCards.delete(id);
             else selectedCards.add(id);
             renderCrisis();
-            renderHand();
         }
 
         function resolveCrisis() {
-            if(G.phase !== 'crisis' || G.crisisResolved) return;
-            const committed = [];
+            let playerSum = 0;
             G.heroes.forEach(h => {
                 h.hand = h.hand.filter(c => {
-                    if(selectedCards.has(c.id)) { committed.push(c); return false; }
+                    if(selectedCards.has(c.id)) { playerSum += c.value; return false; }
                     return true;
                 });
             });
-            const playerSum = committed.reduce((n, c) => n + c.value, 0);
             const chaosCards = 2 + rand(6) + rand(6);
             const totalPool = playerSum + chaosCards;
             G.crisisResolved = true;
             
-            log(`[Crisis Resolution] Player Bid (${playerSum}) + Chaos Cards (${chaosCards}) = Pool ${totalPool} vs DC ${G.crisis.dc}.`);
+            log(`[Secret Crisis Resolution] Secret Bids (${playerSum}) + Chaos (${chaosCards}) = Pool ${totalPool} vs DC ${G.crisis.dc}.`);
             if(totalPool >= G.crisis.dc) {
                 log(`[Crisis Averted] The group successfully met the DC!`, 'success');
             } else {
                 G.integrity = Math.max(0, G.integrity - G.crisis.damage);
-                log(`[Crisis Failed] Pool missed DC ${G.crisis.dc}. Train Integrity −${G.crisis.damage} (HP: ${G.integrity}/${G.maxIntegrity}).`, 'alert');
+                log(`[Crisis Failed] Pool missed DC ${G.crisis.dc}. Train Integrity −${G.crisis.damage}.`, 'alert');
+                
+                G.enemies.push({id:'spawn_' + rand(100), name:'Mournland Stalker', hp:4, maxHp:4, car: rand(3), cell: 4, img:'token_minion_generic.png'});
+                log(`[Reinforcements] A hostile Mournland Stalker boards the train due to the failed crisis!`, 'alert');
             }
             G.phase = 'threats';
             render();
-            setTimeout(() => { if(!G.gameOver) resolveThreatPhase(); }, 2000);
+            setTimeout(() => { if(!G.gameOver) resolveThreatPhase(); }, 2500);
         }
 
         function resolveThreatPhase() {
             if(G.gameOver) return;
-            log(`[Step 4: Threat Activation] Advancing track and resolving enemies.`, 'alert');
+            log(`[Step 4: Threat AI] Enemies marching and launching attacks.`, 'alert');
             
             G.distance = Math.min(12, G.distance + 1);
             
             for(const e of G.enemies.filter(e => e.hp > 0)) {
+                if(e.cell > 1) {
+                    e.cell--;
+                } else if(e.car > 0) {
+                    e.car--;
+                    e.cell = 8;
+                }
+
                 const nearby = G.heroes.filter(h => h.hp > 0 && !h.confined && h.car === e.car && Math.abs(e.cell - e.cell) <= 2);
                 if(nearby.length) {
                     const target = pick(nearby);
-                    target.hp = Math.max(0, target.hp - 2);
-                    log(`${e.name} attacks ${target.name} for 2 damage.`, 'alert');
+                    const strikeDmg = 3; 
+                    target.hp = Math.max(0, target.hp - strikeDmg);
+                    log(`[Boss Strike] ${e.name} attacks ${target.name} for ${strikeDmg} damage!`, 'alert');
                     continue;
                 }
-                if(e.car > 1) e.car--;
-                else {
-                    const target = G.vips.find(v => v.hp > 0);
-                    if(target) {
-                        target.hp = Math.max(0, target.hp - 2);
-                        log(`${e.name} attacks VIP ${target.name} for 2 damage.`, 'alert');
-                    }
+                
+                if(e.car === 0) {
+                    G.integrity = Math.max(0, G.integrity - 2);
+                    log(`[Engine Assault] ${e.name} damages the Engine Room (-2 Integrity)!`, 'alert');
                 }
             }
 
+            // MID-POINT SECRET TRAITOR EVENT
+            if (G.distance === 6 && !G.midpointTriggered) {
+                G.midpointTriggered = true;
+                log(`[MID-POINT EVENT] Distance 6 reached. Secret Traitor Subversion!`, 'alert');
+                openModal(`<h2>QUORI AWAKENING: SLEEPER AGENT</h2>
+                    <p style="color:var(--crimson-accent); font-weight:bold; margin-bottom:15px;">Pass the device privately to inspect your revised allegiance.</p>
+                    <p style="text-align:left; font-size:13px; line-height:1.5;">At Distance 6, the sleeper protocols activate. Select your name below to secretly check if your role has shifted or if you remain loyal.</p>
+                    <div class="actions" style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:15px;">
+                        ${G.heroes.map(h => `<button class="magipunk-btn" onclick="secretMidpointInspect('${h.id}')">Inspect ${h.name}</button>`).join('')}
+                    </div>
+                    <div id="midpointResult" class="notice" style="margin-top:12px;">Select your operative to verify.</div>
+                    <button class="magipunk-btn primary" onclick="applyMidpointPenalty()" style="margin-top:15px; width:100%;">Acknowledge & Continue</button>`);
+                return;
+            }
+
+            advanceRound();
+        }
+
+        function secretMidpointInspect(id) {
+            const isTraitor = (G.traitor === id);
+            $('midpointResult').innerHTML = isTraitor ? '<span style="color:var(--crimson-accent);font-weight:bold;">YOUR DIRECTIVE HAS FLIPPED — You are now the active Traitor! Sabotage quietly.</span>' : '<span style="color:#4ade80;font-weight:bold;">YOUR LOYALTY HOLDS — You remain staunchly with the Loyalists.</span>';
+        }
+
+        function applyMidpointPenalty() {
+            G.integrity = Math.max(0, G.integrity - 3);
+            log(`[Sleeper Subversion] Train Integrity suffers -3 sabotage damage.`, 'alert');
+            closeModal();
+            checkGameOver();
+            if(!G.gameOver) advanceRound();
+        }
+
+        function advanceRound() {
             G.round++;
             G.heroes.forEach(h => {
                 h.ap = h.maxAp;
                 h.usedAbility = false;
-                if(h.hp > 0) h.hand.push(...drawCards(Math.max(0, 3 - h.hand.length))); 
             });
-            G.active = 0; G.turns = 0; G.phase = 'heroes'; G.crisis = null; selectedCards.clear();
+            G.active = 0; G.turns = 0; G.phase = 'heroes'; G.heroStep = 1; G.crisis = null; selectedCards.clear();
             checkGameOver();
             if(!G.gameOver) {
                 log(`Round ${G.round} begins. Distance: ${G.distance}/12.`, 'success');
+                $('action-hint').textContent = 'Step 1: You must Draw a Card to unlock actions.';
             }
             render();
         }
@@ -608,7 +665,7 @@
             const mel = G.vips.find(v => v.id === 'melindre');
             if(!mel || mel.hp <= 0) { finish('TRAITOR VICTORY', 'VIP Assassination: Melindre HP reached 0.'); return; }
             if(G.distance >= 12) { finish('LOYALIST VICTORY', 'Flamekeep Cathedral reached with Melindre alive!'); return; }
-            if(G.round > 10) { finish(G.social && G.traitor ? 'TRAITOR VICTORY' : 'DEFEAT', 'Time Expired: Round 10 ended before reaching destination.'); return; }
+            if(G.round > 10) { finish('TRAITOR VICTORY', 'Time Expired: Round 10 ended before reaching destination.'); return; }
             if(G.heroes.every(h => h.hp <= 0)) { finish('DEFEAT', 'Every hero has fallen.'); return; }
         }
 
@@ -623,17 +680,31 @@
             $('integrity').textContent = `${G.integrity} / ${G.maxIntegrity}`;
             $('distance').textContent = `${G.distance} / 12`;
             $('round').textContent = `${G.round} / 10`;
-            $('phase').textContent = G.phase === 'heroes' ? 'Hero turn' : G.phase === 'crisis' ? 'Crisis Bidding' : G.phase === 'threats' ? 'Threats & Speed' : 'Game Over';
+            $('phase').textContent = G.phase === 'heroes' ? 'Hero turn' : G.phase === 'crisis' ? 'Crisis Bidding' : G.phase === 'threats' ? 'Threats & AI' : 'Game Over';
             
             const activeH = hero();
-            $('active-summary').innerHTML = G.gameOver ? '<b>Game over.</b>' : `<span class="phase" style="color:var(--azure-glow)">${esc(activeH.name)}</span> — ${esc(activeH.role)}<br>AP: <b>${activeH.ap}/${activeH.maxAp}</b> · HP: <b>${activeH.hp}/${activeH.maxHp}</b> · Car: <b>${CAR_NAMES[activeH.car]}</b>${activeH.confined ? '<br><span style="color:var(--crimson-accent)">CONFINED IN BRIG</span>' : ''}`;
+            $('active-summary').innerHTML = G.gameOver ? '<b>Game over.</b>' : `<span class="phase" style="color:var(--azure-glow)">${esc(activeH.name)}</span> — ${esc(activeH.role)}<br>AP: <b>${activeH.ap}/${activeH.maxAp}</b> · HP: <b>${activeH.hp}/${activeH.maxHp}</b> · Car: <b>${CAR_NAMES[activeH.car]}</b>`;
             
-            $('moveBtn').disabled = G.phase !== 'heroes' || activeH.ap < 1 || activeH.confined;
-            $('attackBtn').disabled = G.phase !== 'heroes' || activeH.ap < 1 || activeH.confined;
-            $('repairBtn').disabled = G.phase !== 'heroes' || activeH.ap < 1 || activeH.confined;
-            $('vipBtn').disabled = G.phase !== 'heroes' || activeH.ap < 1 || activeH.confined;
-            $('accuseBtn').disabled = G.phase !== 'heroes' || activeH.ap < 2 || activeH.confined || activeH.car !== 3;
-            $('endBtn').disabled = G.phase !== 'heroes' || G.gameOver;
+            const isStep1 = (G.phase === 'heroes' && G.heroStep === 1);
+            const isStep2 = (G.phase === 'heroes' && G.heroStep === 2);
+
+            $('drawBtn').disabled = !isStep1;
+            $('moveBtn').disabled = !isStep2 || activeH.ap < 1;
+            $('attackBtn').disabled = !isStep2 || activeH.ap < 1;
+            $('repairBtn').disabled = !isStep2 || activeH.ap < 1;
+            $('vipBtn').disabled = !isStep2 || activeH.ap < 1;
+            $('endBtn').disabled = !isStep2 || G.gameOver;
+
+            if (isStep1) {
+                $('drawBtn').classList.add('pulse');
+                $('endBtn').classList.remove('pulse');
+            } else if (isStep2) {
+                $('drawBtn').classList.remove('pulse');
+                $('endBtn').classList.add('pulse');
+            } else {
+                $('drawBtn').classList.remove('pulse');
+                $('endBtn').classList.remove('pulse');
+            }
 
             renderTrain();
             renderHeroes();
@@ -646,7 +717,7 @@
             $('train').innerHTML = CAR_NAMES.map((name, car) => {
                 const cols = [];
                 for(let cell=0; cell<10; cell++) { 
-                    const isLegal = actionMode === 'move' && canMoveTo(hero(), car, cell);
+                    const isLegal = actionMode === 'move' && canMoveTo(hero(), car, cell) && G.heroStep === 2;
                     const tokens = [];
                     
                     G.heroes.forEach(h => {
@@ -658,7 +729,7 @@
                         tokens.push(`<div class="token vip" style="background-image:url('${v.img}')" title="${v.name} (HP ${v.hp})"></div>`);
                     });
                     G.enemies.filter(e => e.hp > 0 && e.car === car && e.cell === cell).forEach(e => {
-                        tokens.push(`<div class="token minion" style="background-image:url('${e.img}')" title="${e.name}"></div>`);
+                        tokens.push(`<div class="token minion" style="background-image:url('${e.img}')" title="${e.name} (HP ${e.hp})"></div>`);
                     });
 
                     cols.push(`<div class="grid-cell ${isLegal ? 'legal-move' : ''}" onclick="moveTo(${car}, ${cell})">${tokens.join('')}</div>`);
@@ -685,10 +756,10 @@
         function renderCrisis() {
             if(!G) return;
             if(G.phase === 'crisis' && G.crisis) {
-                $('crisis').innerHTML = `<b>${esc(G.crisis.name)}</b> (DC ${G.crisis.dc})<p style="margin-bottom:6px;font-size:11px;">${esc(G.crisis.desc)}</p><p class="small" style="color:var(--gold-primary);">Committed Bid: <b>${G.heroes.reduce((n, h) => n + h.hand.filter(c => selectedCards.has(c.id)).reduce((a, c) => a + c.value, 0), 0)}</b> (+2 Chaos)</p>`;
-                $('crisis-controls').innerHTML = `<div class="actions"><button class="magipunk-btn primary" onclick="resolveCrisis()">Commit & Resolve</button></div>`;
+                $('crisis').innerHTML = `<b>${esc(G.crisis.name)}</b> (DC ${G.crisis.dc})<p style="margin-bottom:6px;font-size:11px;">${esc(G.crisis.desc)}</p><p class="small" style="color:var(--gold-primary);">Total Secret Cards Provided: <b>${selectedCards.size} cards</b></p>`;
+                $('crisis-controls').innerHTML = `<div class="actions" style="margin-top:8px;"><button class="magipunk-btn primary pulse" style="width:100%;padding:12px;font-size:14px;" onclick="lockSecretBid()">Lock Secret Bid & Pass Device</button></div>`;
             } else {
-                $('crisis').textContent = G.phase === 'threats' ? 'Resolving threats & advancing...' : G.phase === 'game over' ? 'Game over.' : 'No crisis active. Crises appear after all heroes take a turn.';
+                $('crisis').textContent = G.phase === 'threats' ? 'Resolving threat AI & boss strikes...' : G.phase === 'game over' ? 'Game over.' : 'No crisis active. Crises appear after all heroes take a turn.';
                 $('crisis-controls').innerHTML = '';
             }
         }
@@ -696,27 +767,29 @@
         function renderHand() {
             if(!G) return;
             if(G.phase === 'crisis') {
-                $('hand').innerHTML = G.heroes.map(owner => `
-                    <div class="card">
-                        <strong>${esc(owner.name)}'s Hand</strong>
-                        <div style="width:100%;display:flex;flex-direction:column;gap:3px;">
-                            ${owner.hand.map(c => `
-                                <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,0.6);padding:4px 6px;border-radius:4px;width:100%; border:1px solid var(--border-metal);">
-                                    <span style="font-size:10px;">${esc(c.name)} <span class="pill">+${c.value}</span></span>
-                                    <label style="font-size:10px; cursor:pointer;"><input type="checkbox" ${selectedCards.has(c.id) ? 'checked' : ''} onchange="toggleCard('${c.id}')"> Commit</label>
+                const h = hero();
+                $('hand').innerHTML = `
+                    <div class="card" style="border-color:var(--azure-glow);">
+                        <strong>${esc(h.name)}'s Secret Hand</strong>
+                        <div class="small">Select cards secretly to commit. Your choices are hidden.</div>
+                        <div style="width:100%;display:flex;flex-direction:column;gap:4px;margin-top:6px;">
+                            ${h.hand.map(c => `
+                                <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,0.7);padding:6px;border-radius:4px;width:100%; border:1px solid var(--border-metal);">
+                                    <span style="font-size:11px;">${esc(c.name)} <span class="pill">Power: ${c.value}</span></span>
+                                    <label style="font-size:11px; cursor:pointer;"><input type="checkbox" ${selectedCards.has(c.id) ? 'checked' : ''} onchange="toggleCard('${c.id}')"> Secret Bid</label>
                                 </div>
                             `).join('') || '<div class="small">No cards.</div>'}
                         </div>
-                    </div>
-                `).join('');
+                    </div>`;
             } else {
                 const h = hero();
                 $('hand').innerHTML = h.hand.map(c => `
-                    <div class="card">
+                    <div class="card" onclick="playSkillCard('${c.id}')" title="Click to play card for 1 AP" style="cursor:pointer; border-color:var(--azure-glow);">
                         <div style="display:flex;justify-content:space-between;align-items:center;">
-                            <span>${esc(c.name)}</span>
-                            <span class="pill">+${c.value}</span>
+                            <span>⚡ ${esc(c.name)}</span>
+                            <span class="pill">Power: ${c.value}</span>
                         </div>
+                        <div style="font-size:10px; color:var(--azure-glow); margin-top:4px;">Click to Play Effect (Costs 1 AP)</div>
                     </div>
                 `).join('') || '<div class="small">Hand empty.</div>';
             }
