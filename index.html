@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Lightning Rail: Sharn to Thrane — Master Edition v8.0 Collaborative Bidding</title>
+    <title>Lightning Rail: Sharn to Thrane — Master Edition v8.1 Visual Asset Restoration</title>
     <style>
         :root{--bg-deep:#070a12;--panel-bg:rgba(15, 23, 42, 0.97);--gold-primary:#d4af37;--gold-light:#f3e5ab;--azure-glow:#00e5ff;--crimson-accent:#ff1744;--text-main:#f5f2e9;--text-muted:#e2e8f0;--border-metal:#455a64;}
         *{box-sizing:border-box;margin:0;padding:0;}
@@ -32,19 +32,19 @@
         .stat span{display:block;color:var(--text-muted);font-size:11px;text-transform:uppercase;font-weight:bold;}
         .stat strong{font-size:22px;color:var(--azure-glow);font-family:monospace;text-shadow:0 0 10px rgba(0,229,255,0.6);}
         
+        /* Restored Visual Tactical Train Board */
         .train{width:1040px;height:590px;background-image:url('board_layout_tactical_grid.png');background-size:cover;background-position:center;border:4px solid var(--gold-primary);border-radius:16px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.95),inset 0 0 35px rgba(0,0,0,0.7);display:grid;grid-template-columns:repeat(5,1fr);padding:105px 50px 70px 50px;gap:18px;margin:auto;}
         .car{display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(5,1fr);gap:3px;position:relative;height:100%;}
-        .occupants{position:absolute;top:-45px;left:0;right:0;display:flex;flex-direction:column;gap:3px;z-index:20;}
-        .token{padding:4px 6px;border-radius:4px;background:rgba(28,51,73,0.92);border:1.5px solid var(--border-metal);font-size:10px;font-weight:bold;overflow-wrap:anywhere;color:#fff;text-shadow:0 1px 3px #000;box-shadow:0 4px 10px rgba(0,0,0,0.95);}
+        
+        .grid-cell{min-width:0;min-height:0;background:rgba(0,229,255,0.03);border:1px solid rgba(0,229,255,0.3);border-radius:3px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+        .grid-cell.legal-move{background:rgba(74,222,128,0.25);border:2px solid rgba(74,222,128,0.95);cursor:pointer;}
+
+        /* Restored Custom Avatar Tokens */
+        .token{width:75%;height:75%;max-width:24px;max-height:24px;margin:auto;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:bold;box-shadow:0 4px 10px rgba(0,0,0,0.95);position:relative;z-index:25;background-size:cover;background-position:center;border:2px solid var(--gold-primary);}
         .token.hero{border-color:var(--azure-glow);}
-        .token.active{outline:2px solid var(--gold-primary);}
-        .token.enemy{border-color:var(--crimson-accent);background:rgba(60,32,43,0.92);}
-        .token.vip{border-color:#f59e0b;background:rgba(56,47,29,0.92);}
-        
-        .cells{position:absolute;bottom:-35px;left:0;right:0;display:flex;gap:3px;justify-content:center;}
-        .cell{font-size:10px;padding:2px 4px;border:1px solid var(--border-metal);border-radius:3px;color:var(--text-main);background:rgba(0,0,0,0.85);cursor:pointer;}
-        .cell:hover{border-color:var(--azure-glow);background:rgba(0,229,255,0.2);}
-        
+        .token.minion{border-color:var(--crimson-accent);}
+        .token.vip{border-color:#f59e0b;}
+
         .hero-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
         .hero-card{padding:12px;border-radius:8px;background:rgba(18,24,36,0.95);border:1.5px solid var(--border-metal);}
         .hero-card.current{border-color:var(--gold-primary);box-shadow:0 0 15px rgba(212,175,55,0.6);}
@@ -58,7 +58,6 @@
         .small{font-size:12px;color:var(--text-muted);line-height:1.4;}
         .hand{display:flex;flex-direction:column;gap:8px;}
         .card{border:1.5px solid var(--gold-primary);background:#1e293b;padding:10px 12px;border-radius:8px;background-image:url('card_template_hero_brass.png');background-size:cover;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.95);display:flex;justify-content:space-between;align-items:center;}
-        .card.committed{border-color:var(--azure-glow);box-shadow:0 0 12px var(--azure-glow);}
         
         .log{max-height:220px;overflow:auto;display:flex;flex-direction:column;gap:6px;font-family:monospace;font-size:12px;}
         .log p{margin:0;padding:7px 9px;background:rgba(0,0,0,0.85);border-left:3px solid var(--border-metal);border-radius:4px;}
@@ -83,7 +82,7 @@
             <div>
                 <div class="eyebrow">Eberron · Magipunk Social Deduction</div>
                 <h1>⚡ Lightning Rail: Sharn to Thrane</h1>
-                <div class="subtitle">Master Edition v8.0 — Collaborative Crisis Bidding & Balanced Play</div>
+                <div class="subtitle">Master Edition v8.1 — Visual Asset Restoration & Collaborative Play</div>
             </div>
             <div class="actions">
                 <button onclick="showHelp()">How to Play</button>
@@ -102,7 +101,7 @@
             <main>
                 <section class="panel">
                     <h2>Train Carriages (Cars 1–5)</h2>
-                    <div class="small">Click 'Move', then select a cell to navigate carriages. Adjacent carriages connect at neighboring cell numbers.</div>
+                    <div class="small">Click 'Move', then select a tactical grid cell to navigate carriages.</div>
                     <div class="train" id="train"></div>
                 </section>
                 <section class="panel" style="margin-top:14px">
@@ -131,7 +130,7 @@
                     <div id="crisis-controls"></div>
                     <div class="section">
                         <h3>Shared Table Skill Hand</h3>
-                        <div class="small">All players can inspect hands and collaboratively commit cards to overcome the Crisis DC. Traitors may covertly withhold or sabotage!</div>
+                        <div class="small">All players can inspect hands and collaboratively commit cards to overcome the Crisis DC.</div>
                         <div id="hand" class="hand"></div>
                     </div>
                 </section>
@@ -147,7 +146,7 @@
             </aside>
         </div>
         
-        <div class="footer">Lightning Rail Master Edition v8.0 · Fully playable local co-op & social deduction build.</div>
+        <div class="footer">Lightning Rail Master Edition v8.1 · Visual Assets Restored.</div>
     </div>
 
     <div id="overlay" class="overlay hidden">
@@ -163,11 +162,11 @@
             {name: 'Mournland Spectral Surge', dc: 14, damage: 3, desc: 'A wave of grey mist and hostile energy strikes the express.'}
         ];
         const HERO_BASE = [
-            {id:'jan', name:'Jan Valek', role:'Vampire Detective', hp:12, maxHp:12, def:15, skill:3, car:0, cell:2, ap:2, maxAp:2, stress:0},
-            {id:'caden', name:'Caden', role:'Arcane Sniper', hp:10, maxHp:10, def:14, skill:3, car:1, cell:4, ap:2, maxAp:2, stress:0},
-            {id:'bromli', name:'Bromli', role:'Cannith Artificer', hp:14, maxHp:14, def:16, skill:4, car:0, cell:5, ap:2, maxAp:2, stress:0},
-            {id:'fix', name:'Fix', role:'Changeling Bard', hp:10, maxHp:10, def:14, skill:3, car:2, cell:1, ap:2, maxAp:2, stress:0},
-            {id:'temple', name:'Temple', role:'Warforged Guardian', hp:16, maxHp:16, def:17, skill:2, car:3, cell:3, ap:2, maxAp:2, stress:0}
+            {id:'jan', name:'Jan Valek', role:'Vampire Detective', hp:12, maxHp:12, def:15, skill:3, car:0, cell:2, ap:2, maxAp:2, stress:0, img:'token_hero_jan_valek.png'},
+            {id:'caden', name:'Caden', role:'Arcane Sniper', hp:10, maxHp:10, def:14, skill:3, car:1, cell:4, ap:2, maxAp:2, stress:0, img:'token_hero_caden.png'},
+            {id:'bromli', name:'Bromli', role:'Cannith Artificer', hp:14, maxHp:14, def:16, skill:4, car:0, cell:5, ap:2, maxAp:2, stress:0, img:'token_hero_bromli.png'},
+            {id:'fix', name:'Fix', role:'Changeling Bard', hp:10, maxHp:10, def:14, skill:3, car:2, cell:1, ap:2, maxAp:2, stress:0, img:'token_hero_fix.png'},
+            {id:'temple', name:'Temple', role:'Warforged Guardian', hp:16, maxHp:16, def:17, skill:2, car:3, cell:3, ap:2, maxAp:2, stress:0, img:'token_hero_temple.png'}
         ];
 
         let G = null;
@@ -226,8 +225,8 @@
             G = {
                 social, heroes, traitor, active: 0, round: 1, integrity: 14, maxIntegrity: 14, distance: 3,
                 phase: 'heroes', turns: 0, crisis: null, crisisResolved: false, gameOver: false,
-                enemies: [{id:'daask', name:'Daask Enforcer', hp:4, maxHp:4, car:4, cell:8}, {id:'spawn', name:'Vampire Spawn', hp:5, maxHp:5, car:3, cell:2}],
-                vips: [{id:'melindre', name:'Melindre', hp:8, maxHp:8, car:1, cell:2}, {id:'shetari', name:'Shetari', hp:8, maxHp:8, car:1, cell:7}],
+                enemies: [{id:'daask', name:'Daask Enforcer', hp:4, maxHp:4, car:4, cell:8, img:'token_minion_generic.png'}, {id:'spawn', name:'Vampire Spawn', hp:5, maxHp:5, car:3, cell:2, img:'token_minion_generic.png'}],
+                vips: [{id:'melindre', name:'Melindre', hp:8, maxHp:8, car:1, cell:2, img:'token_vip_melindre.png'}, {id:'shetari', name:'Shetari', hp:8, maxHp:8, car:1, cell:7, img:'token_vip_melindre.png'}],
                 log: []
             };
             actionMode = '';
@@ -271,7 +270,7 @@
         function closeModal() { $('overlay').classList.add('hidden'); }
 
         function showHelp() {
-            openModal(`<h2>Master Rulebook v8.0 Summary</h2><p><b>Goal:</b> Loyalists reach Distance 12 with Melindre alive. Traitors win via Derailment (0 HP), Melindre assassination, or stalling past Round 10.</p><p><b>Turn Structure:</b> 1. Draw Skills, 2. Hero Actions (2 AP), 3. Collaborative Crisis Bidding, 4. Threat Activation & Distance +1, 5. Cleanup.</p><p><b>Collaborative Crisis Bidding:</b> After all heroes take their turns, a Crisis is drawn. All players inspect hands and collaboratively commit cards to meet the DC alongside 2 Elemental Chaos Cards.</p><div class="actions"><button class="primary" onclick="closeModal()">Resume Game</button></div>`);
+            openModal(`<h2>Master Rulebook v8.1 Summary</h2><p><b>Goal:</b> Loyalists reach Distance 12 with Melindre alive. Traitors win via Derailment (0 HP), Melindre assassination, or stalling past Round 10.</p><p><b>Turn Structure:</b> 1. Draw Skills, 2. Hero Actions (2 AP), 3. Collaborative Crisis Bidding, 4. Threat Activation & Distance +1, 5. Cleanup.</p><div class="actions"><button class="primary" onclick="closeModal()">Resume Game</button></div>`);
         }
 
         function setMode(mode) {
@@ -281,14 +280,22 @@
             renderTrain();
         }
 
+        function canMoveTo(h, targetCar, targetCell) {
+            const car = Number(targetCar), cell = Number(targetCell);
+            if (!Number.isInteger(car) || car < 0 || car > 4 || !Number.isInteger(cell) || cell < 0 || cell > 7) return false;
+            const carDiff = Math.abs(h.car - car);
+            const cellDiff = Math.abs(h.cell - cell);
+            if (carDiff === 0) return cellDiff > 0 && cellDiff <= 3;
+            return carDiff === 1 && cellDiff <= 1;
+        }
+
         function moveTo(car, cell) {
             if(actionMode !== 'move' || G.phase !== 'heroes' || G.gameOver) return;
             const h = hero();
             if(h.confined || h.ap < 1) return;
-            let legal = car === h.car ? Math.abs(cell - h.cell) <= 3 : Math.abs(car - h.car) === 1 && Math.abs(cell - h.cell) <= 1;
-            if(!legal) { $('action-hint').textContent = 'Target cell is out of movement range.'; return; }
+            if(!canMoveTo(h, car, cell)) { $('action-hint').textContent = 'Target cell is out of movement range.'; return; }
             h.car = car; h.cell = cell; h.ap--; actionMode = '';
-            log(`${h.name} moved to Car ${car+1} (${CAR_NAMES[car]}), cell ${cell}.`);
+            log(`${h.name} moved to Car ${car+1} (${CAR_NAMES[car]}), cell ${cell+1}.`);
             afterAction();
         }
 
@@ -386,7 +393,7 @@
                 });
             });
             const playerSum = committed.reduce((n, c) => n + c.value, 0);
-            const chaosCards = 2 + rand(6) + rand(6); // +2 Elemental Chaos cards
+            const chaosCards = 2 + rand(6) + rand(6);
             const totalPool = playerSum + chaosCards;
             G.crisisResolved = true;
             
@@ -406,10 +413,8 @@
             if(G.gameOver) return;
             log(`[Step 4: Threat Activation & Speed] Advancing track and activating enemies.`, 'alert');
             
-            // Advance Distance +1
             G.distance = Math.min(12, G.distance + 1);
             
-            // Enemy attacks
             G.enemies.filter(e => e.hp > 0).forEach(e => {
                 if(e.car > 1) e.car--;
                 else {
@@ -481,17 +486,26 @@
         function renderTrain() {
             if(!G) return;
             $('train').innerHTML = CAR_NAMES.map((name, car) => {
-                const occ = [];
-                G.heroes.forEach(h => {
-                    if(h.car === car) occ.push(`<div class="token hero ${h.id === hero().id ? 'active' : ''}">🧙 ${esc(h.name)} · ${h.hp} HP${h.confined ? ' (Confined)' : ''}</div>`);
-                });
-                G.vips.filter(v => v.hp > 0 && v.car === car).forEach(v => occ.push(`<div class="token vip">⭐ ${esc(v.name)} · ${v.hp} HP</div>`));
-                G.enemies.filter(e => e.hp > 0 && e.car === car).forEach(e => occ.push(`<div class="token enemy">☠ ${esc(e.name)} · ${e.hp} HP</div>`));
-                
-                return `<div class="car">
-                    <div class="occupants">${occ.length ? occ.join('') : '<span class="small" style="text-align:center;color:var(--muted)">Empty</span>'}</div>
-                    <div class="cells">${[1,2,3,4,5,6,7,8].map(cell => `<button class="cell" ${actionMode === 'move' ? '' : 'disabled'} onclick="moveTo(${car},${cell})">${cell}</button>`).join('')}</div>
-                </div>`;
+                const cols = [];
+                for(let cell=0; cell<10; cell++) {
+                    const isLegal = actionMode === 'move' && canMoveTo(hero(), car, cell);
+                    const tokens = [];
+                    
+                    G.heroes.forEach(h => {
+                        if(h.car === car && h.cell === cell) {
+                            tokens.push(`<div class="token hero ${h.id === hero().id ? 'active' : ''}" style="background-image:url('${h.img}')" title="${h.name} (HP ${h.hp})"></div>`);
+                        }
+                    });
+                    G.vips.filter(v => v.hp > 0 && v.car === car && v.cell === cell).forEach(v => {
+                        tokens.push(`<div class="token vip" style="background-image:url('${v.img}')" title="${v.name} (HP ${v.hp})"></div>`);
+                    });
+                    G.enemies.filter(e => e.hp > 0 && e.car === car && e.cell === cell).forEach(e => {
+                        tokens.push(`<div class="token minion" style="background-image:url('${e.img}')" title="${e.name}"></div>`);
+                    });
+
+                    cols.push(`<div class="grid-cell ${isLegal ? 'legal-move' : ''}" onclick="moveTo(${car}, ${cell})">${tokens.join('')}</div>`);
+                }
+                return `<div class="car">${cols.join('')}</div>`;
             }).join('');
         }
 
@@ -499,7 +513,7 @@
             if(!G) return;
             $('heroes').innerHTML = G.heroes.map((h, i) => `<div class="hero-card ${i === G.active && G.phase === 'heroes' ? 'current' : ''}">
                 <strong>${esc(h.name)}</strong> <span class="pill">${esc(h.role)}</span>
-                <p>HP ${h.hp}/${h.maxHp} · AP ${h.ap}/${h.maxAp} · Car ${h.car+1}, cell ${h.cell}${h.confined ? ' · BRIG' : ''}</p>
+                <p>HP ${h.hp}/${h.maxHp} · AP ${h.ap}/${h.maxAp} · Car ${h.car+1}, cell ${h.cell+1}${h.confined ? ' · BRIG' : ''}</p>
                 <div class="bar"><i style="width:${Math.max(0, h.hp/h.maxHp*100)}%"></i></div>
             </div>`).join('');
         }
