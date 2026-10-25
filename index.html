@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Lightning Rail: Master Edition v15.4</title>
+    <title>Lightning Rail: Master Edition v15.6</title>
     <style>
         :root { --bg-deep: #070a12; --panel-bg: rgba(15, 23, 42, 0.97); --gold-primary: #d4af37; --azure-glow: #00e5ff; --crimson-accent: #ff1744; --text-main: #f5f2e9; --text-muted: #e2e8f0; --border-metal: #455a64; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,11 +31,12 @@
         .car { display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(5, 1fr); gap: 2px; }
         .grid-cell { background: rgba(0, 229, 255, 0.02); border: 1px solid rgba(0, 229, 255, 0.2); border-radius: 3px; display: flex; align-items: center; justify-content: center; }
         .grid-cell.legal-move { background: rgba(74, 222, 128, 0.35); border: 2px solid rgba(74, 222, 128, 0.95); cursor: pointer; }
-        .token { width: 80%; height: 80%; max-width: 22px; max-height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; border: 2px solid var(--gold-primary); background: #222; }
-        .token.hero { border-color: var(--azure-glow); color: var(--azure-glow); }
-        .token.active { transform: scale(1.15); box-shadow: 0 0 12px rgba(212,175,55,0.9); border-color: var(--gold-primary); color: var(--gold-primary); }
-        .token.minion { border-color: var(--crimson-accent); color: var(--crimson-accent); }
-        .token.vip { border-color: #f59e0b; color: #f59e0b; }
+        .token { width: 80%; height: 80%; max-width: 22px; max-height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; border: 2px solid var(--gold-primary); background-color: #222; background-size: cover; background-position: center; }
+        .token.hero { border-color: var(--azure-glow); color: transparent; }
+        .token.active { transform: scale(1.15); box-shadow: 0 0 12px rgba(212,175,55,0.9); border-color: var(--gold-primary); }
+        .token.minion { border-color: var(--crimson-accent); color: transparent; }
+        .token.vip { border-color: #f59e0b; color: transparent; }
+        .token.boss { border-color: #ff5722; width: 95%; height: 95%; max-width: 28px; max-height: 28px; }
         .hero-list { display: flex; flex-direction: column; gap: 8px; }
         .hero-card-mini { background: rgba(18, 24, 36, 0.95); border: 1.5px solid var(--border-metal); border-radius: 8px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; }
         .hero-card-mini.dead { opacity: 0.4; }
@@ -59,7 +60,7 @@
             <div>
                 <div class="eyebrow">Eberron · Magipunk Social Deduction</div>
                 <h1>⚡ Lightning Rail: Sharn to Thrane</h1>
-                <div class="subtitle">Master Edition v15.4 — Doorways & Traitor Constraints Enabled</div>
+                <div class="subtitle">Master Edition v15.6 — Confirmed Execution</div>
             </div>
             <div class="actions">
                 <button class="magipunk-btn primary" onclick="newGame(true)">New Game</button>
@@ -112,16 +113,16 @@
         const CAR_NAMES = ['Engine Room', 'Passenger Car', 'Cargo / Brig', 'Dining Car', 'Rear Observation'];
         const CRISES = [
             {name: 'Conduit Rail Arc Overload', dc: 11, damage: 2, boss: null},
-            {name: 'Daask Airship Ambush', dc: 13, damage: 2, boss: {id:'boss', name:'Daask Warlord', hp:8, maxHp:8, car:4, cell:8, isBoss:true}},
+            {name: 'Daask Airship Ambush', dc: 13, damage: 2, boss: {id:'boss', name:'Daask Warlord', hp:8, maxHp:8, car:4, cell:8, isBoss:true, img:'token_minion_generic.png'}},
             {name: 'Mournland Spectral Surge', dc: 15, damage: 3, boss: null}
         ];
         
         const HERO_BASE = [
-            {id:'jan', name:'Jan Valek', hp:12, maxHp:12, car:0, cell:2, ap:2, maxAp:2},
-            {id:'caden', name:'Caden', hp:10, maxHp:10, car:1, cell:4, ap:2, maxAp:2},
-            {id:'bromli', name:'Bromli', hp:14, maxHp:14, car:0, cell:5, ap:2, maxAp:2},
-            {id:'fix', name:'Fix', hp:10, maxHp:10, car:2, cell:1, ap:2, maxAp:2},
-            {id:'temple', name:'Temple', hp:16, maxHp:16, car:3, cell:3, ap:2, maxAp:2}
+            {id:'jan', name:'Jan Valek', hp:12, maxHp:12, car:0, cell:2, ap:2, maxAp:2, img:'token_hero_jan_valek.png'},
+            {id:'caden', name:'Caden', hp:10, maxHp:10, car:1, cell:4, ap:2, maxAp:2, img:'token_hero_caden.png'},
+            {id:'bromli', name:'Bromli', hp:14, maxHp:14, car:0, cell:5, ap:2, maxAp:2, img:'token_hero_bromli.png'},
+            {id:'fix', name:'Fix', hp:10, maxHp:10, car:2, cell:1, ap:2, maxAp:2, img:'token_hero_fix.png'},
+            {id:'temple', name:'Temple', hp:16, maxHp:16, car:3, cell:3, ap:2, maxAp:2, img:'token_hero_temple.png'}
         ];
 
         let G = null;
@@ -181,8 +182,8 @@
                 active: 0, round: 1, integrity: 14, maxIntegrity: 14, distance: 3,
                 phase: 'heroes', heroStep: 1, crisis: null, crisisResolved: false, gameOver: false, midpointTriggered: false,
                 crisisPool: [], bidsSubmitted: new Set(),
-                enemies: [{id:'daask', name:'Daask Enforcer', hp:4, maxHp:4, car:4, cell:8}],
-                vips: [{id:'melindre', name:'Melindre', hp:8, maxHp:8, car:1, cell:2, usedAbility: false}, {id:'shetari', name:'Shetari', hp:8, maxHp:8, car:1, cell:7, usedAbility: false}],
+                enemies: [{id:'daask', name:'Daask Enforcer', hp:4, maxHp:4, car:4, cell:8, img:'token_minion_generic.png'}],
+                vips: [{id:'melindre', name:'Melindre', hp:8, maxHp:8, car:1, cell:2, usedAbility: false, img:'token_vip_melindre.png'}, {id:'shetari', name:'Shetari', hp:8, maxHp:8, car:1, cell:7, usedAbility: false, img:'token_vip_melindre.png'}],
                 log: []
             };
             G.heroes.forEach(h => h.hand = drawCards(3, h.id === G.traitor));
@@ -273,13 +274,10 @@
             
             if (h.car === car) return getGridDist(h.cell, cell) <= 3;
             
-            // Movement between cars requires strict doorway adjacency
             if (Math.abs(h.car - car) === 1) {
                 if (car > h.car) {
-                    // Moving back a car (e.g. Car 0 to Car 1): Hero must be at cells 8 or 9, destination must be cells 0 or 1
                     return (h.cell === 8 || h.cell === 9) && (cell === 0 || cell === 1);
                 } else {
-                    // Moving forward a car: Hero must be at cells 0 or 1, destination must be cells 8 or 9
                     return (h.cell === 0 || h.cell === 1) && (cell === 8 || cell === 9);
                 }
             }
@@ -297,7 +295,7 @@
 
         function attackEnemy() {
             const h = hero();
-            const targets = G.enemies.filter(e => e.hp > 0 && e.car === h.car && getGridDist(h.cell, e.cell) <= 1);
+            const targets = G.enemies.filter(e => e.hp > 0 && e.car === h.car && getGridDist(h.cell, e.cell) <= 2);
             if(!targets.length || !spend(1)) return;
             targets[0].hp = Math.max(0, targets[0].hp - 2);
             actionMode = '';
@@ -316,7 +314,7 @@
 
         function vipAction() {
             const h = hero();
-            const vip = G.vips.find(v => v.hp > 0 && v.car === h.car && getGridDist(h.cell, v.cell) <= 1);
+            const vip = G.vips.find(v => v.hp > 0 && v.car === h.car && getGridDist(h.cell, v.cell) <= 2);
             if(!vip || vip.usedAbility || !spend(1)) return;
             vip.usedAbility = true;
             actionMode = '';
@@ -385,7 +383,7 @@
             if(totalPool < G.crisis.dc) {
                 G.crisisResolved = false;
                 G.integrity = Math.max(0, G.integrity - G.crisis.damage);
-                G.enemies.push({id:'spawn_'+rand(100), name:'Stalker', hp:4, maxHp:4, car: rand(3), cell: 4});
+                G.enemies.push({id:'spawn_'+rand(100), name:'Stalker', hp:4, maxHp:4, car: rand(3), cell: 4, img:'token_minion_generic.png'});
                 log(`[Crisis Failed] Pool ${totalPool} vs DC ${G.crisis.dc}. Train damaged.`, 'alert');
             } else {
                 G.crisisResolved = true;
@@ -439,7 +437,9 @@
                 }
                 
                 G.heroes.forEach(h => h.inspectedRole = false);
-                openModal(`<h2>MIDPOINT SUBVERSION</h2><p>Distance 6 reached. The sleepers awaken. Has a new traitor been subverted?</p><button class="magipunk-btn primary" onclick="promptMidpointReveal()">Commence Interrogations</button>`);
+                openModal(`<h2>MIDPOINT SUBVERSION</h2><p>Distance 6 reached. The sleepers awaken.</p>
+                <p style="color:var(--gold-primary); font-size:12px; margin-bottom:15px;">${flipOccurred ? 'Detectors indicate a role shift has occurred!' : 'Detectors indicate allegiances remain stable.'}</p>
+                <button class="magipunk-btn primary" onclick="promptMidpointReveal()">Commence Interrogations</button>`);
                 return;
             }
             advanceRound();
@@ -447,7 +447,10 @@
 
         function promptMidpointReveal() {
             const uninspected = G.heroes.filter(h => h.hp > 0 && !h.inspectedRole);
-            if(uninspected.length === 0) { advanceRound(); return; }
+            if(uninspected.length === 0) {
+                openModal(`<h2>Midpoint Briefing Complete</h2><button class="magipunk-btn primary" onclick="closeModal(); advanceRound();">Resume Operation</button>`);
+                return;
+            }
             openModal(`<h2>Midpoint Inspection</h2><p style="margin-bottom:15px;">Pass the device to the next operative.</p>
                 <div class="actions" style="justify-content:center;">
                     <button class="magipunk-btn" onclick="revealMidpointRole('${uninspected[0].id}')">I am ${uninspected[0].name}</button>
@@ -509,9 +512,9 @@
             const isStep1 = G.phase === 'heroes' && G.heroStep === 1; const isStep2 = G.phase === 'heroes' && G.heroStep === 2;
             
             const hasAP = activeH.ap > 0 && activeH.hp > 0;
-            const canAttack = hasAP && G.enemies.some(e => e.hp > 0 && e.car === activeH.car && getGridDist(activeH.cell, e.cell) <= 1);
+            const canAttack = hasAP && G.enemies.some(e => e.hp > 0 && e.car === activeH.car && getGridDist(activeH.cell, e.cell) <= 2);
             const canRepair = hasAP && activeH.car === 0 && activeH.cell <= 3 && G.integrity < G.maxIntegrity;
-            const canVip = hasAP && G.vips.some(v => v.hp > 0 && v.car === activeH.car && getGridDist(activeH.cell, v.cell) <= 1 && !v.usedAbility);
+            const canVip = hasAP && G.vips.some(v => v.hp > 0 && v.car === activeH.car && getGridDist(activeH.cell, v.cell) <= 2 && !v.usedAbility);
 
             $('drawBtn').disabled = !isStep1; 
             $('moveBtn').disabled = !isStep2 || !hasAP; 
@@ -528,9 +531,9 @@
                 for(let cell=0; cell<10; cell++) { 
                     const isLegal = actionMode === 'move' && canMoveTo(activeH, car, cell) && isStep2;
                     const tokens = [];
-                    G.heroes.forEach(h => { if(h.car===car && h.cell===cell && h.hp>0) tokens.push(`<div class="token hero ${h.id===activeH.id ? 'active':''}">${h.name[0]}</div>`); });
-                    G.vips.forEach(v => { if(v.car===car && v.cell===cell && v.hp>0) tokens.push(`<div class="token vip">V</div>`); });
-                    G.enemies.forEach(e => { if(e.car===car && e.cell===cell && e.hp>0) tokens.push(`<div class="token minion ${e.isBoss?'boss':''}">${e.isBoss?'B':'E'}</div>`); });
+                    G.heroes.forEach(h => { if(h.car===car && h.cell===cell && h.hp>0) tokens.push(`<div class="token hero ${h.id===activeH.id ? 'active':''}" style="background-image:url('${h.img}');" title="${h.name} (HP ${h.hp})"></div>`); });
+                    G.vips.forEach(v => { if(v.car===car && v.cell===cell && v.hp>0) tokens.push(`<div class="token vip" style="background-image:url('${v.img}');" title="${v.name} (HP ${v.hp})"></div>`); });
+                    G.enemies.forEach(e => { if(e.car===car && e.cell===cell && e.hp>0) tokens.push(`<div class="token minion ${e.isBoss?'boss':''}" style="background-image:url('${e.img}');" title="${e.name} (HP ${e.hp})"></div>`); });
                     cols.push(`<div class="grid-cell ${isLegal ? 'legal-move' : ''}" onclick="moveTo(${car}, ${cell})">${tokens.join('')}</div>`);
                 }
                 return `<div class="car">${cols.join('')}</div>`;
