@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Lightning Rail: Sharn to Thrane — Master Edition v8.2 Visuals & Group Mechanics</title>
+    <title>Lightning Rail: Sharn to Thrane — Master Edition v8.3 Stable Overlay</title>
     <style>
         :root {
             --bg-deep: #070a12;
@@ -127,6 +127,9 @@
         .notice { padding: 12px; border: 1.5px solid var(--border-metal); border-radius: 8px; background: rgba(0,0,0,0.75); margin: 8px 0; font-size: 13px; line-height: 1.5; }
         .phase { color: var(--azure-glow); font-weight: bold; }
         
+        /* The crucial .hidden class that was missing */
+        .hidden { display: none !important; }
+        
         .overlay { position: fixed; inset: 0; background: rgba(7, 10, 18, 0.96); backdrop-filter: blur(14px); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 200; }
         .modal { max-width: 620px; width: 100%; max-height: 90vh; overflow: auto; background: linear-gradient(135deg, #1e293b, #0f172a); border: 4px solid var(--gold-primary); border-radius: 16px; padding: 26px; box-shadow: 0 0 90px rgba(212,175,55,0.85); background-image: url('card_template_crisis_fantasy.png'); background-size: cover; text-align: center; }
         .modal h2 { color: var(--gold-primary); margin-top: 0; font-size: 22px; margin-bottom: 12px; }
@@ -143,7 +146,7 @@
             <div>
                 <div class="eyebrow">Eberron · Magipunk Social Deduction</div>
                 <h1>⚡ Lightning Rail: Sharn to Thrane</h1>
-                <div class="subtitle">Master Edition v8.2 — Visual Restoration & Table Bidding</div>
+                <div class="subtitle">Master Edition v8.3 — Stable Overlay Fix</div>
             </div>
             <div class="actions">
                 <button class="magipunk-btn" onclick="showHelp()">How to Play</button>
@@ -206,10 +209,11 @@
                 </section>
             </aside>
         </div>
-        <div class="footer">Lightning Rail Master Edition v8.2 · Visuals & Hot-Seat Roles Restored.</div>
+        <div class="footer">Lightning Rail Master Edition v8.3 · Modal Overlay Bug Fixed.</div>
     </div>
 
-    <div id="overlay" class="overlay hidden">
+    <!-- Initialization Overlay -->
+    <div id="overlay" class="overlay hidden" style="display: none;">
         <div class="modal" id="modal"></div>
     </div>
 
@@ -222,7 +226,6 @@
             {name: 'Mournland Spectral Surge', dc: 14, damage: 3, desc: 'A wave of grey mist and hostile energy strikes the express.'}
         ];
         
-        // Restored image links to the proper avatar tokens
         const HERO_BASE = [
             {id:'jan', name:'Jan Valek', role:'Vampire Detective', hp:12, maxHp:12, def:15, skill:3, car:0, cell:2, ap:2, maxAp:2, stress:0, img:'token_hero_jan_valek.png'},
             {id:'caden', name:'Caden', role:'Arcane Sniper', hp:10, maxHp:10, def:14, skill:3, car:1, cell:4, ap:2, maxAp:2, stress:0, img:'token_hero_caden.png'},
@@ -242,6 +245,7 @@
         class WeatherEngine {
             constructor(canvasId) {
                 this.canvas = document.getElementById(canvasId);
+                if (!this.canvas) return;
                 this.ctx = this.canvas.getContext('2d');
                 this.resize();
                 window.addEventListener('resize', () => this.resize());
@@ -268,6 +272,17 @@
                 }
                 requestAnimationFrame(() => this.update());
             }
+        }
+
+        // Bulletproof Modal controls
+        function openModal(html) { 
+            $('modal').innerHTML = html; 
+            $('overlay').classList.remove('hidden');
+            $('overlay').style.display = 'flex'; // Hard override to ensure visibility
+        }
+        function closeModal() { 
+            $('overlay').classList.add('hidden');
+            $('overlay').style.display = 'none'; // Hard override to ensure closure
         }
 
         function startMenu() {
@@ -317,9 +332,6 @@
         }
         function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
-        function openModal(html) { $('modal').innerHTML = html; $('overlay').classList.remove('hidden'); }
-        function closeModal() { $('overlay').classList.add('hidden'); }
-
         function showRoles() {
             openModal(`<h2>Secret Role Assignment</h2><p style="margin-bottom:15px; color:var(--text-muted)">Pass the device privately to each player so they can inspect their allegiance.</p><div id="roleReveal" class="notice">Select your operative below to reveal your secret card.</div><div class="actions" style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:15px;">${G.heroes.map(h => `<button class="magipunk-btn" onclick="revealRole('${h.id}')">Inspect ${h.name}</button>`).join('')}</div><div class="actions"><button class="magipunk-btn primary" onclick="closeModal()">Begin Briefing</button></div>`);
         }
@@ -330,7 +342,7 @@
         }
 
         function showHelp() {
-            openModal(`<h2>Master Rulebook v8.2</h2><p style="text-align:left; line-height:1.6; font-size:13px; color:var(--text-muted);"><b>Goal:</b> Loyalists reach Distance 12 with Melindre alive. Traitors win via Derailment (0 HP), Melindre death, or stalling past Round 10.<br><br><b>Turn Structure:</b><br>1. Spend 2 AP (Move, Attack, Repair, VIP Command).<br>2. Click End Hero Turn.<br>3. After all heroes act, a Crisis is drawn. Group inspects hands and commits cards.<br>4. Threats activate and Distance increases.<br>5. Next round begins.</p><div class="actions" style="margin-top:15px;"><button class="magipunk-btn primary" onclick="closeModal()">Resume Game</button></div>`);
+            openModal(`<h2>Master Rulebook v8.3</h2><p style="text-align:left; line-height:1.6; font-size:13px; color:var(--text-muted);"><b>Goal:</b> Loyalists reach Distance 12 with Melindre alive. Traitors win via Derailment (0 HP), Melindre death, or stalling past Round 10.<br><br><b>Turn Structure:</b><br>1. Spend 2 AP (Move, Attack, Repair, VIP Command).<br>2. Click End Hero Turn.<br>3. After all heroes act, a Crisis is drawn. Group inspects hands and commits cards.<br>4. Threats activate and Distance increases.<br>5. Next round begins.</p><div class="actions" style="margin-top:15px;"><button class="magipunk-btn primary" onclick="closeModal()">Resume Game</button></div>`);
         }
 
         function spend(n=1) {
@@ -343,7 +355,7 @@
         function setMode(mode) {
             if(G.gameOver || G.phase !== 'heroes') return;
             actionMode = mode;
-            $('action-hint').textContent = mode === 'move' ? 'Click a highlighted cell on the train carriages to move.' : 'Choose an action.';
+            $('action-hint').textContent = mode === 'move' ? 'Click a highlighted cell on the tactical grid to move.' : 'Choose an action.';
             renderTrain();
         }
 
@@ -427,7 +439,7 @@
 
         function voteAccusation(id) {
             const accuser = hero();
-            accuser.ap -= 2; // Dedicate the 2 AP
+            accuser.ap -= 2;
             closeModal();
             const voters = G.heroes.filter(h => h.hp > 0 && !h.confined);
             const votes = {};
@@ -507,7 +519,7 @@
                 });
             });
             const playerSum = committed.reduce((n, c) => n + c.value, 0);
-            const chaosCards = 2 + rand(6) + rand(6); // Elemental chaos
+            const chaosCards = 2 + rand(6) + rand(6);
             const totalPool = playerSum + chaosCards;
             G.crisisResolved = true;
             
@@ -529,7 +541,6 @@
             
             G.distance = Math.min(12, G.distance + 1);
             
-            // Enemies activate
             for(const e of G.enemies.filter(e => e.hp > 0)) {
                 const nearby = G.heroes.filter(h => h.hp > 0 && !h.confined && h.car === e.car && Math.abs(h.cell - e.cell) <= 2);
                 if(nearby.length) {
@@ -552,7 +563,7 @@
             G.heroes.forEach(h => {
                 h.ap = h.maxAp;
                 h.usedAbility = false;
-                if(h.hp > 0) h.hand.push(...drawCards(Math.max(0, 3 - h.hand.length))); // Draw back up to 3
+                if(h.hp > 0) h.hand.push(...drawCards(Math.max(0, 3 - h.hand.length))); 
             });
             G.active = 0; G.turns = 0; G.phase = 'heroes'; G.crisis = null; selectedCards.clear();
             checkGameOver();
@@ -609,7 +620,7 @@
             if(!G) return;
             $('train').innerHTML = CAR_NAMES.map((name, car) => {
                 const cols = [];
-                for(let cell=0; cell<10; cell++) { // 10 physical cells to match the image grid
+                for(let cell=0; cell<10; cell++) { 
                     const isLegal = actionMode === 'move' && canMoveTo(hero(), car, cell);
                     const tokens = [];
                     
