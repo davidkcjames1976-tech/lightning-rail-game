@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightning Rail: Sharn to Thrane — Master Edition v6.7 Card & Turn Economy</title>
+    <title>Lightning Rail: Sharn to Thrane — Master Edition v6.8 Genuine Crisis Bidding</title>
     <style>
         :root {
             --bg-deep: #070a12;
@@ -342,8 +342,8 @@
             background: #1e293b;
             border: 1.5px solid var(--gold-primary);
             border-radius: 6px;
-            padding: 10px 12px;
-            font-size: 13px;
+            padding: 8px 10px;
+            font-size: 12px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
@@ -357,22 +357,34 @@
             align-items: center;
         }
 
-        .card-item:hover {
-            transform: translateX(4px);
-            box-shadow: 0 0 18px rgba(0,229,255,0.8);
+        .card-item.committed {
+            border-color: var(--azure-glow);
+            box-shadow: 0 0 10px var(--azure-glow);
+            transform: translateX(6px);
         }
 
-        .card-discard-btn {
-            background: var(--crimson-accent);
-            color: #fff;
+        .card-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .card-btn {
+            background: var(--azure-glow);
+            color: #000;
             border: none;
-            border-radius: 4px;
-            padding: 2px 6px;
+            border-radius: 3px;
+            padding: 2px 5px;
             font-size: 10px;
+            font-weight: bold;
             cursor: pointer;
         }
 
-        /* Central Master Board View with Precision Car Alignment & Clipping */
+        .card-btn.discard {
+            background: var(--crimson-accent);
+            color: #fff;
+        }
+
+        /* Central Master Board View */
         .board-workspace {
             flex: 1;
             display: flex;
@@ -424,7 +436,6 @@
             overflow: hidden;
             contain: layout size;
             isolation: isolate;
-            transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
         }
 
         .grid-cell.legal-move {
@@ -432,12 +443,6 @@
             border: 2px solid rgba(74, 222, 128, 0.95);
             box-shadow: inset 0 0 10px rgba(74, 222, 128, 0.4);
             cursor: pointer;
-        }
-
-        .grid-cell:hover {
-            background: rgba(0,229,255,0.35);
-            border-color: var(--azure-glow);
-            box-shadow: inset 0 0 12px rgba(0,229,255,0.7);
         }
 
         .token {
@@ -518,7 +523,6 @@
             font-weight: bold;
         }
 
-        /* Crisis Bidding Engine Box */
         .crisis-bidding-box {
             background: rgba(15, 23, 42, 0.95);
             border: 1.5px solid var(--border-metal);
@@ -530,22 +534,22 @@
         }
 
         .bidding-tray {
-            height: 90px;
+            min-height: 90px;
             background: rgba(0,0,0,0.85);
             border: 1.5px inset var(--border-metal);
             border-radius: 6px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            padding: 8px;
+            gap: 6px;
+            padding: 10px;
             color: var(--gold-light);
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
             text-align: center;
         }
 
-        /* Log Console */
         .log-console {
             flex: 1;
             background: rgba(0,0,0,0.85);
@@ -598,15 +602,9 @@
             gap: 16px;
             box-shadow: 0 0 80px rgba(212,175,55,0.8);
             position: relative;
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             background-image: url('card_template_crisis_fantasy.png');
             background-size: cover;
             overflow-y: auto;
-        }
-
-        @keyframes popIn {
-            0% { transform: scale(0.8); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
         }
 
         .modal-close {
@@ -624,7 +622,6 @@
             aside.right-sidebar { width: 290px; flex: 0 0 290px; padding: 14px; gap: 12px; }
             .board-workspace { flex: 1 1 0; min-width: 0; padding: 8px; justify-content: flex-start; }
             .master-board-container { width: 100%; max-width: 1040px; height: auto; aspect-ratio: 1040 / 590; padding: 17.8% 4.8% 11.8%; gap: 1.7%; }
-            .board-control-hint { flex: 0 0 auto; font-size: 11px !important; }
             .token { width: 75%; height: 75%; max-width: 20px; max-height: 20px; font-size: 5px; }
         }
 
@@ -646,10 +643,10 @@
     <div class="mode-select-overlay" id="mode-select-overlay">
         <div class="mode-select-card">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <p><strong id="startup-version-label">Master Edition v6.7 Card & Turn Economy</strong><br>
-            • <strong>Card Economy:</strong> Step 1 draws true skill cards (capped at 10 hand limit), and cards can be spent or discarded dynamically[cite: 4, 5].<br>
-            • <strong>Proximity & AP Checks:</strong> VIP commands require the active hero to share the same carriage and cost 1 AP[cite: 5, 6].<br>
-            • <strong>Turn Progression:</strong> Step 2 actions auto-advance to Step 3 Crisis Bidding when AP is exhausted or Pass Turn is clicked[cite: 4, 5].</p>
+            <p><strong id="startup-version-label">Master Edition v6.8 Genuine Crisis Bidding</strong><br>
+            • <strong>Strategic Card Bidding:</strong> Click <strong>"Commit"</strong> on specific cards in your hand during Step 3 Crisis Bidding to sacrifice them to the pool[cite: 3, 5].<br>
+            • <strong>Balanced Penalty Scaling:</strong> Crisis failure damage is carefully calibrated (2–3 HP) to prevent rapid 2-turn blowouts.<br>
+            • <strong>Full Turn Economy:</strong> Step 1 Draws, Step 2 Actions, Step 3 Bidding, Step 4 Threats, Step 5 Cleanup[cite: 4, 5].</p>
             <div class="mode-buttons-container">
                 <button class="mode-btn" onclick="game.startGameMode(2, false)">1-2 Player (Shadow Agent Mode)</button>
                 <button class="mode-btn" onclick="game.startGameMode(4, true)">3-6 Player (Master Social Deduction)</button>
@@ -661,7 +658,7 @@
     <header>
         <div class="title-area">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <span id="header-version-label">Master Rulebook v6.7 | Card & Turn Economy</span>
+            <span id="header-version-label">Master Rulebook v6.8 | Genuine Crisis Bidding</span>
         </div>
         <div class="global-status">
             <div class="status-badge">
@@ -693,7 +690,7 @@
         <aside class="left-sidebar">
             <div class="section-header">
                 <span>Active Operatives</span>
-                <span class="help-link" onclick="game.showHowToPlay()">Rules v6.7</span>
+                <span class="help-link" onclick="game.showHowToPlay()">Rules v6.8</span>
             </div>
             <div class="hero-roster" id="hero-roster"></div>
 
@@ -712,7 +709,7 @@
         <!-- Central Master Board View with Strict Cell Clipping -->
         <div class="board-workspace">
             <div class="board-control-hint" style="width:min(1040px,100%);padding:8px 12px;margin-bottom:8px;border:1px solid rgba(74,222,128,.45);border-radius:8px;background:rgba(5,18,24,.88);color:#d9fbe7;font-size:12px;line-height:1.45;">
-                <strong>Turn Flow:</strong> Click <strong>1. Draw Skill</strong> (Step 1) → Spend AP in Step 2 (click <strong>Pass Turn</strong> when finished to advance to Step 3 Crisis Bidding)[cite: 3, 4, 5]. Tokens are strictly locked inside carriages.
+                <strong>Turn Flow:</strong> Click <strong>Draw Skill</strong> (Step 1) → Spend AP in Step 2 (click <strong>Pass Turn</strong> when finished) → In Step 3, click <strong>Commit</strong> on specific cards in your hand to bid them into the crisis pool alongside 2 Elemental Chaos Cards[cite: 3, 4, 5].
             </div>
             <div style="width:min(1040px,100%);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-bottom:5px;text-align:center;font-size:clamp(9px, .8vw, 12px);font-weight:bold;color:var(--gold-light);text-shadow:0 1px 4px #000;">
                 <span>1 · Engine Room</span><span>2 · Passenger Car</span><span>3 · Cargo / Brig</span><span>4 · Dining Lounge</span><span>5 · Rear Observation</span>
@@ -752,17 +749,17 @@
                     <span id="bidding-status" style="color: var(--azure-glow);">Ready</span>
                 </div>
                 <div class="bidding-tray" id="bidding-tray">
-                    <span>Complete Step 2 (Actions), then click 'Pass Turn' or draw crisis to bid skill cards (+2 Chaos Cards)[cite: 3, 5].</span>
+                    <span>Draw a Crisis in Step 3, then click 'Commit' on cards in your hand to add them to the pool[cite: 3, 5].</span>
                 </div>
                 <div id="crisis-board-panel" style="display:none;margin-top:12px;padding:12px;border:1px solid var(--gold-primary);border-radius:8px;background:rgba(4,12,24,.92);line-height:1.5;"></div>
                 <div class="deck-buttons">
-                    <button class="magipunk-btn primary" onclick="game.resolveCrisisBidding()">Submit Secret Bid & Resolve[cite: 5]</button>
+                    <button class="magipunk-btn primary" onclick="game.resolveCrisisBidding()">Submit Bid & Resolve[cite: 5]</button>
                 </div>
             </div>
 
             <div class="section-header">Event & Action Log</div>
             <div class="log-console" id="log-console">
-                <div class="log-entry highlight" id="startup-log-entry">[System] Master Rulebook v6.7 loaded successfully.</div>
+                <div class="log-entry highlight" id="startup-log-entry">[System] Master Rulebook v6.8 loaded successfully.</div>
             </div>
         </aside>
     </main>
@@ -778,14 +775,14 @@
     <!-- Script Engine -->
     <script>
         const GAME_RELEASE = Object.freeze({
-            version: '6.7',
-            edition: 'Card & Turn Economy Master Edition',
-            buildId: 'LR-2026-10-23-ECONOMY',
+            version: '6.8',
+            edition: 'Genuine Crisis Bidding Master Edition',
+            buildId: 'LR-2026-10-23-GENUINE-BID',
             releaseDate: '2026-10-23',
             changes: [
-                'Fixed true card drawing and enforced max 10 hand limit with manual card discarding.',
-                'Enforced AP costs and proximity checks for VIP companion commands.',
-                'Smoothed turn progression from Step 1 through Step 5.'
+                'Implemented genuine individual card commitment and sacrifice for Step 3 Crisis Bidding.',
+                'Calibrated crisis failure damage to 2-3 HP to prevent rapid 2-turn campaign blowouts.',
+                'Maintained 14 HP Train Integrity and 5-step flow.'
             ]
         });
 
@@ -794,9 +791,9 @@
             const startupLabel = document.getElementById('startup-version-label');
             if (startupLabel) startupLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} · Build ${GAME_RELEASE.buildId}`;
             const headerLabel = document.getElementById('header-version-label');
-            if (headerLabel) headerLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} | Card & Turn Economy`;
+            if (headerLabel) headerLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} | Genuine Crisis Bidding`;
             const startupLog = document.getElementById('startup-log-entry');
-            if (startupLog) startupLog.textContent = `[System] Master Rulebook v6.7 loaded successfully[cite: 4].`;
+            if (startupLog) startupLog.textContent = `[System] Master Rulebook v6.8 loaded successfully[cite: 4].`;
         }
 
         class SoundEngine {
@@ -905,6 +902,7 @@
                 ];
 
                 this.hand = [];
+                this.committedCards = [];
                 this.activeCrisis = null;
                 this.gameOver = false;
             }
@@ -966,11 +964,10 @@
                     { title: "Mobility Leap (Value 2)", value: 2 },
                     { title: "Focus Skill (Value 3)", value: 3 }
                 ];
-                // Draw 2 new cards per step 1, capped at 10
                 for (let i = 0; i < 2; i++) {
                     if (this.hand.length < 10) {
                         const card = pool[Math.floor(Math.random() * pool.length)];
-                        this.hand.push({...card, id: Math.random().toString(36).substr(2, 5)});
+                        this.hand.push({...card, id: Math.random().toString(36).substr(2, 5), committed: false});
                     }
                 }
                 this.renderHand();
@@ -986,10 +983,37 @@
                 container.innerHTML = '';
                 this.hand.forEach((c, idx) => {
                     const item = document.createElement('div');
-                    item.className = 'card-item';
-                    item.innerHTML = `<span><strong>${c.title}</strong></span> <button class="card-discard-btn" onclick="game.discardCard(${idx})">Discard</button>`;
+                    item.className = `card-item ${c.committed ? 'committed' : ''}`;
+                    item.innerHTML = `
+                        <span><strong>${c.title}</strong></span>
+                        <div class="card-actions">
+                            ${this.step === 3 ? `<button class="card-btn" onclick="game.toggleCommitCard(${idx})">${c.committed ? 'Uncommit' : 'Commit'}</button>` : ''}
+                            <button class="card-btn discard" onclick="game.discardCard(${idx})">Discard</button>
+                        </div>
+                    `;
                     container.appendChild(item);
                 });
+            }
+
+            toggleCommitCard(idx) {
+                if (this.step !== 3) {
+                    this.log("Cards can only be committed to the pool during Step 3 Crisis Bidding[cite: 3, 5].", "alert");
+                    return;
+                }
+                this.sound.playClick();
+                const card = this.hand[idx];
+                card.committed = !card.committed;
+                this.renderHand();
+                this.updateBiddingTray();
+            }
+
+            updateBiddingTray() {
+                const tray = document.getElementById('bidding-tray');
+                if (!tray || !this.activeCrisis) return;
+                const committedSum = this.hand.filter(c => c.committed).reduce((acc, c) => acc + c.value, 0);
+                tray.innerHTML = `<strong>Crisis:</strong> ${this.activeCrisis.title} (Target DC ${this.activeCrisis.dc})<br>
+                    <strong>Committed Bid Value:</strong> ${committedSum} (+2 Chaos Cards)[cite: 3, 5]<br>
+                    <em>Click 'Commit' on cards in your hand, then click Submit Bid.</em>`;
             }
 
             discardCard(idx) {
@@ -1332,20 +1356,18 @@
                 this.sound.playClick();
                 this.step = 3; // Advance to Step 3: Crisis
                 const crises = [
-                    { title: "Conduit Rail Arc Overload", dc: 13, penalty: "Train Integrity -2 HP" },
-                    { title: "Core Instability", dc: 14, penalty: "Engine Damaged; Integrity -3 HP" },
-                    { title: "Mournland Surge", dc: 15, penalty: "Spectral breach; Integrity -3 HP" }
+                    { title: "Conduit Rail Arc Overload", dc: 10, penalty: "Train Integrity -2 HP" },
+                    { title: "Core Instability", dc: 12, penalty: "Engine Damaged; Integrity -2 HP" },
+                    { title: "Mournland Surge", dc: 13, penalty: "Spectral breach; Integrity -3 HP" }
                 ];
                 this.activeCrisis = crises[Math.floor(Math.random() * crises.length)];
                 
                 document.getElementById('current-phase-title').innerText = 'Step 3: Crisis Event & Secret Bidding';
-                document.getElementById('current-phase-desc').innerText = 'Secretly bid skill cards into pool alongside 2 Elemental Chaos Cards[cite: 3, 5].';
+                document.getElementById('current-phase-desc').innerText = 'Click 'Commit' on cards in your hand to bid them into the pool[cite: 3, 5].';
 
-                const tray = document.getElementById('bidding-tray');
-                if (tray) {
-                    tray.innerHTML = `<strong>Active Crisis:</strong> ${this.activeCrisis.title} (Target DC ${this.activeCrisis.dc})<br><em>Secretly bidding skill cards + 2 Elemental Chaos Cards[cite: 3, 5]...</em>`;
-                }
-                this.log(`[Step 3: Crisis Event] ${this.activeCrisis.title} drawn (Target DC ${this.activeCrisis.dc})[cite: 3, 5]. Secret card bidding active.`, "alert");
+                this.updateBiddingTray();
+                this.renderHand(); // Render commit buttons
+                this.log(`[Step 3: Crisis Event] ${this.activeCrisis.title} drawn (Target DC ${this.activeCrisis.dc})[cite: 3, 5]. Select cards to commit.`, "alert");
             }
 
             resolveCrisisBidding() {
@@ -1356,20 +1378,26 @@
                 this.sound.playClick();
                 const crisis = this.activeCrisis;
                 
-                const chaosCardSum = Math.floor(Math.random() * 6) + Math.floor(Math.random() * 6) + 3;
-                // Sum only current hand values
-                const playerBidSum = this.hand.reduce((acc, card) => acc + (card.value || 2), 0);
+                // Calculate sum of committed cards and remove them from hand (sacrifice)
+                const committedCardsList = this.hand.filter(c => c.committed);
+                const playerBidSum = committedCardsList.reduce((acc, c) => acc + c.value, 0);
+                
+                // Remove committed cards from hand permanently
+                this.hand = this.hand.filter(c => !c.committed);
+                this.renderHand();
+
+                const chaosCardSum = Math.floor(Math.random() * 6) + Math.floor(Math.random() * 6) + 2; // Elemental Chaos Cards
                 const totalPool = playerBidSum + chaosCardSum;
 
                 const success = totalPool >= crisis.dc;
                 if (success) {
                     this.sound.playSuccess();
-                    this.log(`[Crisis Resolved] Secret bid pool total ${totalPool} met DC ${crisis.dc}! Crisis averted[cite: 3, 5].`, "highlight");
+                    this.log(`[Crisis Resolved] Committed bid (${playerBidSum}) + Chaos (${chaosCardSum}) = ${totalPool} met DC ${crisis.dc}! Crisis averted[cite: 3, 5].`, "highlight");
                 } else {
-                    const dmg = crisis.dc === 13 ? 2 : 3;
+                    const dmg = crisis.dc === 10 ? 2 : 3;
                     this.integrity = Math.max(0, this.integrity - dmg);
                     document.getElementById('hud-integrity').innerText = `${this.integrity} / 14 HP`;
-                    this.log(`[Crisis Failed] Secret bid pool total ${totalPool} missed DC ${crisis.dc}[cite: 3, 5]. Train Integrity −${dmg} (HP: ${this.integrity}).`, "alert");
+                    this.log(`[Crisis Failed] Committed bid (${playerBidSum}) + Chaos (${chaosCardSum}) = ${totalPool} missed DC ${crisis.dc}[cite: 3, 5]. Train Integrity −${dmg} (HP: ${this.integrity}).`, "alert");
                     
                     if (crisis.dc - totalPool >= 3) {
                         this.log(`[Suspicion Trigger] Crisis failed by 3+ points! Suspicion Marker placed on contributor[cite: 4, 5].`, "alert");
@@ -1379,7 +1407,7 @@
 
                 this.activeCrisis = null;
                 const tray = document.getElementById('bidding-tray');
-                if (tray) tray.innerHTML = `<span>Crisis resolved successfully. Advance to Step 4.</span>`;
+                if (tray) tray.innerHTML = `<span>Crisis resolved. Committed cards sacrificed. Advance to Step 4.</span>`;
 
                 this.step = 4; // Advance to Step 4: Threat & Speed
                 document.getElementById('current-phase-title').innerText = 'Step 4: Threat & Speed Progress';
@@ -1416,7 +1444,6 @@
 
             endHeroTurn() {
                 if (this.step === 2) {
-                    // Pass Turn in Step 2 automatically advances to Step 3 Crisis Bidding
                     this.drawCrisisCard();
                     return;
                 }
@@ -1438,7 +1465,6 @@
                         this.triggerGameOver(false, "Time Expired: Round 10 ended before reaching Flamekeep Cathedral[cite: 4].");
                         return;
                     }
-                    // Reset VIP ability flags for the new round
                     this.vips.forEach(v => v.usedAbility = false);
                     this.updateVIPPowersHUD();
                 }
@@ -1448,7 +1474,7 @@
                 this.step = 1; // Back to Step 1: Draw Skills
                 document.getElementById('current-phase-title').innerText = 'Step 1: Receive Skills (Draw Step)';
                 document.getElementById('current-phase-desc').innerText = 'Click "Draw Skill" in the left panel to begin your turn[cite: 4, 5].';
-                document.getElementById('bidding-tray').innerHTML = `<span>Complete Step 2 (Actions), then click 'Pass Turn' or draw crisis to bid skill cards (+2 Chaos Cards)[cite: 3, 5].</span>`;
+                document.getElementById('bidding-tray').innerHTML = `<span>Draw a Crisis in Step 3, then click 'Commit' on cards in your hand to add them to the pool[cite: 3, 5].</span>`;
                 this.renderTokens(); this.renderRoster(); this.updateActionEconomyUI();
             }
 
@@ -1488,11 +1514,11 @@
                 if (!content) return;
                 content.innerHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
-                    <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">MASTER RULEBOOK v6.7 RULES</h2>
+                    <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">MASTER RULEBOOK v6.8 RULES</h2>
                     <p style="font-size:13px;line-height:1.6;text-align:left">
-                    <strong>1. Card Economy:</strong> Step 1 draws skill cards (capped at 10 hand limit), with manual discard buttons available[cite: 4, 5].<br><br>
-                    <strong>2. VIP Proximity:</strong> Commands cost 1 AP and require sharing a carriage with Melindre or Shetari[cite: 5, 6].<br><br>
-                    <strong>3. Turn Flow:</strong> Step 2 actions auto-advance to Step 3 upon AP exhaustion or clicking Pass Turn[cite: 4, 5].
+                    <strong>1. Genuine Crisis Bidding:</strong> During Step 3, click 'Commit' on individual cards in your hand to sacrifice them to the pool[cite: 3, 5].<br><br>
+                    <strong>2. Calibrated Penalties:</strong> Failure damage is scaled to 2-3 HP to prevent rapid 2-turn game over loops.<br><br>
+                    <strong>3. Victory:</strong> Reach Distance 12 before Round 10 with Melindre alive[cite: 4].
                     </p>
                     <button class="magipunk-btn primary" style="width:100%;padding:12px;margin-top:14px" onclick="game.closeModal(null)">Got It</button>`;
                 if (modal) modal.style.display = 'flex';
