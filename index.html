@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightning Rail: Sharn to Thrane — Master Edition v6.6 Hand Render & Flow Fix</title>
+    <title>Lightning Rail: Sharn to Thrane — Master Edition v6.7 Card & Turn Economy</title>
     <style>
         :root {
             --bg-deep: #070a12;
@@ -352,11 +352,24 @@
             background-size: cover;
             color: #fff;
             text-shadow: 0 1px 4px rgba(0,0,0,0.95);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .card-item:hover {
-            transform: translateX(6px);
+            transform: translateX(4px);
             box-shadow: 0 0 18px rgba(0,229,255,0.8);
+        }
+
+        .card-discard-btn {
+            background: var(--crimson-accent);
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 10px;
+            cursor: pointer;
         }
 
         /* Central Master Board View with Precision Car Alignment & Clipping */
@@ -633,10 +646,10 @@
     <div class="mode-select-overlay" id="mode-select-overlay">
         <div class="mode-select-card">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <p><strong id="startup-version-label">Master Edition v6.6 Hand Render & Flow Fix</strong><br>
-            • <strong>Visible Skill Hand:</strong> Skill cards now render immediately into the hand container during Step 1[cite: 4, 5].<br>
-            • <strong>Seamless Turn Progression:</strong> Click <strong>1. Draw Skill</strong> (Step 1) → Spend AP or click *Pass Turn* to instantly trigger Step 3 (Crisis Bidding).<br>
-            • <strong>Strict Token Alignment:</strong> Tokens are precisely locked inside carriage rooms.</p>
+            <p><strong id="startup-version-label">Master Edition v6.7 Card & Turn Economy</strong><br>
+            • <strong>Card Economy:</strong> Step 1 draws true skill cards (capped at 10 hand limit), and cards can be spent or discarded dynamically[cite: 4, 5].<br>
+            • <strong>Proximity & AP Checks:</strong> VIP commands require the active hero to share the same carriage and cost 1 AP[cite: 5, 6].<br>
+            • <strong>Turn Progression:</strong> Step 2 actions auto-advance to Step 3 Crisis Bidding when AP is exhausted or Pass Turn is clicked[cite: 4, 5].</p>
             <div class="mode-buttons-container">
                 <button class="mode-btn" onclick="game.startGameMode(2, false)">1-2 Player (Shadow Agent Mode)</button>
                 <button class="mode-btn" onclick="game.startGameMode(4, true)">3-6 Player (Master Social Deduction)</button>
@@ -648,7 +661,7 @@
     <header>
         <div class="title-area">
             <h1>LIGHTNING RAIL: SHARN TO THRANE</h1>
-            <span id="header-version-label">Master Rulebook v6.6 | Hand Render & Flow Fix</span>
+            <span id="header-version-label">Master Rulebook v6.7 | Card & Turn Economy</span>
         </div>
         <div class="global-status">
             <div class="status-badge">
@@ -680,7 +693,7 @@
         <aside class="left-sidebar">
             <div class="section-header">
                 <span>Active Operatives</span>
-                <span class="help-link" onclick="game.showHowToPlay()">Rules v6.6</span>
+                <span class="help-link" onclick="game.showHowToPlay()">Rules v6.7</span>
             </div>
             <div class="hero-roster" id="hero-roster"></div>
 
@@ -699,7 +712,7 @@
         <!-- Central Master Board View with Strict Cell Clipping -->
         <div class="board-workspace">
             <div class="board-control-hint" style="width:min(1040px,100%);padding:8px 12px;margin-bottom:8px;border:1px solid rgba(74,222,128,.45);border-radius:8px;background:rgba(5,18,24,.88);color:#d9fbe7;font-size:12px;line-height:1.45;">
-                <strong>Turn Flow:</strong> Click <strong>1. Draw Skill</strong> (Step 1) to view cards in hand → Spend AP in Step 2 (click <strong>Pass Turn</strong> when finished to advance to Step 3 Crisis Bidding)[cite: 3, 4, 5]. Tokens are strictly locked inside carriages.
+                <strong>Turn Flow:</strong> Click <strong>1. Draw Skill</strong> (Step 1) → Spend AP in Step 2 (click <strong>Pass Turn</strong> when finished to advance to Step 3 Crisis Bidding)[cite: 3, 4, 5]. Tokens are strictly locked inside carriages.
             </div>
             <div style="width:min(1040px,100%);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-bottom:5px;text-align:center;font-size:clamp(9px, .8vw, 12px);font-weight:bold;color:var(--gold-light);text-shadow:0 1px 4px #000;">
                 <span>1 · Engine Room</span><span>2 · Passenger Car</span><span>3 · Cargo / Brig</span><span>4 · Dining Lounge</span><span>5 · Rear Observation</span>
@@ -727,8 +740,8 @@
                     <button class="magipunk-btn" onclick="game.attackNearestEnemy()">Attack Enemy (1 AP)[cite: 5]</button>
                     <button class="magipunk-btn" onclick="game.performRepairAction()">Repair Train (1 AP)[cite: 5]</button>
                     <button class="magipunk-btn" onclick="game.openAccusationModal()">Accuse in Car 4 (2 AP)[cite: 3, 5]</button>
-                    <button class="magipunk-btn" onclick="game.useShetariStrike()" style="background:linear-gradient(to bottom,#78350f,#451a03)">Shetari Command</button>
-                    <button class="magipunk-btn" onclick="game.useMelindreHeal()" style="background:linear-gradient(to bottom,#065f46,#064e3b)">Melindre Command</button>
+                    <button class="magipunk-btn" onclick="game.useShetariStrike()" style="background:linear-gradient(to bottom,#78350f,#451a03)">Shetari Command (1 AP)[cite: 6]</button>
+                    <button class="magipunk-btn" onclick="game.useMelindreHeal()" style="background:linear-gradient(to bottom,#065f46,#064e3b)">Melindre Command (1 AP)[cite: 6]</button>
                 </div>
             </div>
 
@@ -749,7 +762,7 @@
 
             <div class="section-header">Event & Action Log</div>
             <div class="log-console" id="log-console">
-                <div class="log-entry highlight" id="startup-log-entry">[System] Master Rulebook v6.6 loaded successfully.</div>
+                <div class="log-entry highlight" id="startup-log-entry">[System] Master Rulebook v6.7 loaded successfully.</div>
             </div>
         </aside>
     </main>
@@ -765,14 +778,14 @@
     <!-- Script Engine -->
     <script>
         const GAME_RELEASE = Object.freeze({
-            version: '6.6',
-            edition: 'Hand Render & Flow Master Edition',
-            buildId: 'LR-2026-10-23-FIXED-HAND',
+            version: '6.7',
+            edition: 'Card & Turn Economy Master Edition',
+            buildId: 'LR-2026-10-23-ECONOMY',
             releaseDate: '2026-10-23',
             changes: [
-                'Added direct renderHand() call in refreshHandToLimit() so skill cards are fully visible in the left panel hand container.',
-                'Fixed endHeroTurn() / Pass Turn flow so clicking it in Step 2 automatically advances to Step 3 Crisis Bidding.',
-                'Locked tokens strictly inside carriage cell boundaries.'
+                'Fixed true card drawing and enforced max 10 hand limit with manual card discarding.',
+                'Enforced AP costs and proximity checks for VIP companion commands.',
+                'Smoothed turn progression from Step 1 through Step 5.'
             ]
         });
 
@@ -781,9 +794,9 @@
             const startupLabel = document.getElementById('startup-version-label');
             if (startupLabel) startupLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} · Build ${GAME_RELEASE.buildId}`;
             const headerLabel = document.getElementById('header-version-label');
-            if (headerLabel) headerLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} | Hand Render & Flow Fix`;
+            if (headerLabel) headerLabel.textContent = `${GAME_RELEASE.edition} v${GAME_RELEASE.version} | Card & Turn Economy`;
             const startupLog = document.getElementById('startup-log-entry');
-            if (startupLog) startupLog.textContent = `[System] Master Rulebook v6.6 loaded successfully[cite: 4].`;
+            if (startupLog) startupLog.textContent = `[System] Master Rulebook v6.7 loaded successfully[cite: 4].`;
         }
 
         class SoundEngine {
@@ -899,7 +912,7 @@
             startGameMode(modeCount, enableTraitor) {
                 this.sound.playClick();
                 this.hasTraitorMode = enableTraitor;
-                const selectedHeroes = modeCount <= 2 ? this.allHeroes.slice(0, 2) : this.allHeroes;
+                const selectedHeroes = modeCount === 2 ? this.allHeroes.slice(0, 2) : this.allHeroes;
                 this.heroes = selectedHeroes.map(h => ({...h, confined: false, traitor: false, suspicion: 0}));
 
                 if(this.hasTraitorMode && this.heroes.length > 0) {
@@ -946,16 +959,19 @@
             }
 
             refreshHandToLimit() {
-                const sampleCards = [
+                const pool = [
                     { title: "Combat Strike (Value 2)", value: 2 },
                     { title: "Tinkering Spanner (Value 2)", value: 2 },
                     { title: "Arcane Aegis (Value 3)", value: 3 },
                     { title: "Mobility Leap (Value 2)", value: 2 },
                     { title: "Focus Skill (Value 3)", value: 3 }
                 ];
-                while(this.hand.length < 5) {
-                    const card = sampleCards[Math.floor(Math.random() * sampleCards.length)];
-                    this.hand.push(card);
+                // Draw 2 new cards per step 1, capped at 10
+                for (let i = 0; i < 2; i++) {
+                    if (this.hand.length < 10) {
+                        const card = pool[Math.floor(Math.random() * pool.length)];
+                        this.hand.push({...card, id: Math.random().toString(36).substr(2, 5)});
+                    }
                 }
                 this.renderHand();
             }
@@ -968,12 +984,19 @@
                     return;
                 }
                 container.innerHTML = '';
-                this.hand.forEach((c) => {
+                this.hand.forEach((c, idx) => {
                     const item = document.createElement('div');
                     item.className = 'card-item';
-                    item.innerHTML = `<strong>${c.title}</strong>`;
+                    item.innerHTML = `<span><strong>${c.title}</strong></span> <button class="card-discard-btn" onclick="game.discardCard(${idx})">Discard</button>`;
                     container.appendChild(item);
                 });
+            }
+
+            discardCard(idx) {
+                this.sound.playClick();
+                this.hand.splice(idx, 1);
+                this.renderHand();
+                this.log(`Discarded skill card. Hand size: ${this.hand.length}/10.`);
             }
 
             getActiveHero() {
@@ -1012,7 +1035,7 @@
                         <div class="hero-stats-mini">
                             <span class="stat-hp">HP:${h.hp}</span>
                             <span class="stat-def">DEF:${h.def}</span>
-                            <span class="stat-stress">S:${h.stress}</span>
+                            <span class="stat-stress">S:${h.stress || 0}</span>
                         </div>
                     `;
                     card.onclick = () => this.inspectHero(h);
@@ -1021,40 +1044,66 @@
             }
 
             useShetariStrike() {
+                if (this.step !== 2) {
+                    this.log("VIP commands can only be issued during Step 2 Hero Actions[cite: 5].", "alert");
+                    return;
+                }
+                const hero = this.getActiveHero();
                 const shetari = this.vips.find(v => v.id === 'shetari');
                 if (!shetari || shetari.usedAbility || shetari.hp <= 0) {
-                    this.log("Shetari has already used her 1 AP command this turn or is down[cite: 5].", "alert");
+                    this.log("Shetari has already used her command this turn or is down[cite: 5, 6].", "alert");
                     return;
                 }
+                if (hero.car !== shetari.car) {
+                    this.log(`${hero.name} must share Carriage ${shetari.car} with Shetari to issue a command[cite: 5, 6].`, "alert");
+                    return;
+                }
+                if (hero.ap < 1) {
+                    this.log("Not enough AP for VIP Command (costs 1 AP)[cite: 5, 6].", "alert");
+                    return;
+                }
+                hero.ap--;
+                shetari.usedAbility = true;
                 const enemies = [...this.minions, ...this.bosses].filter(e => e.hp > 0 && e.car === shetari.car);
                 if (enemies.length === 0) {
-                    this.log("No minion in Shetari's car for Shadow Crossbow Strike.", "alert");
-                    return;
+                    this.log("No minion in Shetari's car for Shadow Crossbow Strike (command wasted)[cite: 6].", "alert");
+                } else {
+                    const target = enemies[0];
+                    target.hp = Math.max(0, target.hp - 2);
+                    this.log(`[VIP Command] Shetari executes Shadow Crossbow Strike on ${target.name} for 2 damage[cite: 6]!`, "highlight");
+                    if (target.hp <= 0) {
+                        this.minions = this.minions.filter(e => e.hp > 0);
+                        this.bosses = this.bosses.filter(e => e.hp > 0);
+                    }
                 }
-                shetari.usedAbility = true;
-                const target = enemies[0];
-                target.hp = Math.max(0, target.hp - 2);
-                this.log(`[VIP Command] Shetari executes Shadow Crossbow Strike on ${target.name} for 2 damage!`, "highlight");
-                if (target.hp <= 0) {
-                    this.minions = this.minions.filter(e => e.hp > 0);
-                    this.bosses = this.bosses.filter(e => e.hp > 0);
-                }
-                this.renderTokens(); this.updateVIPPowersHUD(); this.checkGameOverConditions();
+                this.renderTokens(); this.updateVIPPowersHUD(); this.renderRoster(); this.updateActionEconomyUI(); this.checkActionEconomyExhaustion();
             }
 
             useMelindreHeal() {
-                const melindre = this.vips.find(v => v.id === 'melindre');
-                if (!melindre || melindre.usedAbility || melindre.hp <= 0) {
-                    this.log("Melindre has already used her 1 AP command this turn or is down[cite: 5].", "alert");
+                if (this.step !== 2) {
+                    this.log("VIP commands can only be issued during Step 2 Hero Actions[cite: 5].", "alert");
                     return;
                 }
-                melindre.usedAbility = true;
-                const targetHero = this.heroes.find(h => h.car === melindre.car && h.hp > 0) || this.heroes[0];
-                if (targetHero) {
-                    targetHero.hp = Math.min(targetHero.maxHp, targetHero.hp + 1);
-                    this.log(`[VIP Command] Melindre channels Silver Flame Blessing on ${targetHero.name}: Restored 1 HP.`, "highlight");
+                const hero = this.getActiveHero();
+                const melindre = this.vips.find(v => v.id === 'melindre');
+                if (!melindre || melindre.usedAbility || melindre.hp <= 0) {
+                    this.log("Melindre has already used her command this turn or is down[cite: 5, 6].", "alert");
+                    return;
                 }
-                this.updateVIPPowersHUD(); this.checkGameOverConditions();
+                if (hero.car !== melindre.car) {
+                    this.log(`${hero.name} must share Carriage ${melindre.car} with Melindre to issue a command[cite: 5, 6].`, "alert");
+                    return;
+                }
+                if (hero.ap < 1) {
+                    this.log("Not enough AP for VIP Command (costs 1 AP)[cite: 5, 6].", "alert");
+                    return;
+                }
+                hero.ap--;
+                melindre.usedAbility = true;
+                hero.hp = Math.min(hero.maxHp, hero.hp + 1);
+                hero.stress = Math.max(0, (hero.stress || 0) - 1);
+                this.log(`[VIP Command] Melindre channels Silver Flame Blessing on ${hero.name}: Restored 1 HP & cleared 1 Stress[cite: 6].`, "highlight");
+                this.renderTokens(); this.updateVIPPowersHUD(); this.renderRoster(); this.updateActionEconomyUI(); this.checkActionEconomyExhaustion();
             }
 
             updateVIPPowersHUD() {
@@ -1308,6 +1357,7 @@
                 const crisis = this.activeCrisis;
                 
                 const chaosCardSum = Math.floor(Math.random() * 6) + Math.floor(Math.random() * 6) + 3;
+                // Sum only current hand values
                 const playerBidSum = this.hand.reduce((acc, card) => acc + (card.value || 2), 0);
                 const totalPool = playerBidSum + chaosCardSum;
 
@@ -1366,7 +1416,7 @@
 
             endHeroTurn() {
                 if (this.step === 2) {
-                    // Clicking Pass Turn during Step 2 actions auto-triggers Crisis Bidding (Step 3)
+                    // Pass Turn in Step 2 automatically advances to Step 3 Crisis Bidding
                     this.drawCrisisCard();
                     return;
                 }
@@ -1376,7 +1426,6 @@
                 }
                 
                 this.sound.playClick();
-                this.hand = this.hand.slice(0, 10);
                 this.heroTurnsCompleted = (this.heroTurnsCompleted || 0) + 1;
                 
                 if (this.heroTurnsCompleted >= this.heroes.length) {
@@ -1389,6 +1438,9 @@
                         this.triggerGameOver(false, "Time Expired: Round 10 ended before reaching Flamekeep Cathedral[cite: 4].");
                         return;
                     }
+                    // Reset VIP ability flags for the new round
+                    this.vips.forEach(v => v.usedAbility = false);
+                    this.updateVIPPowersHUD();
                 }
 
                 this.activeHeroIndex = (this.activeHeroIndex + 1) % this.heroes.length;
@@ -1436,11 +1488,11 @@
                 if (!content) return;
                 content.innerHTML = `
                     <span class="modal-close" onclick="game.closeModal(null)">&times;</span>
-                    <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">MASTER RULEBOOK v6.6 RULES</h2>
+                    <h2 style="color: var(--gold-primary); margin-bottom: 8px; font-size: 20px;">MASTER RULEBOOK v6.7 RULES</h2>
                     <p style="font-size:13px;line-height:1.6;text-align:left">
-                    <strong>1. Hand Rendering:</strong> Skill cards now correctly render in the left-hand panel when drawn in Step 1[cite: 4, 5].<br><br>
-                    <strong>2. Turn Progression:</strong> Click 'Draw Skill' (Step 1) -> Take actions (Step 2) -> Click 'Pass Turn' or exhaust AP to trigger Crisis Bidding (Step 3)[cite: 3, 4, 5].<br><br>
-                    <strong>3. Victory:</strong> Reach Distance 12 before Round 10 with Melindre alive[cite: 4].
+                    <strong>1. Card Economy:</strong> Step 1 draws skill cards (capped at 10 hand limit), with manual discard buttons available[cite: 4, 5].<br><br>
+                    <strong>2. VIP Proximity:</strong> Commands cost 1 AP and require sharing a carriage with Melindre or Shetari[cite: 5, 6].<br><br>
+                    <strong>3. Turn Flow:</strong> Step 2 actions auto-advance to Step 3 upon AP exhaustion or clicking Pass Turn[cite: 4, 5].
                     </p>
                     <button class="magipunk-btn primary" style="width:100%;padding:12px;margin-top:14px" onclick="game.closeModal(null)">Got It</button>`;
                 if (modal) modal.style.display = 'flex';
