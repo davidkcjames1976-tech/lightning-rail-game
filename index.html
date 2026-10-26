@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Lightning Rail: Master Edition v15.7</title>
+    <title>Lightning Rail: Master Edition v16.0</title>
     <style>
         :root { --bg-deep: #070a12; --panel-bg: rgba(15, 23, 42, 0.97); --gold-primary: #d4af37; --azure-glow: #00e5ff; --crimson-accent: #ff1744; --text-main: #f5f2e9; --text-muted: #e2e8f0; --border-metal: #455a64; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -60,7 +60,7 @@
             <div>
                 <div class="eyebrow">Eberron · Magipunk Social Deduction</div>
                 <h1>⚡ Lightning Rail: Sharn to Thrane</h1>
-                <div class="subtitle">Master Edition v15.7 — Full Interface Restoration</div>
+                <div class="subtitle">Master Edition v16.0 — Rapid Crises & Random Starts</div>
             </div>
             <div class="actions">
                 <button class="magipunk-btn primary" onclick="newGame(true)">New Game</button>
@@ -97,7 +97,7 @@
             
             <aside class="panel">
                 <h2>3. Secret Crisis Bidding</h2>
-                <div id="crisis" style="margin-bottom:10px; font-size:12px; color:var(--text-muted)">Crises trigger after all heroes act.</div>
+                <div id="crisis" style="margin-bottom:10px; font-size:12px; color:var(--text-muted)">Crises trigger after EVERY turn.</div>
                 <div id="crisis-controls"></div>
                 <h2 style="margin-top:12px;">Event Log</h2>
                 <div id="log" class="log"></div>
@@ -180,7 +180,8 @@
             const heroes = HERO_BASE.slice(0, socialChoice ? 5 : 2).map(h => ({...h, hand: [], confined: false, inspectedRole: false, actedThisRound: false}));
             G = {
                 social: socialChoice, heroes, traitor: socialChoice ? pick(heroes).id : null,
-                active: 0, round: 1, integrity: 14, maxIntegrity: 14, distance: 3,
+                active: rand(heroes.length),
+                round: 1, integrity: 14, maxIntegrity: 14, distance: 3,
                 phase: 'heroes', heroStep: 1, crisis: null, crisisResolved: false, gameOver: false, midpointTriggered: false,
                 crisisPool: [], bidsSubmitted: new Set(),
                 enemies: [{id:'daask', name:'Daask Enforcer', hp:4, maxHp:4, car:4, cell:8, img:'token_minion_generic.png'}],
@@ -273,15 +274,9 @@
             const car = Number(targetCar), cell = Number(targetCell);
             if (car < 0 || car > 4 || cell < 0 || cell > 9) return false;
             
-            if (h.car === car) return getGridDist(h.cell, cell) <= 3;
-            
-            if (Math.abs(h.car - car) === 1) {
-                if (car > h.car) {
-                    return (h.cell === 8 || h.cell === 9) && (cell === 0 || cell === 1);
-                } else {
-                    return (h.cell === 0 || h.cell === 1) && (cell === 8 || cell === 9);
-                }
-            }
+            const carDiff = Math.abs(h.car - car);
+            if (carDiff === 0) return getGridDist(h.cell, cell) <= 3;
+            if (carDiff === 1) return true;
             return false;
         }
 
@@ -329,12 +324,7 @@
             actionMode = ''; 
             hero().actedThisRound = true;
             
-            if(G.heroes.filter(h => h.hp > 0 && !h.actedThisRound).length === 0) {
-                startCrisisPhase();
-            } else {
-                do { G.active = (G.active + 1) % G.heroes.length; } while (hero().hp <= 0 || hero().actedThisRound);
-                hero().ap = hero().maxAp; G.heroStep = 1; render();
-            }
+            startCrisisPhase();
         }
 
         function startCrisisPhase() {
@@ -422,7 +412,7 @@
             checkGameOver();
             if(G.gameOver) return;
 
-            if (G.distance === 6 && !G.midpointTriggered && G.social) {
+            if (G.distance >= 6 && !G.midpointTriggered && G.social) {
                 G.midpointTriggered = true;
                 let flipOccurred = false;
                 if (Math.random() < 0.4) {
@@ -443,13 +433,13 @@
                 <button class="magipunk-btn primary" onclick="promptMidpointReveal()">Commence Interrogations</button>`);
                 return;
             }
-            advanceRound();
+            resumeAfterThreats();
         }
 
         function promptMidpointReveal() {
             const uninspected = G.heroes.filter(h => h.hp > 0 && !h.inspectedRole);
             if(uninspected.length === 0) {
-                openModal(`<h2>Midpoint Briefing Complete</h2><button class="magipunk-btn primary" onclick="closeModal(); advanceRound();">Resume Operation</button>`);
+                openModal(`<h2>Midpoint Briefing Complete</h2><button class="magipunk-btn primary" onclick="closeModal(); resumeAfterThreats();">Resume Operation</button>`);
                 return;
             }
             openModal(`<h2>Midpoint Inspection</h2><p style="margin-bottom:15px;">Pass the device to the next operative.</p>
@@ -463,6 +453,19 @@
             h.inspectedRole = true;
             openModal(`<h2>Secret Role Update</h2><br><b>${h.name}:</b> ${G.traitor === id ? '<span style="color:red">TRAITOR</span>' : '<span style="color:#4ade80">LOYAL</span>'}
                 <br><br><button class="magipunk-btn primary" onclick="promptMidpointReveal()">Hide & Pass</button>`);
+        }
+        
+        function resumeAfterThreats() {
+            checkGameOver(); if(G.gameOver) return;
+            
+            if(G.heroes.filter(h => h.hp > 0 && !h.actedThisRound).length === 0) {
+                advanceRound();
+            } else {
+                do { G.active = (G.active + 1) % G.heroes.length; } while (hero().hp <= 0 || hero().actedThisRound);
+                hero().ap = hero().maxAp; 
+                G.phase = 'heroes'; G.heroStep = 1; G.crisis = null; selectedCards.clear();
+                render();
+            }
         }
 
         function advanceRound() {
