@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Lightning Rail: Master Edition v16.0</title>
+    <title>Lightning Rail: Master Edition v16.1</title>
     <style>
         :root { --bg-deep: #070a12; --panel-bg: rgba(15, 23, 42, 0.97); --gold-primary: #d4af37; --azure-glow: #00e5ff; --crimson-accent: #ff1744; --text-main: #f5f2e9; --text-muted: #e2e8f0; --border-metal: #455a64; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -42,8 +42,15 @@
         .hero-card-mini.dead { opacity: 0.4; }
         .actions { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
         .hand { display: flex; flex-direction: column; gap: 6px; max-height: 300px; overflow-y: auto; }
-        .card { border: 1.5px solid var(--gold-primary); background: #1e293b; padding: 8px 10px; border-radius: 6px; color: #fff; cursor: pointer; font-size: 11px; }
+        
+        /* RESTORED CARD VISUALS */
+        .card { border: 1.5px solid var(--gold-primary); background: #1e293b; padding: 8px 10px; border-radius: 6px; color: #fff; cursor: pointer; display: flex; flex-direction: column; gap: 4px; }
+        .card-header { display: flex; justify-content: space-between; font-weight: bold; font-size: 11px; }
+        .card-val { color: var(--azure-glow); }
+        .card-desc { font-size: 9px; color: var(--text-muted); font-style: italic; }
         .card.sabotage { border-color: var(--crimson-accent); }
+        .card.sabotage .card-val { color: var(--crimson-accent); }
+
         .log { max-height: 180px; overflow: auto; display: flex; flex-direction: column; gap: 5px; font-family: monospace; font-size: 11px; }
         .log p { margin: 0; padding: 5px 7px; background: rgba(0,0,0,0.85); border-left: 3px solid var(--border-metal); }
         .log p.alert { border-color: var(--crimson-accent); color: #f87171; }
@@ -60,7 +67,7 @@
             <div>
                 <div class="eyebrow">Eberron · Magipunk Social Deduction</div>
                 <h1>⚡ Lightning Rail: Sharn to Thrane</h1>
-                <div class="subtitle">Master Edition v16.0 — Rapid Crises & Random Starts</div>
+                <div class="subtitle">Master Edition v16.1 — Card Abilities & Visuals Restored</div>
             </div>
             <div class="actions">
                 <button class="magipunk-btn primary" onclick="newGame(true)">New Game</button>
@@ -86,7 +93,7 @@
                 <h2>Train Carriages (Cars 1–5)</h2>
                 <div class="board-workspace"><div class="train" id="train"></div></div>
                 <div class="actions" style="justify-content:center; margin-top:12px;">
-                    <button class="magipunk-btn primary" id="drawBtn" onclick="drawCardManual()">1. DRAW CARD</button>
+                    <button class="magipunk-btn primary" id="drawBtn" onclick="drawCardManual()">1. DRAW CARDS</button>
                     <button class="magipunk-btn" id="moveBtn" onclick="setMode('move')">Move (1 AP)</button>
                     <button class="magipunk-btn" id="attackBtn" onclick="attackEnemy()">Attack (1 AP)</button>
                     <button class="magipunk-btn" id="repairBtn" onclick="repairEngine()">Repair (1 AP)</button>
@@ -193,10 +200,20 @@
             if(G.social) showRoles(); else render();
         }
 
+        // RESTORED CARD DATA & DESCRIPTIONS
         function drawCards(n, isTraitor) {
             return Array.from({length: n}, () => {
-                if (isTraitor && Math.random() < 0.25) return { id: Math.random().toString(36).slice(2), value: pick([-2, -3]), name: 'Sabotage', isSabotage: true };
-                return { id: Math.random().toString(36).slice(2), value: pick([2, 2, 3, 3, 4]), name: pick(['Combat Strike', 'Tinkering', 'Mobility']), isSabotage: false };
+                if (isTraitor && Math.random() < 0.25) {
+                    const val = pick([-2, -3]);
+                    return { id: Math.random().toString(36).slice(2), value: val, name: 'Sabotage', desc: 'Secretly lowers crisis pool.', isSabotage: true };
+                }
+                const type = pick(['Combat Strike', 'Tinkering', 'Mobility']);
+                const val = pick([2, 2, 3, 3, 4]);
+                let desc = '';
+                if(type === 'Combat Strike') desc = `Deal ${val} DMG to a nearby enemy in car.`;
+                if(type === 'Tinkering') desc = `Restore ${val} Train Integrity.`;
+                if(type === 'Mobility') desc = `Push enemies back 2 cells in current car.`;
+                return { id: Math.random().toString(36).slice(2), value: val, name: type, desc: desc, isSabotage: false };
             });
         }
 
@@ -224,9 +241,10 @@
         function drawCardManual() {
             const h = hero();
             if(G.gameOver || G.phase !== 'heroes' || G.heroStep !== 1 || h.hp <= 0) return;
-            const newCard = drawCards(1, h.id === G.traitor)[0];
-            h.hand.push(newCard);
-            log(`[Step 1] ${h.name} drew a card.`, "success");
+            // Balance Update: Drawing 2 cards instead of 1 to survive the rapid crises loop.
+            const newCards = drawCards(2, h.id === G.traitor);
+            h.hand.push(...newCards);
+            log(`[Step 1] ${h.name} drew 2 cards.`, "success");
             G.heroStep = 2; render();
         }
 
@@ -509,6 +527,7 @@
 
         function finish(title, msg) { G.gameOver = true; G.phase = 'game over'; openModal(`<h2>${title}</h2><p>${msg}</p><br><button class="magipunk-btn primary" onclick="location.reload()">Restart</button>`); }
 
+        // RESTORED CARD RENDERING (Includes Descriptions & Formatting)
         function render() {
             if(!G) return;
             $('integrity').textContent = `${G.integrity} / ${G.maxIntegrity}`; $('distance').textContent = `${G.distance} / 12`;
@@ -550,10 +569,25 @@
             if(G.phase === 'crisis') {
                 $('crisis').innerHTML = `<b>${G.crisis.name}</b>`;
                 $('crisis-controls').innerHTML = `<button class="magipunk-btn primary pulse" onclick="lockSecretBid()">Lock Bid</button>`;
-                $('hand').innerHTML = activeH.hand.map(c => `<div class="card" style="border:1px solid #fff;"><label><input type="checkbox" ${selectedCards.has(c.id)?'checked':''} onchange="toggleCard('${c.id}')"> Bid ${c.value}</label></div>`).join('');
+                $('hand').innerHTML = activeH.hand.map(c => `
+                    <div class="card ${c.isSabotage?'sabotage':''}" style="border:1px solid #fff;">
+                        <label style="cursor:pointer; display:flex; flex-direction:column; gap:4px;">
+                            <div class="card-header">
+                                <span><input type="checkbox" ${selectedCards.has(c.id)?'checked':''} onchange="toggleCard('${c.id}')"> ${c.name}</span>
+                                <span class="card-val">${c.value > 0 ? '+'+c.value : c.value}</span>
+                            </div>
+                        </label>
+                    </div>`).join('');
             } else {
                 $('crisis').textContent = 'Waiting for crisis phase.'; $('crisis-controls').innerHTML = '';
-                $('hand').innerHTML = activeH.hand.map(c => `<div class="card ${c.isSabotage?'sabotage':''}" onclick="playSkillCard('${c.id}')"><span>${c.name} (${c.value})</span></div>`).join('');
+                $('hand').innerHTML = activeH.hand.map(c => `
+                    <div class="card ${c.isSabotage?'sabotage':''}" onclick="playSkillCard('${c.id}')">
+                        <div class="card-header">
+                            <span>${c.name}</span>
+                            <span class="card-val">${c.value > 0 ? '+'+c.value : c.value}</span>
+                        </div>
+                        <span class="card-desc">${c.desc}</span>
+                    </div>`).join('');
             }
         }
         document.addEventListener('DOMContentLoaded', () => { new WeatherEngine('weather-canvas'); startMenu(); });
